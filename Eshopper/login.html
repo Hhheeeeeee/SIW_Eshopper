@@ -147,18 +147,20 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-sm-4 col-sm-offset-1">
-					<div class="login-form"><!--login form-->
+					<div class="login-form">
 						<h2>Login to your account</h2>
-						<form action="#">
-							<input type="text" placeholder="Name" />
-							<input type="email" placeholder="Email Address" />
+						<form id="loginForm">
+							<input type="email" id="login_correo" placeholder="Email Address" required />
+							<input type="password" id="login_contraseña" placeholder="Password" required />
 							<span>
-								<input type="checkbox" class="checkbox"> 
+								<input type="checkbox" id="keep_signed_in" class="checkbox"> 
 								Keep me signed in
 							</span>
 							<button type="submit" class="btn btn-default">Login</button>
 						</form>
-					</div><!--/login form-->
+						<p id="loginMessage"></p>
+					</div>
+					
 				</div>
 				<div class="col-sm-1">
 					<h2 class="or">OR</h2>
@@ -349,7 +351,7 @@
     <script src="js/main.js"></script>
 
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-	
+
 <script>
 $(document).ready(function () {
     $("#signupForm").submit(function (e) {
@@ -382,6 +384,42 @@ $(document).ready(function () {
         });
     });
 });
+</script>
+
+<script>
+	$(document).ready(function () {
+    $("#loginForm").submit(function (e) {
+        e.preventDefault(); // Evita el envío tradicional del formulario
+
+        let correo = $("#login_correo").val();
+        let contraseña = $("#login_contraseña").val();
+        let keepSignedIn = $("#keep_signed_in").prop("checked") ? 1 : 0;
+
+        $.ajax({
+            url: "login.php", 
+            type: "POST",
+            data: {
+                correo: correo,
+                contraseña: contraseña,
+                keep_signed_in: keepSignedIn
+            },
+            dataType: "json",
+            success: function (response) {
+                if (response.success) {
+                    $("#loginMessage").text("Inicio de sesión exitoso").css("color", "green");
+                    window.location.href = "dashboard.php"; // Redirigir al usuario
+                } else {
+                    $("#loginMessage").text(response.message).css("color", "red");
+                }
+            },
+            error: function () {
+                $("#loginMessage").text("Error en el servidor").css("color", "red");
+            }
+        });
+    });
+});
+
+
 </script>
 
 </body>
