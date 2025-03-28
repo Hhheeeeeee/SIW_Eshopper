@@ -234,7 +234,7 @@
 					<div class="col-sm-8">
 						<div class="shop-menu pull-right">
 							<ul class="nav navbar-nav">
-								<li><a href="#" id="accountLink"><i class="fa fa-user"></i> Account</a></li>
+								<li><a href="javascript:void(0);" id="accountLink"><i class="fa fa-user"></i> Account</a></li>
 								<p id="accountMessage" style="color: red; display: none; margin-left: 10px;"></p>
 								<li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
 								<li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li>
@@ -1546,21 +1546,26 @@ function loadProducts(category, minPrice = 0, maxPrice = 600) {
 </script>
 
 <script>
-	$(document).ready(function () {
-    $("#accountLink").click(function (e) {
-        e.preventDefault(); // Evita la navegación predeterminada
 
+	console.log("Script cargado correctamente ..");
+
+	$(document).ready(function () {
+    $("#accountLink").on("click", function (e) {
+		console.log("✅ jQuery está listo");
+        e.preventDefault(); // Detiene el comportamiento predeterminado del enlace
+		console.log("Click detectado ..");
         $.ajax({
             url: "session_check.php",
             type: "GET",
             dataType: "json",
             success: function (response) {
+				console.log("Repsuesta servidor .. ");
                 if (response.logged_in) {
-                    window.location.href = "dashboard.php"; // Si está logueado, lo lleva al dashboard
+                    window.location.href = "personal_page.html"; // Redirige si está logueado
                 } else {
                     $("#accountMessage").text("No has iniciado sesión. Redirigiendo...").show();
                     setTimeout(() => {
-                        window.location.href = "login.html"; // Lo redirige al login después de 2 segundos
+                        window.location.href = "login.html"; // Redirige después de 2 segundos
                     }, 2000);
                 }
             },
@@ -1572,7 +1577,6 @@ function loadProducts(category, minPrice = 0, maxPrice = 600) {
 });
 
 </script>
-
 
 
 </body>
