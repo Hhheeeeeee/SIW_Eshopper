@@ -13,7 +13,6 @@
     <link href="css/animate.css" rel="stylesheet">
 	<link href="css/main.css" rel="stylesheet">
 	<link href="css/responsive.css" rel="stylesheet">
-	<link href="css/ofertas.css" rel="stylesheet">
 	<style>
         /* Usar Flexbox en las filas */
 		.row {
@@ -123,31 +122,6 @@
 			border-radius: 5px;
 		}
 		
-		/* Estilos para el slider de productos */
-		#slider-carousel .carousel-inner .item .row {
-			display: flex;
-			justify-content: space-between;
-		}
-
-		#slider-carousel .carousel-inner .item .row .col-sm-4 {
-			flex: 0 0 33.33%;
-			max-width: 33.33%;
-			box-sizing: border-box;
-			padding: 0 10px;
-		}
-
-		#slider-carousel .carousel-inner .item .row .col-sm-4 .product-image-wrapper {
-			display: flex;
-			flex-direction: column;
-			justify-content: space-between;
-			text-align: center;
-		}
-
-		#slider-carousel .carousel-inner .item .row .col-sm-4 img {
-			max-width: 100%;
-			height: auto;
-		}
-
 		/* Estilos para el slider */
 		.slider-wrapper {
 			flex: 1;
@@ -175,24 +149,8 @@
 		}
 		
 		#applyPriceFilter:hover {
-			background: #ff5722;
+			background: #e64a19;
 		}
-		</style>
-		
-		<!-- Agregar estilos para los precios -->
-		<style>
-			/* Estilo para el precio en oferta */
-			.offer-price {
-				color: orange; /* Cambia el color a naranja */
-				font-size: 1.5em; /* Tamaño más grande */
-				font-weight: bold; /* Puedes hacerlo en negrita si quieres */
-			}
-	
-			/* Estilo para el precio original */
-			.original-price {
-				color: red; /* Color de la oferta puede ser rojo */
-				font-size: 1.2em; /* Hacerlo un poco más pequeño */
-			}
 		</style>
 	
     <!--[if lt IE 9]>
@@ -276,7 +234,8 @@
 					<div class="col-sm-8">
 						<div class="shop-menu pull-right">
 							<ul class="nav navbar-nav">
-								<li><a href="#"><i class="fa fa-user"></i> Account</a></li>
+								<li><a href="#" id="accountLink"><i class="fa fa-user"></i> Account</a></li>
+								<p id="accountMessage" style="color: red; display: none; margin-left: 10px;"></p>
 								<li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
 								<li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li>
 								<li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart</a></li>
@@ -339,13 +298,52 @@
 				<div class="col-sm-12">
 					<div id="slider-carousel" class="carousel slide" data-ride="carousel">
 						<ol class="carousel-indicators">
-							<!-- Aquí se generan dinámicamente los indicadores del carousel -->
+							<li data-target="#slider-carousel" data-slide-to="0" class="active"></li>
+							<li data-target="#slider-carousel" data-slide-to="1"></li>
+							<li data-target="#slider-carousel" data-slide-to="2"></li>
 						</ol>
-	
-						<div class="carousel-inner" id="slider-items">
-							<!-- Los productos se inyectarán aquí -->
+						
+						<div class="carousel-inner">
+							<div class="item active">
+								<div class="col-sm-6">
+									<h1><span>E</span>-SHOPPER</h1>
+									<h2>Free E-Commerce Template</h2>
+									<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
+									<button type="button" class="btn btn-default get">Get it now</button>
+								</div>
+								<div class="col-sm-6">
+									<img src="images/home/girl1.jpg" class="girl img-responsive" alt="" />
+									<img src="images/home/pricing.png"  class="pricing" alt="" />
+								</div>
+							</div>
+							<div class="item">
+								<div class="col-sm-6">
+									<h1><span>E</span>-SHOPPER</h1>
+									<h2>100% Responsive Design</h2>
+									<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
+									<button type="button" class="btn btn-default get">Get it now</button>
+								</div>
+								<div class="col-sm-6">
+									<img src="images/home/girl2.jpg" class="girl img-responsive" alt="" />
+									<img src="images/home/pricing.png"  class="pricing" alt="" />
+								</div>
+							</div>
+							
+							<div class="item">
+								<div class="col-sm-6">
+									<h1><span>E</span>-SHOPPER</h1>
+									<h2>Free Ecommerce Template</h2>
+									<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
+									<button type="button" class="btn btn-default get">Get it now</button>
+								</div>
+								<div class="col-sm-6">
+									<img src="images/home/girl3.jpg" class="girl img-responsive" alt="" />
+									<img src="images/home/pricing.png" class="pricing" alt="" />
+								</div>
+							</div>
+							
 						</div>
-	
+						
 						<a href="#slider-carousel" class="left control-carousel hidden-xs" data-slide="prev">
 							<i class="fa fa-angle-left"></i>
 						</a>
@@ -353,11 +351,11 @@
 							<i class="fa fa-angle-right"></i>
 						</a>
 					</div>
+					
 				</div>
 			</div>
 		</div>
 	</section><!--/slider-->
-	
 	
 	<section>
 		<div class="container">
@@ -1280,7 +1278,7 @@
 	</script>
 
 	<!--script: productos-->
-	<!--<script>
+	<script>
 	$(document).ready(function () {
 		console.log("Ejecutando petición AJAX para cargar productos...");
 		$.ajax({
@@ -1352,110 +1350,6 @@
 		console.log("Redirigiendo a la página de detalles del producto:", productId);
 		window.location.href = `product_details.html?id=${productId}`;
 	}
-	</script>-->
-
-	<script>
-		$(document).ready(function () {
-		console.log("Ejecutando petición AJAX para cargar productos y ofertas...");
-	
-		// Petición para obtener los productos
-		$.ajax({
-			url: 'get_products.php', // Archivo PHP que devuelve los productos en formato JSON
-			type: 'GET',
-			dataType: 'json',
-			success: function (response) {
-				if (response.success) {
-					console.log("Productos cargados correctamente");
-
-					// Petición para obtener las ofertas
-					$.ajax({
-						url: 'get_ofertas_y_productos.php', // Archivo PHP que devuelve las ofertas en formato JSON
-						type: 'GET',
-						dataType: 'json',
-						success: function (offersResponse) {
-							console.log(offersResponse); 
-							if (offersResponse.success) {
-								console.log("Ofertas cargadas correctamente");
-
-								// Guardamos los ids de productos que están en oferta en un array
-								let offersIds = offersResponse.offers.map(offer => offer.id);
-								
-								// Variables para el HTML de productos
-								let productsHtml = '';
-								
-								// Recorremos los productos y verificamos si están en oferta
-								response.products.slice(0, 8).forEach(product => {
-									// Verificamos si el id del producto está en las ofertas
-									let isInOffer = offersIds.includes(product.id);
-									
-									if (!isInOffer) {  // Solo mostramos los productos que no están en oferta
-										productsHtml += `
-											<div class="col-sm-4">
-												<div class="product-image-wrapper">
-													<div class="single-products">
-														<div class="productinfo text-center">
-															<img src="${product.image}" alt="${product.name}" />
-															<h2>$${product.price}</h2>
-															<p>${product.name}</p>
-															<a href="#" class="btn btn-default add-to-cart">
-																<i class="fa fa-shopping-cart"></i> Add to cart
-															</a>
-														</div>
-														<div class="product-overlay" data-id="${product.id}">
-															<div class="overlay-content">
-																<h2>$${product.price}</h2>
-																<p>${product.name}</p>
-																<a href="#" class="btn btn-default add-to-cart">
-																	<i class="fa fa-shopping-cart"></i> Add to cart
-																</a>
-															</div>
-														</div>
-													</div>
-													<div class="choose">
-														<ul class="nav nav-pills nav-justified">
-															<li><a href="#"><i class="fa fa-plus-square"></i> Add to wishlist</a></li>
-															<li><a href="#"><i class="fa fa-plus-square"></i> Add to compare</a></li>
-														</ul>
-													</div>
-												</div>
-											</div>`;  
-									}  // Aquí termina el if
-								});
-
-								// Agregar los productos al contenedor
-								$('.features_items').append(productsHtml);
-								// Agregar evento de clic solo en el overlay
-								$('.product-overlay').on('click', function (e) {
-									e.preventDefault();
-									e.stopPropagation();
-									let productId = $(this).data('id');
-									console.log("Producto seleccionado desde overlay:", productId);
-									openProductDetails(productId);
-								});
-				
-								// Evitar que los enlaces dentro del overlay interfieran con el evento de clic
-								$('.product-overlay a').on('click', function (e) {
-									e.stopPropagation();
-								});
-							}
-						},
-						error: function (xhr, status, error) {
-							console.error("Error cargando ofertas:", error);
-						}
-					});
-				}
-			},
-			error: function (xhr, status, error) {
-				console.error("Error cargando productos:", error);
-			}
-		});
-	});
-
-
-		function openProductDetails(productId) {
-			console.log("Redirigiendo a la página de detalles del producto:", productId);
-			window.location.href = `product_details.html?id=${productId}`;
-		}
 	</script>
 	
 
@@ -1595,7 +1489,7 @@ function loadProducts(category, minPrice = 0, maxPrice = 600) {
                                 <div class="single-products">
                                     <div class="productinfo text-center">
                                         <img src="${product.image}" alt="${product.name}" />
-                                        <h2>$$${product.price}</h2>
+                                        <h2>$${product.price}</h2>
                                         <p>${product.name}</p>
                                         <a href="#" class="btn btn-default add-to-cart">
                                             <i class="fa fa-shopping-cart"></i> Add to cart
@@ -1651,153 +1545,34 @@ function loadProducts(category, minPrice = 0, maxPrice = 600) {
 
 </script>
 
-
-
-<!--script: ofertas-->
 <script>
 	$(document).ready(function () {
-		console.log("Ejecutando petición AJAX para cargar ofertas...");
-		$.ajax({
-			url: 'get_ofertas.php', // Archivo PHP que devuelve las ofertas en formato JSON
-			type: 'GET',
-			dataType: 'json',
-			success: function (response) {
-				if (response.success) {
-					console.log("Ofertas cargadas correctamente");
-					let offersHtml = '';
-					let sliderHtml = '';
-					let slideHtml = '';
-					let activeClass = 'active'; // Primer slide es el 'active'
-	
-					response.offers.forEach((offer, index) => {
-						// Estructura HTML de cada oferta para el contenido general
-						offersHtml += `
-							<div class="col-sm-4">
-								<div class="product-image-wrapper">
-									<div class="single-products">
-										<div class="productinfo text-center">
-											<img src="${offer.imagen}" alt="${offer.titulo}" />
-											<p class="price">
-												<span class="original-price"><del>$${offer.precio_original}</del></span> 
-												<span class="offer-price">$${offer.precio_oferta}</span>
-											</p>
-											<p>${offer.titulo}</p>
-											<p>Oferta ID: ${offer.id}</p>
-											<a href="#" class="btn btn-default add-to-cart">
-												<i class="fa fa-shopping-cart"></i> Add to cart
-											</a>
-										</div>
-										<div class="product-overlay" data-id="${offer.id_producto}">
-											<div class="overlay-content">
-												<h2><del>$${offer.precio_original}</del> $${offer.precio_oferta}</h2>
-												<p>Oferta ID: ${offer.id}</p>
-												<a href="#" class="btn btn-default add-to-cart">
-													<i class="fa fa-shopping-cart"></i> Add to cart
-												</a>
-											</div>
-										</div>
-									</div>
-									<div class="choose">
-										<ul class="nav nav-pills nav-justified">
-											<li><a href="#"><i class="fa fa-plus-square"></i> Add to wishlist</a></li>
-											<li><a href="#"><i class="fa fa-plus-square"></i> Add to compare</a></li>
-										</ul>
-									</div>
-								</div>
-							</div>`;
-						
-						// Estructura HTML para el slider, agrupando productos en grupos de tres
-						slideHtml += `
-							<div class="col-sm-4">
-								<div class="product-image-wrapper">
-									<div class="single-products">
-										<div class="productinfo text-center">
-											<img src="${offer.imagen}" alt="${offer.titulo}" />
-											<p class="price">
-												<span class="original-price"><del>$${offer.precio_original}</del></span> 
-												<span class="offer-price">$${offer.precio_oferta}</span>
-											</p>
-											<p>${offer.titulo}</p>
-											<p>Oferta ID: ${offer.id}</p>
-											<a href="#" class="btn btn-default add-to-cart">
-												<i class="fa fa-shopping-cart"></i> Add to cart
-											</a>
-										</div>
-										<div class="product-overlay" data-id="${offer.id_producto}">
-											<div class="overlay-content">
-												<h2><del>$${offer.precio_original}</del> $${offer.precio_oferta}</h2>
-												<p>Oferta ID: ${offer.id}</p>
-												<a href="#" class="btn btn-default add-to-cart">
-													<i class="fa fa-shopping-cart"></i> Add to cart
-												</a>
-											</div>
-										</div>
-									</div>
-									<div class="choose">
-										<ul class="nav nav-pills nav-justified">
-											<li><a href="#"><i class="fa fa-plus-square"></i> Add to wishlist</a></li>
-											<li><a href="#"><i class="fa fa-plus-square"></i> Add to compare</a></li>
-										</ul>
-									</div>
-								</div>
-							</div>`;
-	
-						// Cuando tengamos 3 productos, añadimos un nuevo slide
-						if ((index + 1) % 3 === 0 || index === response.offers.length - 1) {
-							sliderHtml += `
-								<div class="item ${activeClass}">
-									<div class="row">
-										${slideHtml}
-									</div>
-								</div>`;
-							slideHtml = '';  // Reseteamos para el siguiente grupo
-							activeClass = '';  // Sólo el primer slide tiene la clase 'active'
-						}
-					});
-	
-					// Insertamos las ofertas en el contenedor de ofertas
-					$('.features_items').append(offersHtml);
-					// Agregar evento de clic solo en el overlay
-					$('.product-overlay').on('click', function (e) {
-						e.preventDefault();
-						e.stopPropagation();
-						let productId = $(this).data('id');
-						console.log("Producto seleccionado desde overlay:", productId);
-						openProductDetails(productId);
-					});
-				
-					// Evitar que los enlaces dentro del overlay interfieran con el evento de clic
-					$('.product-overlay a').on('click', function (e) {
-						e.stopPropagation();
-					});
-	
-					// Insertamos los productos en el slider
-					$('#slider-items').html(sliderHtml);
-	
-					// Actualizamos los indicadores del carousel
-					let indicatorsHtml = '';
-					let totalSlides = Math.ceil(response.offers.length / 3);
-					for (let i = 0; i < totalSlides; i++) {
-						indicatorsHtml += `<li data-target="#slider-carousel" data-slide-to="${i}" class="${i === 0 ? 'active' : ''}"></li>`;
-					}
-					$('.carousel-indicators').html(indicatorsHtml);
-				}
-			},
-			error: function (xhr, status, error) {
-				console.error("Status: " + status + ", Error: " + error);
-				console.log(xhr.responseText); // Ver respuesta del servidor
-			}
-		});
-	});
-	
-	function openProductDetails(productId) {
-		console.log("Redirigiendo a la página de detalles del producto:", productId);
-		window.location.href = `product_details.html?id=${productId}`;
-	}
-	</script>
-	
-	
-	
+    $("#accountLink").click(function (e) {
+        e.preventDefault(); // Evita la navegación predeterminada
+
+        $.ajax({
+            url: "session_check.php",
+            type: "GET",
+            dataType: "json",
+            success: function (response) {
+                if (response.logged_in) {
+                    window.location.href = "dashboard.php"; // Si está logueado, lo lleva al dashboard
+                } else {
+                    $("#accountMessage").text("No has iniciado sesión. Redirigiendo...").show();
+                    setTimeout(() => {
+                        window.location.href = "login.html"; // Lo redirige al login después de 2 segundos
+                    }, 2000);
+                }
+            },
+            error: function () {
+                alert("Error en el servidor. Inténtalo más tarde.");
+            }
+        });
+    });
+});
+
+</script>
+
 
 
 </body>
