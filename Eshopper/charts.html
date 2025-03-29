@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Login | E-Shopper</title>
+    <title>Checkout | E-Shopper</title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/font-awesome.min.css" rel="stylesheet">
     <link href="css/prettyPhoto.css" rel="stylesheet">
@@ -88,9 +88,9 @@
 							<ul class="nav navbar-nav">
 								<li><a href=""><i class="fa fa-user"></i> Account</a></li>
 								<li><a href=""><i class="fa fa-star"></i> Wishlist</a></li>
-								<li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li>
+								<li><a href="checkout.html" class="active"><i class="fa fa-crosshairs"></i> Checkout</a></li>
 								<li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart</a></li>
-								<li><a href="login.html" class="active"><i class="fa fa-lock"></i> Login</a></li>
+								<li><a href="login.html"><i class="fa fa-lock"></i> Login</a></li>
 								<li><a href=""><i class="fa fa-file-pdf-o"></i> Exportar</a></li>
 								<li><a href=""><i class="fa fa-bar-chart"></i> Gráficos</a></li>
 							</ul>
@@ -119,9 +119,9 @@
                                     <ul role="menu" class="sub-menu">
                                         <li><a href="shop.html">Products</a></li>
 										<li><a href="product-details.html">Product Details</a></li> 
-										<li><a href="checkout.html">Checkout</a></li> 
+										<li><a href="checkout.html" class="active">Checkout</a></li> 
 										<li><a href="cart.html">Cart</a></li> 
-										<li><a href="login.html" class="active">Login</a></li> 
+										<li><a href="login.html">Login</a></li> 
 										<li><a href="export.html">Exportar</a></li> 
 										<li><a href="charts.html">Gráficos</a></li> 
                                     </ul>
@@ -146,46 +146,9 @@
 			</div>
 		</div><!--/header-bottom-->
 	</header><!--/header-->
-	
-	<section id="form"><!--form-->
-		<div class="container">
-			<div class="row">
-				<div class="col-sm-4 col-sm-offset-1">
-					<div class="login-form">
-						<h2>Login to your account</h2>
-						<form id="loginForm">
-							<input type="email" id="login_correo" placeholder="Email Address" required />
-							<input type="password" id="login_contraseña" placeholder="Password" required />
-							<span>
-								<input type="checkbox" id="keep_signed_in" class="checkbox"> 
-								Keep me signed in
-							</span>
-							<button type="submit" class="btn btn-default">Login</button>
-						</form>
-						<p id="loginMessage"></p>
-					</div>
-					
-				</div>
-				<div class="col-sm-1">
-					<h2 class="or">OR</h2>
-				</div>
-				<div class="col-sm-4">
-					<div class="signup-form">
-						<h2>¡Regístrate como nuevo usuario!</h2>
-						<form id="signupForm">
-							<input type="text" id="nombre_usuario" placeholder="Nombre de usuario" required/>
-							<input type="email" id="correo" placeholder="Correo electrónico" required/>
-							<input type="password" id="contraseña" placeholder="Contraseña" required/>
-							<button type="submit" class="btn btn-default">Signup</button>
-						</form>
-						<p id="signupMessage"></p>
-					</div>
-					
-				</div>
-			</div>
-		</div>
-	</section><!--/form-->
-	
+
+
+
 	
 	<footer id="footer"><!--Footer-->
 		<div class="footer-top">
@@ -344,87 +307,11 @@
 		</div>
 		
 	</footer><!--/Footer-->
-	
 
-  
     <script src="js/jquery.js"></script>
-	<script src="js/price-range.js"></script>
-    <script src="js/jquery.scrollUp.min.js"></script>
 	<script src="js/bootstrap.min.js"></script>
+	<script src="js/jquery.scrollUp.min.js"></script>
     <script src="js/jquery.prettyPhoto.js"></script>
     <script src="js/main.js"></script>
-
-	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<script>
-$(document).ready(function () {
-    $("#signupForm").submit(function (e) {
-        e.preventDefault(); // Evita el envío tradicional del formulario
-
-        let nombre_usuario = $("#nombre_usuario").val();
-        let correo = $("#correo").val();
-        let contraseña = $("#contraseña").val();
-
-        $.ajax({
-            url: "signup.php", 
-            type: "POST",
-            data: {
-                nombre_usuario: nombre_usuario,
-                correo: correo,
-                contraseña: contraseña
-            },
-            dataType: "json",
-            success: function (response) {
-                if (response.success) {
-                    $("#signupMessage").text("Registro exitoso").css("color", "green");
-                    $("#signupForm")[0].reset();
-                } else {
-                    $("#signupMessage").text(response.message).css("color", "red");
-                }
-            },
-            error: function () {
-                $("#signupMessage").text("Error en el servidor").css("color", "red");
-            }
-        });
-    });
-});
-</script>
-
-<script>
-	$(document).ready(function () {
-    $("#loginForm").submit(function (e) {
-        e.preventDefault(); // Evita el envío tradicional del formulario
-
-        let correo = $("#login_correo").val();
-        let contraseña = $("#login_contraseña").val();
-        let keepSignedIn = $("#keep_signed_in").prop("checked") ? 1 : 0;
-
-        $.ajax({
-            url: "login.php", 
-            type: "POST",
-            data: {
-                correo: correo,
-                contraseña: contraseña,
-                keep_signed_in: keepSignedIn
-            },
-            dataType: "json",
-            success: function (response) {
-                if (response.success) {
-                    $("#loginMessage").text("Inicio de sesión exitoso").css("color", "green");
-                    window.location.href = "dashboard.php"; // Redirigir al usuario
-                } else {
-                    $("#loginMessage").text(response.message).css("color", "red");
-                }
-            },
-            error: function () {
-                $("#loginMessage").text("Error en el servidor").css("color", "red");
-            }
-        });
-    });
-});
-
-
-</script>
-
 </body>
 </html>

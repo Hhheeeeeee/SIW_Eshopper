@@ -252,6 +252,8 @@
 								<li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li>
 								<li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart</a></li>
 								<li><a href="login.html"><i class="fa fa-lock"></i> Login</a></li>
+								<li><a href="javascript:void(0);" id="exportLink"><i class="fa fa-file-pdf-o"></i> Exportar</a></li>
+								<li><a href="javascript:void(0);" id="chartsLink"><i class="fa fa-bar-chart"></i> Gráficos</a></li>
 							</ul>
 						</div>
 					</div>
@@ -281,6 +283,8 @@
 										<li><a href="checkout.html">Checkout</a></li> 
 										<li><a href="cart.html">Cart</a></li> 
 										<li><a href="login.html">Login</a></li> 
+										<li><a href="export.html">Exportar</a></li> 
+										<li><a href="charts.html">Gráficos</a></li> 
                                     </ul>
                                 </li> 
 								<li class="dropdown"><a href="#">Blog<i class="fa fa-angle-down"></i></a>
@@ -1713,6 +1717,73 @@ function loadProducts(category, minPrice = 0, maxPrice = 600) {
 				console.log("Repsuesta servidor .. ");
                 if (response.logged_in) {
                     window.location.href = "personal_page.html"; // Redirige si está logueado
+                } else {
+                    $("#accountMessage").text("No has iniciado sesión. Redirigiendo...").show();
+                    setTimeout(() => {
+                        window.location.href = "login.html"; // Redirige después de 2 segundos
+                    }, 2000);
+                }
+            },
+            error: function () {
+                alert("Error en el servidor. Inténtalo más tarde.");
+            }
+        });
+    });
+});
+
+</script>
+
+<!--Redirección Exportar a PDF-->
+<script>
+
+	console.log("Script cargado correctamente ..");
+
+	$(document).ready(function () {
+    $("#exportLink").on("click", function (e) {
+		console.log("✅ jQuery está listo");
+        e.preventDefault(); // Detiene el comportamiento predeterminado del enlace
+		console.log("Click detectado ..");
+        $.ajax({
+            url: "session_check.php",
+            type: "GET",
+            dataType: "json",
+            success: function (response) {
+				console.log("Repsuesta servidor .. ");
+                if (response.logged_in) {
+                    window.location.href = "export.html"; // Redirige si está logueado
+                } else {
+                    $("#accountMessage").text("No has iniciado sesión. Redirigiendo...").show();
+                    setTimeout(() => {
+                        window.location.href = "login.html"; // Redirige después de 2 segundos
+                    }, 2000);
+                }
+            },
+            error: function () {
+                alert("Error en el servidor. Inténtalo más tarde.");
+            }
+        });
+    });
+});
+
+</script>
+<!--Redirección Visualizar Gráficos-->
+<script>
+
+	console.log("Script cargado correctamente ..");
+
+	$(document).ready(function () {
+    $("#chartsLink").on("click", function (e) {
+		console.log("✅ jQuery está listo");
+        e.preventDefault(); // Detiene el comportamiento predeterminado del enlace
+		console.log("Click detectado ..");
+        $.ajax({
+            url: "session_check.php",
+            type: "GET",
+            dataType: "json",
+            success: function (response) {
+				console.log("Repsuesta servidor .. ");
+                if (response.logged_in) {
+                    window.location.href = "charts.html"; // Redirige si está logueado
                 } else {
                     $("#accountMessage").text("No has iniciado sesión. Redirigiendo...").show();
                     setTimeout(() => {
