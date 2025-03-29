@@ -292,58 +292,22 @@
 		</div><!--/header-bottom-->
 	</header><!--/header-->
 	
-	<section id="slider"><!--slider-->
+	<section id="slider">
 		<div class="container">
 			<div class="row">
 				<div class="col-sm-12">
 					<div id="slider-carousel" class="carousel slide" data-ride="carousel">
+						<!-- Indicadores del slider -->
 						<ol class="carousel-indicators">
-							<li data-target="#slider-carousel" data-slide-to="0" class="active"></li>
-							<li data-target="#slider-carousel" data-slide-to="1"></li>
-							<li data-target="#slider-carousel" data-slide-to="2"></li>
+							<!-- Se generarán dinámicamente en el script -->
 						</ol>
-						
-						<div class="carousel-inner">
-							<div class="item active">
-								<div class="col-sm-6">
-									<h1><span>E</span>-SHOPPER</h1>
-									<h2>Free E-Commerce Template</h2>
-									<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
-									<button type="button" class="btn btn-default get">Get it now</button>
-								</div>
-								<div class="col-sm-6">
-									<img src="images/home/girl1.jpg" class="girl img-responsive" alt="" />
-									<img src="images/home/pricing.png"  class="pricing" alt="" />
-								</div>
-							</div>
-							<div class="item">
-								<div class="col-sm-6">
-									<h1><span>E</span>-SHOPPER</h1>
-									<h2>100% Responsive Design</h2>
-									<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
-									<button type="button" class="btn btn-default get">Get it now</button>
-								</div>
-								<div class="col-sm-6">
-									<img src="images/home/girl2.jpg" class="girl img-responsive" alt="" />
-									<img src="images/home/pricing.png"  class="pricing" alt="" />
-								</div>
-							</div>
-							
-							<div class="item">
-								<div class="col-sm-6">
-									<h1><span>E</span>-SHOPPER</h1>
-									<h2>Free Ecommerce Template</h2>
-									<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
-									<button type="button" class="btn btn-default get">Get it now</button>
-								</div>
-								<div class="col-sm-6">
-									<img src="images/home/girl3.jpg" class="girl img-responsive" alt="" />
-									<img src="images/home/pricing.png" class="pricing" alt="" />
-								</div>
-							</div>
-							
+	
+						<!-- Contenedor de los slides -->
+						<div class="carousel-inner" id="slider-items">
+							<!-- Se generarán dinámicamente en el script -->
 						</div>
-						
+	
+						<!-- Controles del slider -->
 						<a href="#slider-carousel" class="left control-carousel hidden-xs" data-slide="prev">
 							<i class="fa fa-angle-left"></i>
 						</a>
@@ -351,11 +315,11 @@
 							<i class="fa fa-angle-right"></i>
 						</a>
 					</div>
-					
 				</div>
 			</div>
 		</div>
-	</section><!--/slider-->
+	</section>
+	
 	
 	<section>
 		<div class="container">
@@ -1279,79 +1243,108 @@
 
 	<!--script: productos-->
 	<script>
-	$(document).ready(function () {
-		console.log("Ejecutando petición AJAX para cargar productos...");
-		$.ajax({
-			url: 'get_products.php', // Archivo PHP que devuelve los productos en formato JSON
-			type: 'GET',
-			dataType: 'json',
-			success: function (response) {
-				if (response.success) {
-					console.log("Productos cargados correctamente");
-					let productsHtml = '';
-					response.products.slice(0, 8).forEach(product => {
-						productsHtml += `
-							<div class="col-sm-4">
-								<div class="product-image-wrapper">
-									<div class="single-products">
-										<div class="productinfo text-center">
-											<img src="${product.image}" alt="${product.name}" />
-											<h2>$${product.price}</h2>
-											<p>${product.name}</p>
-											<a href="#" class="btn btn-default add-to-cart">
-												<i class="fa fa-shopping-cart"></i> Add to cart
-											</a>
-										</div>
-										<div class="product-overlay" data-id="${product.id}">
-											<div class="overlay-content">
-												<h2>$${product.price}</h2>
-												<p>${product.name}</p>
-												<a href="#" class="btn btn-default add-to-cart">
-													<i class="fa fa-shopping-cart"></i> Add to cart
-												</a>
-											</div>
-										</div>
-									</div>
-									<div class="choose">
-										<ul class="nav nav-pills nav-justified">
-											<li><a href="#"><i class="fa fa-plus-square"></i> Add to wishlist</a></li>
-											<li><a href="#"><i class="fa fa-plus-square"></i> Add to compare</a></li>
-										</ul>
-									</div>
-								</div>
-							</div>`;
-					});
-					//console.log(productsHtml);
-					$('.features_items').append(productsHtml);
-	
-					// Agregar evento de clic solo en el overlay
-					$('.product-overlay').on('click', function (e) {
-						e.preventDefault();
-						e.stopPropagation();
-						let productId = $(this).data('id');
-						console.log("Producto seleccionado desde overlay:", productId);
-						openProductDetails(productId);
-					});
-	
-					// Evitar que los enlaces dentro del overlay interfieran con el evento de clic
-					$('.product-overlay a').on('click', function (e) {
-						e.stopPropagation();
-					});
+		$(document).ready(function () {
+			console.log("Ejecutando petición AJAX para cargar productos y ofertas...");
+		
+			// Petición para obtener los productos
+			$.ajax({
+				url: 'get_products.php', // Archivo PHP que devuelve los productos en formato JSON
+				type: 'GET',
+				dataType: 'json',
+				success: function (response) {
+					if (response.success) {
+						console.log("Productos cargados correctamente");
+		
+						// Petición para obtener las ofertas
+						$.ajax({
+							url: 'get_ofertas_y_productos.php', // Archivo PHP que devuelve las ofertas en formato JSON
+							type: 'GET',
+							dataType: 'json',
+							success: function (offersResponse) {
+								console.log("Ofertas cargadas correctamente");
+								if (offersResponse.success) {
+									// Guardamos los ids de productos que están en oferta en un array
+									let offersIds = offersResponse.offers.map(offer => offer.id);
+									// Variables para el HTML de productos
+									let productsHtml = '';
+		
+									// Recorremos los productos y verificamos si están en oferta
+									response.products.slice(0, 8).forEach(product => {
+										let isInOffer = offersIds.includes(product.id);
+		
+										// Solo mostramos los productos que no están en oferta
+										if (!isInOffer) {
+											productsHtml += `
+												<div class="col-sm-4">
+													<div class="product-image-wrapper">
+														<div class="single-products">
+															<div class="productinfo text-center">
+																<img src="${product.image}" alt="${product.name}" />
+																<h2>$${product.price}</h2>
+																<p>${product.name}</p>
+																<a href="#" class="btn btn-default add-to-cart">
+																	<i class="fa fa-shopping-cart"></i> Add to cart
+																</a>
+															</div>
+															<div class="product-overlay" data-id="${product.id}">
+																<div class="overlay-content">
+																	<h2>$${product.price}</h2>
+																	<p>${product.name}</p>
+																	<a href="#" class="btn btn-default add-to-cart">
+																		<i class="fa fa-shopping-cart"></i> Add to cart
+																	</a>
+																</div>
+															</div>
+														</div>
+														<div class="choose">
+															<ul class="nav nav-pills nav-justified">
+																<li><a href="#"><i class="fa fa-plus-square"></i> Add to wishlist</a></li>
+																<li><a href="#"><i class="fa fa-plus-square"></i> Add to compare</a></li>
+															</ul>
+														</div>
+													</div>
+												</div>
+											`;
+										}
+									});
+		
+									// Agregar los productos al contenedor
+									$('.features_items').append(productsHtml);
+		
+									// Agregar evento de clic solo en el overlay
+									$('.product-overlay').on('click', function (e) {
+										e.preventDefault();
+										e.stopPropagation();
+										let productId = $(this).data('id');
+										console.log("Producto seleccionado desde overlay:", productId);
+										openProductDetails(productId);
+									});
+		
+									// Evitar que los enlaces dentro del overlay interfieran con el evento de clic
+									$('.product-overlay a').on('click', function (e) {
+										e.stopPropagation();
+									});
+								}
+							},
+							error: function (xhr, status, error) {
+								console.error("Error cargando ofertas:", error);
+							}
+						});
+					}
+				},
+				error: function (xhr, status, error) {
+					console.error("Error cargando productos:", error);
 				}
-			},
-			error: function (xhr, status, error) {
-				console.error("Status: " + status + ", Error: " + error);
-				console.log(xhr.responseText); // Ver respuesta del servidor
-			}
+			});
 		});
-	});
-	
-	function openProductDetails(productId) {
-		console.log("Redirigiendo a la página de detalles del producto:", productId);
-		window.location.href = `product_details.html?id=${productId}`;
-	}
+		
+		// Función para redirigir a la página de detalles del producto
+		function openProductDetails(productId) {
+			console.log("Redirigiendo a la página de detalles del producto:", productId);
+			window.location.href = `product_details.html?id=${productId}`;
+		}
 	</script>
-	
+		
 
 <!--Obtener categorias y manejar slider price-range-->
 
@@ -1543,6 +1536,152 @@ function loadProducts(category, minPrice = 0, maxPrice = 600) {
     });
 }
 
+</script>
+
+
+<!--script: ofertas-->
+<script>
+    $(document).ready(function () {
+        console.log("Ejecutando petición AJAX para cargar ofertas...");
+        $.ajax({
+            url: 'get_ofertas.php', // Archivo PHP que devuelve las ofertas en formato JSON
+            type: 'GET',
+            dataType: 'json',
+            success: function (response) {
+                if (response.success) {
+                    console.log("Ofertas cargadas correctamente");
+                    let offersHtml = '';
+                    let sliderHtml = '';
+                    let slideHtml = '';
+                    let activeClass = 'active'; // Primer slide es el 'active'
+
+                    response.offers.forEach((offer, index) => {
+                        // Estructura HTML de cada oferta para el contenido general
+                        offersHtml += `
+                            <div class="col-sm-4">
+                                <div class="product-image-wrapper">
+                                    <div class="single-products">
+                                        <div class="productinfo text-center">
+                                            <img src="${offer.imagen}" alt="${offer.titulo}" />
+                                            <p class="price">
+                                                <span class="original-price"><del>$${offer.precio_original}</del></span>
+                                                <span class="offer-price">$${offer.precio_oferta}</span>
+                                            </p>
+                                            <p>${offer.titulo}</p>
+                                            <p>Oferta ID: ${offer.id}</p>
+                                            <a href="#" class="btn btn-default add-to-cart">
+                                                <i class="fa fa-shopping-cart"></i> Add to cart
+                                            </a>
+                                        </div>
+                                        <div class="product-overlay" data-id="${offer.id_producto}">
+                                            <div class="overlay-content">
+                                                <h2><del>$${offer.precio_original}</del> $${offer.precio_oferta}</h2>
+                                                <p>Oferta ID: ${offer.id}</p>
+                                                <a href="#" class="btn btn-default add-to-cart">
+                                                    <i class="fa fa-shopping-cart"></i> Add to cart
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="choose">
+                                        <ul class="nav nav-pills nav-justified">
+                                            <li><a href="#"><i class="fa fa-plus-square"></i> Add to wishlist</a></li>
+                                            <li><a href="#"><i class="fa fa-plus-square"></i> Add to compare</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>`;
+
+                        // Estructura HTML para el slider, agrupando productos en grupos de tres
+                        slideHtml += `
+                            <div class="col-sm-4">
+                                <div class="product-image-wrapper">
+                                    <div class="single-products">
+                                        <div class="productinfo text-center">
+                                            <img src="${offer.imagen}" alt="${offer.titulo}" />
+                                            <p class="price">
+                                                <span class="original-price"><del>$${offer.precio_original}</del></span>
+                                                <span class="offer-price">$${offer.precio_oferta}</span>
+                                            </p>
+                                            <p>${offer.titulo}</p>
+                                            <p>Oferta ID: ${offer.id}</p>
+                                            <a href="#" class="btn btn-default add-to-cart">
+                                                <i class="fa fa-shopping-cart"></i> Add to cart
+                                            </a>
+                                        </div>
+                                        <div class="product-overlay" data-id="${offer.id_producto}">
+                                            <div class="overlay-content">
+                                                <h2><del>$${offer.precio_original}</del> $${offer.precio_oferta}</h2>
+                                                <p>Oferta ID: ${offer.id}</p>
+                                                <a href="#" class="btn btn-default add-to-cart">
+                                                    <i class="fa fa-shopping-cart"></i> Add to cart
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="choose">
+                                        <ul class="nav nav-pills nav-justified">
+                                            <li><a href="#"><i class="fa fa-plus-square"></i> Add to wishlist</a></li>
+                                            <li><a href="#"><i class="fa fa-plus-square"></i> Add to compare</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>`;
+
+                        // Cuando tengamos 3 productos, añadimos un nuevo slide
+                        if ((index + 1) % 3 === 0 || index === response.offers.length - 1) {
+                            sliderHtml += `
+                                <div class="item ${activeClass}">
+                                    <div class="row">
+                                        ${slideHtml}
+                                    </div>
+                                </div>`;
+                            slideHtml = ''; // Reseteamos para el siguiente grupo
+                            activeClass = ''; // Sólo el primer slide tiene la clase 'active'
+                        }
+                    });
+
+                    // Insertamos las ofertas en el contenedor de ofertas
+                    $('.features_items').append(offersHtml);
+
+                    // Agregar evento de clic solo en el overlay
+                    $('.product-overlay').on('click', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        let productId = $(this).data('id');
+                        console.log("Producto seleccionado desde overlay:", productId);
+                        openProductDetails(productId);
+                    });
+
+                    // Evitar que los enlaces dentro del overlay interfieran con el evento de clic
+                    $('.product-overlay a').on('click', function (e) {
+                        e.stopPropagation();
+                    });
+
+                    // Insertamos los productos en el slider
+                    $('#slider-items').html(sliderHtml);
+
+                    // Actualizamos los indicadores del carousel
+                    let indicatorsHtml = '';
+                    let totalSlides = Math.ceil(response.offers.length / 3);
+                    for (let i = 0; i < totalSlides; i++) {
+                        indicatorsHtml += `<li data-target="#slider-carousel" data-slide-to="${i}" class="${i === 0 ? 'active' : ''}"></li>`;
+                    }
+                    $('.carousel-indicators').html(indicatorsHtml);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Status: " + status + ", Error: " + error);
+                console.log(xhr.responseText); // Ver respuesta del servidor
+            }
+        });
+    });
+
+    // Función para redirigir a la página de detalles del producto
+    function openProductDetails(productId) {
+        console.log("Redirigiendo a la página de detalles del producto:", productId);
+        window.location.href = `product_details.html?id=${productId}`;
+    }
 </script>
 
 <script>
