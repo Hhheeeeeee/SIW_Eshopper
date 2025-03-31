@@ -32,7 +32,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // Si "Keep me signed in" está marcado, guardar cookies por 30 días
             if ($keep_signed_in) {
-                setcookie("user_id", $id, time() + (30 * 24 * 60 * 60), "/");
+                //setcookie("user_id", $id, time() + (30 * 24 * 60 * 60), "/");
+                setcookie("user_id", $id, time() + (30 * 60), "/");
                 setcookie("nombre_usuario", $nombre_usuario_db, time() + (30 * 24 * 60 * 60), "/");
             }
 

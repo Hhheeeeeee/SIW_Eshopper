@@ -22,6 +22,78 @@
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
+    <style>
+            #user-profile {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background: #fff;
+        }
+
+        .profile-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .profile-picture {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .profile-picture img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #ccc;
+        }
+
+        .profile-picture input {
+            margin-top: 12px;
+        }
+    
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .btn-save {
+            background: #FE980F;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn-save:hover {
+            background:#a75e1a;
+            
+        }
+
+    </style>
 </head><!--/head-->
 
 <body>
@@ -143,29 +215,38 @@
 		</div><!--/header-bottom-->
 	</header><!--/header-->
 	
-	<section id="user-profile" class="container">
-        <div class="row">
-            <div class="col-md-4 text-center">
-                <img id="profile-pic" src="images/default-avatar.png" class="img-thumbnail" alt="Foto de perfil">
-                <input type="file" id="upload-pic" style="display: none;">
-                <button class="btn btn-primary mt-2" onclick="document.getElementById('upload-pic').click();">Cambiar foto</button>
+	<section id="user-profile">
+        <!--<h2>Perfil de Usuario</h2>-->
+        <div class="profile-container">
+            <div class="profile-picture">
+                <img id="profile-pic" src="https://astrobriga.es/wp-content/plugins/give/assets/dist/images/anonymous-user.svg" alt="Foto de perfil">
+                <input type="file" id="upload-pic" name="foto_perfil" accept="image/*">
             </div>
-            <div class="col-md-8">
-                <h2>Perfil de Usuario</h2>
+            <div class="profile-info">
                 <form id="profile-form">
                     <div class="form-group">
                         <label for="username">Nombre de usuario:</label>
-                        <input type="text" id="username" class="form-control" value="UsuarioEjemplo">
+                        <input type="text" id="username" disabled>
                     </div>
+                    
                     <div class="form-group">
-                        <label for="password">Nueva contraseña:</label>
-                        <input type="password" id="password" class="form-control">
+                        <label for="contraseña_actual">Contraseña actual:</label>
+                        <input type="password" id="contraseña_actual" required>
                     </div>
-                    <button type="submit" class="btn btn-success">Guardar cambios</button>
+                    
+                    <div class="form-group">
+                        <label for="nueva_contraseña">Nueva contraseña:</label>
+                        <input type="password" id="nueva_contraseña">
+                    </div>
+    
+                    <button type="submit" class="btn-save">Guardar cambios</button>
                 </form>
+                <p id="profileMessage"></p>
             </div>
         </div>
     </section>
+    
+    
     
 
 
@@ -337,38 +418,57 @@
     <script src="js/main.js"></script>
 
     <script>
-        $(document).ready(function () {
-            // Cargar datos del usuario
-            $.ajax({
-                url: "session_check.php",
-                type: "GET",
-                dataType: "json",
-                success: function (response) {
-                    if (response.logged_in) {
-                        $("#username").val(response.nombre_usuario);
-                    } else {
-                        alert("Debes iniciar sesión para ver tu perfil.");
-                        window.location.href = "login.html";
+    $(document).ready(function () {
+        // Cargar datos del usuario
+        $.ajax({
+            url: "session_check.php",
+            type: "GET",
+            dataType: "json",
+            success: function (response) {
+                if (response.logged_in) {
+                    $("#username").val(response.nombre_usuario);
+                    $("#profile-pic").attr("src", response.foto_perfil)
+                    if (response.foto_perfil) {
+                        $("#profile-pic").attr("src", response.foto_perfil);
                     }
+                } else {
+                    alert("Debes iniciar sesión para ver tu perfil.");
+                    window.location.href = "login.html";
+                }
+            }
+        });
+    
+        // Manejo de subida de imagen
+        $("#upload-pic").on("change", function (e) {
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                $("#profile-pic").attr("src", event.target.result);
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        });
+    
+        // Guardar cambios
+        $("#profile-form").submit(function (e) {
+            e.preventDefault();
+            let formData = new FormData(this);
+            formData.append("foto_perfil", $("#upload-pic")[0].files[0]);
+    
+            $.ajax({
+                url: "update_profile.php",
+                type: "POST",
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    $("#profileMessage").text(response.message).css("color", response.success ? "green" : "red");
+                },
+                error: function (xhr) {
+                    $("#profileMessage").text("Error al actualizar: " + xhr.responseText).css("color", "red");
                 }
             });
-        
-            // Simulación de subida de foto
-            $("#upload-pic").on("change", function (e) {
-                const reader = new FileReader();
-                reader.onload = function (event) {
-                    $("#profile-pic").attr("src", event.target.result);
-                };
-                reader.readAsDataURL(e.target.files[0]);
-            });
-        
-            // Guardar cambios (simulación)
-            $("#profile-form").submit(function (e) {
-                e.preventDefault();
-                alert("Datos actualizados correctamente.");
-            });
         });
-        </script>
-        
+    });
+    
+    </script>
 </body>
 </html>

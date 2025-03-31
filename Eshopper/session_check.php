@@ -1,16 +1,29 @@
 <?php
 
-//Sirve para comprobar dentro de una pagina si un usuario esta logeado o no. 
 session_start();
 header('Content-Type: application/json');
 
 if (isset($_SESSION["user_id"])) {
-    echo json_encode(["logged_in" => true, "nombre_usuario" => $_SESSION["nombre_usuario"]]);
-} elseif (isset($_COOKIE["user_id"])) {
-    // Restaurar sesión desde la cookie si el usuario eligió "Keep me signed in"
-    $_SESSION["user_id"] = $_COOKIE["user_id"];
-    $_SESSION["nombre_usuario"] = $_COOKIE["nombre_usuario"];
-    echo json_encode(["logged_in" => true, "nombre_usuario" => $_SESSION["nombre_usuario"]]);
+    $conn = mysqli_connect("dbserver", "grupo38", "lu0xaiM8Si", "db_grupo38");
+
+    if (!$conn) {
+        echo json_encode(["logged_in" => false, "error" => "Error de conexión"]);
+        exit;
+    }
+
+    $stmt = $conn->prepare("SELECT nombre_usuario, foto_perfil FROM final_usuarios WHERE id = ?");
+    $stmt->bind_param("i", $_SESSION["user_id"]);
+    $stmt->execute();
+    $stmt->bind_result($nombre_usuario, $foto_perfil);
+    $stmt->fetch();
+    $stmt->close();
+    $conn->close();
+
+    echo json_encode([
+        "logged_in" => true,
+        "nombre_usuario" => $nombre_usuario,
+        "foto_perfil" => $foto_perfil ? $foto_perfil : "https://astrobriga.es/wp-content/plugins/give/assets/dist/images/anonymous-user.svg"
+    ]);
 } else {
     echo json_encode(["logged_in" => false]);
 }
