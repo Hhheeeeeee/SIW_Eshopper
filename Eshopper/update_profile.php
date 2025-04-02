@@ -40,8 +40,8 @@ if ($foto_perfil && $foto_perfil["size"] > 0) { // Verifica que se haya subido u
 }
 
 // Manejo de actualización de contraseña
-if ($nueva_contraseña || $contraseña_actual) {
-    if (!$nueva_contraseña || !$contraseña_actual) {
+if (!empty($nueva_contraseña) || !empty($contraseña_actual)) {
+    if (empty($nueva_contraseña) || empty($contraseña_actual)) {
         echo json_encode(["success" => false, "message" => "Debes proporcionar la contraseña actual y la nueva contraseña"]);
         exit;
     }
