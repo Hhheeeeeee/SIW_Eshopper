@@ -1701,103 +1701,87 @@ function loadProducts(category, minPrice = 0, maxPrice = 600) {
 </script>
 
 <script>
-
-	console.log("Script cargado correctamente ..");
-
-	$(document).ready(function () {
-    $("#accountLink").on("click", function (e) {
-		console.log("✅ jQuery está listo");
-        e.preventDefault(); // Detiene el comportamiento predeterminado del enlace
-		console.log("Click detectado ..");
-        $.ajax({
-            url: "session_check.php",
-            type: "GET",
-            dataType: "json",
-            success: function (response) {
-				console.log("Repsuesta servidor .. ");
-                if (response.logged_in) {
-                    window.location.href = "personal_page.html"; // Redirige si está logueado
-                } else {
-                    $("#accountMessage").text("No has iniciado sesión. Redirigiendo...").show();
-                    setTimeout(() => {
-                        window.location.href = "login.html"; // Redirige después de 2 segundos
-                    }, 2000);
+    $(document).ready(function () {
+        $("#accountLink").on("click", function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: "session_check.php",
+                type: "GET",
+                dataType: "json",
+                success: function (response) {
+                    if (response.logged_in) {
+                        if (window.location.pathname.indexOf("personal_page.html") === -1) {
+                            window.location.href = "/Eshopper/personal_page.html";
+                        }
+                    } else {
+                        $("#accountMessage").text("No has iniciado sesión. Redirigiendo...").show();
+                        setTimeout(() => {
+                            window.location.href = "/Eshopper/login.html";
+                        }, 2000);
+                    }
+                },
+                error: function () {
+                    alert("Error en el servidor. Inténtalo más tarde.");
                 }
-            },
-            error: function () {
-                alert("Error en el servidor. Inténtalo más tarde.");
-            }
+            });
         });
     });
-});
-
 </script>
 
-<!--Redirección Exportar a PDF-->
 <script>
-
-	console.log("Script cargado correctamente ..");
-
-	$(document).ready(function () {
-    $("#exportLink").on("click", function (e) {
-		console.log("✅ jQuery está listo");
-        e.preventDefault(); // Detiene el comportamiento predeterminado del enlace
-		console.log("Click detectado ..");
-        $.ajax({
-            url: "session_check.php",
-            type: "GET",
-            dataType: "json",
-            success: function (response) {
-				console.log("Repsuesta servidor .. ");
-                if (response.logged_in) {
-                    window.location.href = "export.html"; // Redirige si está logueado
-                } else {
-                    $("#accountMessage").text("No has iniciado sesión. Redirigiendo...").show();
-                    setTimeout(() => {
-                        window.location.href = "login.html"; // Redirige después de 2 segundos
-                    }, 2000);
+    $(document).ready(function () {
+        $("#exportLink").on("click", function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: "session_check.php",
+                type: "GET",
+                dataType: "json",
+                success: function (response) {
+                    if (response.logged_in) {
+                        if (window.location.pathname.indexOf("export.html") === -1) {
+                            window.location.href = "/Eshopper/export.html";
+                        }
+                    } else {
+                        $("#accountMessage").text("No has iniciado sesión. Redirigiendo...").show();
+                        setTimeout(() => {
+                            window.location.href = "/Eshopper/login.html";
+                        }, 2000);
+                    }
+                },
+                error: function () {
+                    alert("Error en el servidor. Inténtalo más tarde.");
                 }
-            },
-            error: function () {
-                alert("Error en el servidor. Inténtalo más tarde.");
-            }
+            });
         });
     });
-});
-
 </script>
-<!--Redirección Visualizar Gráficos-->
+
 <script>
-
-	console.log("Script cargado correctamente ..");
-
-	$(document).ready(function () {
-    $("#chartsLink").on("click", function (e) {
-		console.log("✅ jQuery está listo");
-        e.preventDefault(); // Detiene el comportamiento predeterminado del enlace
-		console.log("Click detectado ..");
-        $.ajax({
-            url: "session_check.php",
-            type: "GET",
-            dataType: "json",
-            success: function (response) {
-				console.log("Repsuesta servidor .. ");
-                if (response.logged_in) {
-                    window.location.href = "charts.html"; // Redirige si está logueado
-                } else {
-                    $("#accountMessage").text("No has iniciado sesión. Redirigiendo...").show();
-                    setTimeout(() => {
-                        window.location.href = "login.html"; // Redirige después de 2 segundos
-                    }, 2000);
+    $(document).ready(function () {
+        $("#chartsLink").on("click", function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: "session_check.php",
+                type: "GET",
+                dataType: "json",
+                success: function (response) {
+                    if (response.logged_in) {
+                        if (window.location.pathname.indexOf("charts.html") === -1) {
+                            window.location.href = "/Eshopper/charts.html";
+                        }
+                    } else {
+                        $("#accountMessage").text("No has iniciado sesión. Redirigiendo...").show();
+                        setTimeout(() => {
+                            window.location.href = "/Eshopper/login.html";
+                        }, 2000);
+                    }
+                },
+                error: function () {
+                    alert("Error en el servidor. Inténtalo más tarde.");
                 }
-            },
-            error: function () {
-                alert("Error en el servidor. Inténtalo más tarde.");
-            }
+            });
         });
     });
-});
-
 </script>
 
 
