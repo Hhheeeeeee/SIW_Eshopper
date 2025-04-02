@@ -36,7 +36,12 @@ if ($foto_perfil) {
 }
 
 // Manejo de actualización de contraseña
-if ($nueva_contraseña && $contraseña_actual) {
+if ($nueva_contraseña || $contraseña_actual) {
+    if (!$nueva_contraseña || !$contraseña_actual) {
+        echo json_encode(["success" => false, "message" => "Debes proporcionar la contraseña actual y la nueva contraseña"]);
+        exit;
+    }
+    
     $stmt = $conn->prepare("SELECT contraseña FROM final_usuarios WHERE id = ?");
     $stmt->bind_param("i", $user_id);
     $stmt->execute();
