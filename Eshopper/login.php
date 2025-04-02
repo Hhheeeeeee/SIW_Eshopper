@@ -29,12 +29,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (password_verify($contraseña, $hashed_password)) {
             $_SESSION["user_id"] = $id;
             $_SESSION["nombre_usuario"] = $nombre_usuario_db;
+            $_SESSION["LAST_ACTIVITY"] = time(); // Guardar el tiempo de inicio de sesión
 
-            // Si "Keep me signed in" está marcado, guardar cookies por 30 días
+            // Si "Keep me signed in" está marcado, guardar cookies por 30 minutos
             if ($keep_signed_in) {
-                //setcookie("user_id", $id, time() + (30 * 24 * 60 * 60), "/");
-                setcookie("user_id", $id, time() + (30 * 60), "/");
-                setcookie("nombre_usuario", $nombre_usuario_db, time() + (30 * 24 * 60 * 60), "/");
+                setcookie("user_id", $id, time() + 1800, "/"); // 30 minutos
+                setcookie("nombre_usuario", $nombre_usuario_db, time() + 1800, "/");
             }
 
             echo json_encode(["success" => true]);

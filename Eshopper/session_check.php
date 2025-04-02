@@ -3,6 +3,20 @@
 session_start();
 header('Content-Type: application/json');
 
+
+$session_lifetime = 1800; // 30 minutos
+// Verificar si la sesión ha expirado
+if (isset($_SESSION["LAST_ACTIVITY"]) && (time() - $_SESSION["LAST_ACTIVITY"] > $session_lifetime)) {
+    session_unset();
+    session_destroy();
+    setcookie("user_id", "", time() - 3600, "/");
+    setcookie("nombre_usuario", "", time() - 3600, "/");
+    echo json_encode(["logged_in" => false, "message" => "Sesión expirada"]);
+    exit;
+}
+// Si la sesión sigue activa, actualizamos el tiempo de actividad
+$_SESSION["LAST_ACTIVITY"] = time();
+
 if (isset($_SESSION["user_id"])) {
     $conn = mysqli_connect("dbserver", "grupo38", "lu0xaiM8Si", "db_grupo38");
 
