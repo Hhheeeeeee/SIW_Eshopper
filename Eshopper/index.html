@@ -1712,7 +1712,7 @@ function loadProducts(category, minPrice = 0, maxPrice = 600) {
                     if (response.logged_in) {
 						console.log(`Response admin ${response.is_admin}`);
                         if (response.es_admin && window.location.pathname.indexOf("admin_panel.html") === -1) {
-							window.location.href = "/Eshopper/admin_panel.html"; // Página de administrador
+							window.location.href = "/Eshopper/personal_page.html"; // Página de administrador
                         }else if (window.location.pathname.indexOf("personal_page.html") === -1){
 							window.location.href = "/Eshopper/personal_page.html";
 						} 

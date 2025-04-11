@@ -2,18 +2,9 @@
 session_start();
 header('Content-Type: application/json');
 
-/*if (!isset($_SESSION["es_admin"])){
-    echo "Falla no esta admin";
-} 
-if ($_SESSION["es_admin"] != 1){
-    echo $_SESSION["es_admin"]; 
-    echo "Falla no esta admin";
-} */
 
 if (isset($_SESSION["es_admin"]) && $_SESSION["es_admin"] == 1) {
 
-    //echo "Dentro de es admin";
-    // Conectar a la base de datos
     $conn = mysqli_connect("dbserver", "grupo38", "lu0xaiM8Si", "db_grupo38");
 
     if (!$conn) {
@@ -28,7 +19,7 @@ if (isset($_SESSION["es_admin"]) && $_SESSION["es_admin"] == 1) {
         $users[] = $row;
     }
 
-    echo json_encode($users);
+    echo json_encode(["success" => true, "data" => $users]);
 
     $conn->close();
 } else {

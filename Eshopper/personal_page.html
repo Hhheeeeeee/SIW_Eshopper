@@ -123,6 +123,20 @@
       #logout-btn:hover {
         background-color: rgb(224, 83, 18);
       }
+
+      .show-btn {
+        background-color: rgb(224, 83, 18);
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .show-btn:hover {
+        background-color: #b75c10; /* Un color un poco más oscuro */
+      }
     </style></head
   ><!--/head-->
 
@@ -293,9 +307,25 @@
               </div>
             </div>
             <div class="col-sm-3">
-              <div class="search_box pull-right">
+              <!--<div class="search_box pull-right">
                 <input type="text" placeholder="Search" />
-              </div>
+              </div>-->
+              <section id="admin-functions">
+                <button id="adminPannelButton" class="show-btn">
+                  Admin Panel
+                </button>
+
+                <!-- Modal con pestañas -->
+                <!-- Modal HTML -->
+                <div id="userModal" class="modal" hidden>
+                  <div class="modal-content">
+                    <div class="tabs">
+                      <div class="tab active" id="tab1">Usuarios</div>
+                    </div>
+                    <div id="userList"></div>
+                  </div>
+                </div>
+              </section>
             </div>
           </div>
         </div>
@@ -540,11 +570,34 @@
               if (response.foto_perfil) {
                 $("#profile-pic").attr("src", response.foto_perfil);
               }
+              if (response.es_admin) {
+                // Si es admin, mostrar el botón de panel admin
+                $("#userModal").removeAttr("hidden");
+                $("#adminPannelButton").show();
+              }
             } else {
               alert("Debes iniciar sesión para ver tu perfil.");
               window.location.href = "login.html";
             }
           },
+        });
+
+        // Al hacer clic en el botón de mostrar usuarios
+        $("#adminPannelButton").click(function () {
+          window.location.href = "admin_panel.html";
+        });
+
+        // Cerrar el modal si se hace clic fuera del contenido
+        $(document).on("click", function (e) {
+          if ($(e.target).is("#userModal")) {
+            $("#userModal").fadeOut();
+          }
+        });
+
+        // Acción al hacer clic en un usuario
+        $(document).on("click", ".user-item", function () {
+          var username = $(this).data("username");
+          alert("Has seleccionado a: " + username);
         });
 
         // Manejo de subida de imagen
