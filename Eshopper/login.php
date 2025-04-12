@@ -16,19 +16,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Buscar usuario en la base de datos
-    $stmt = $conn->prepare("SELECT id, nombre_usuario, contraseña FROM final_usuarios WHERE correo = ?");
+    $stmt = $conn->prepare("SELECT id, nombre_usuario, contraseña, es_admin FROM final_usuarios WHERE correo = ?");
     $stmt->bind_param("s", $correo);
     $stmt->execute();
     $stmt->store_result();
     
     if ($stmt->num_rows > 0) {
-        $stmt->bind_result($id, $nombre_usuario_db, $hashed_password);
+        $stmt->bind_result($id, $nombre_usuario_db, $hashed_password,$es_admin);
         $stmt->fetch();
 
         // Verificar contraseña
         if (password_verify($contraseña, $hashed_password)) {
             $_SESSION["user_id"] = $id;
             $_SESSION["nombre_usuario"] = $nombre_usuario_db;
+            $_SESSION["es_admin"] = $es_admin;
             $_SESSION["LAST_ACTIVITY"] = time(); // Guardar el tiempo de inicio de sesión
 
             // Si "Keep me signed in" está marcado, guardar cookies por 30 minutos
