@@ -154,6 +154,101 @@
         background-color: #f9f9f9;
       }
     </style>
+    <style>
+      /* Estilo general de los botones dentro del userList */
+      #userList button {
+        margin-left: 8px;
+        padding: 5px 10px;
+        background-color: #ff8800;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      #userList button:hover {
+        background-color: #e67300;
+      }
+
+      #userList ul {
+        padding: 0;
+      }
+
+      #userList li {
+        margin-bottom: 10px;
+        list-style: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px;
+        background-color: #f9f9f9;
+        border-radius: 6px;
+      }
+
+      /* Botones agrupados a la derecha */
+      .user-buttons {
+        display: flex;
+        gap: 8px;
+      }
+
+      /* ----------------- MODAL ------------------ */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100vw;
+        height: 100vh;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+      }
+
+      .modal-content {
+        background-color: #fefefe;
+        margin: 10% auto;
+        padding: 20px 30px;
+        border: 1px solid #888;
+        width: 400px;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        position: relative;
+      }
+
+      .close {
+        color: #aaa;
+        float: right;
+        font-size: 24px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      .close:hover {
+        color: black;
+      }
+
+      /* Botones del modal */
+      #editUserModal .btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        color: white;
+        background-color: #ff8800;
+      }
+
+      #editUserModal .btn:hover {
+        background-color: #e67300;
+      }
+
+      /* Alinear los botones del modal en la misma fila a la derecha */
+      .modal-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+      }
+    </style>
   </head>
   <body>
     <div class="header_top">
@@ -297,13 +392,87 @@
             return;
           }
 
+          console.log("Renderizando ..");
+          console.log("Respuesta:", users);
           let html = "<ul>";
           users.forEach(function (user) {
-            html += `<li><strong>${user.nombre_usuario}</strong> (${user.correo})</li>`;
+            html += `<li>
+              <strong>${user.nombre_usuario}</strong> (${user.correo})
+              <div class="user-buttons">
+                <button class="editNameBtn" data-id="${user.id}" data-username="${user.nombre_usuario}">Editar Nombre</button>
+                <button class="editPassBtn" data-id="${user.id}" data-username="${user.nombre_usuario}">Editar Contraseña</button>
+              </div>
+              
+              </li>`;
           });
           html += "</ul>";
           $("#userList").html(html);
+
+          // Eventos para editar nombre
+          $(".editNameBtn").click(function () {
+            const userId = $(this).data("id");
+            const username = $(this).data("username");
+
+            $("#editUsername").val(username).prop("disabled", false);
+            $("#editPassword").val("").prop("disabled", true);
+
+            $("#editUserModal")
+              .data("userId", userId)
+              .data("editType", "name")
+              .show();
+          });
+
+          // Eventos para editar contraseña
+          $(".editPassBtn").click(function () {
+            const userId = $(this).data("id");
+            const username = $(this).data("username");
+
+            $("#editUsername").val(username).prop("disabled", true);
+            $("#editPassword").val("").prop("disabled", false);
+
+            $("#editUserModal")
+              .data("userId", userId)
+              .data("editType", "pass")
+              .show();
+          });
         }
+
+        // Guardar cambios
+        $("#saveChanges").click(function () {
+          const userId = $("#editUserModal").data("userId");
+          const editType = $("#editUserModal").data("editType");
+          const nombreUsuario = $("#editUsername").val();
+          const contrasena = $("#editPassword").val();
+
+          const data = {
+            user_id: userId,
+            nombre_usuario: nombreUsuario,
+            contrasena: contrasena || "unchanged", // Solo si está editando contraseña
+          };
+
+          $.ajax({
+            url: "update_user.php",
+            type: "POST",
+            data: data,
+            success: function (response) {
+              if (response.success) {
+                alert("Usuario actualizado correctamente.");
+                $("#editUserModal").hide();
+                $("#showUsers").click(); // Recargar la lista
+              } else {
+                alert("Error: " + response.message);
+              }
+            },
+            error: function () {
+              alert("Error en la solicitud.");
+            },
+          });
+        });
+
+        // Cancelar modal
+        $("#cancelChanges, #closeModal").click(function () {
+          $("#editUserModal").hide();
+        });
       });
     </script>
   </body>

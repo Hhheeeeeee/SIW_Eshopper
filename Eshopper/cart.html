@@ -152,8 +152,8 @@
 		<div class="container">
 			<div class="breadcrumbs">
 				<ol class="breadcrumb">
-				  <li><a href="#">Home</a></li>
-				  <li class="active">Shopping Cart</li>
+					<li><a href="#">Home</a></li>
+					<li class="active">Shopping Cart</li>
 				</ol>
 			</div>
 			<div class="table-responsive cart_info">
@@ -161,91 +161,13 @@
 					<thead>
 						<tr class="cart_menu">
 							<td class="image">Item</td>
-							<td class="description"></td>
-							<td class="price">Price</td>
-							<td class="quantity">Quantity</td>
-							<td class="total">Total</td>
+							<td class="description">Description</td>
+							<td class="price">Total</td>
 							<td></td>
 						</tr>
 					</thead>
 					<tbody>
-						<tr>
-							<td class="cart_product">
-								<a href=""><img src="images/cart/one.png" alt=""></a>
-							</td>
-							<td class="cart_description">
-								<h4><a href="">Colorblock Scuba</a></h4>
-								<p>Web ID: 1089772</p>
-							</td>
-							<td class="cart_price">
-								<p>$59</p>
-							</td>
-							<td class="cart_quantity">
-								<div class="cart_quantity_button">
-									<a class="cart_quantity_up" href=""> + </a>
-									<input class="cart_quantity_input" type="text" name="quantity" value="1" autocomplete="off" size="2">
-									<a class="cart_quantity_down" href=""> - </a>
-								</div>
-							</td>
-							<td class="cart_total">
-								<p class="cart_total_price">$59</p>
-							</td>
-							<td class="cart_delete">
-								<a class="cart_quantity_delete" href=""><i class="fa fa-times"></i></a>
-							</td>
-						</tr>
-
-						<tr>
-							<td class="cart_product">
-								<a href=""><img src="images/cart/two.png" alt=""></a>
-							</td>
-							<td class="cart_description">
-								<h4><a href="">Colorblock Scuba</a></h4>
-								<p>Web ID: 1089772</p>
-							</td>
-							<td class="cart_price">
-								<p>$59</p>
-							</td>
-							<td class="cart_quantity">
-								<div class="cart_quantity_button">
-									<a class="cart_quantity_up" href=""> + </a>
-									<input class="cart_quantity_input" type="text" name="quantity" value="1" autocomplete="off" size="2">
-									<a class="cart_quantity_down" href=""> - </a>
-								</div>
-							</td>
-							<td class="cart_total">
-								<p class="cart_total_price">$59</p>
-							</td>
-							<td class="cart_delete">
-								<a class="cart_quantity_delete" href=""><i class="fa fa-times"></i></a>
-							</td>
-						</tr>
-						<tr>
-							<td class="cart_product">
-								<a href=""><img src="images/cart/three.png" alt=""></a>
-							</td>
-							<td class="cart_description">
-								<h4><a href="">Colorblock Scuba</a></h4>
-								<p>Web ID: 1089772</p>
-							</td>
-							<td class="cart_price">
-								<p>$59</p>
-							</td>
-							<td class="cart_quantity">
-								<div class="cart_quantity_button">
-									<a class="cart_quantity_up" href=""> + </a>
-									<input class="cart_quantity_input" type="text" name="quantity" value="1" autocomplete="off" size="2">
-									<a class="cart_quantity_down" href=""> - </a>
-								</div>
-							</td>
-							<td class="cart_total">
-								<p class="cart_total_price">$59</p>
-							</td>
-							<td class="cart_delete">
-								<a class="cart_quantity_delete" href=""><i class="fa fa-times"></i></a>
-							</td>
-						</tr>
-					</tbody>
+						</tbody>
 				</table>
 			</div>
 		</div>
@@ -485,7 +407,21 @@
 		</div>
 		
 	</footer><!--/Footer-->
-	
+
+	<style>
+		.cart_product img {
+			max-width: 100px; /* Ajusta el ancho máximo */
+			height: auto; /* Mantén las proporciones */
+		}
+		.cart_description {
+			margin-left: 10px; /* Da espacio entre la imagen y la descripción */
+		}
+
+		.cart_product {
+			display: flex; /* Coloca la imagen y la descripción en una fila */
+			align-items: center; /* Alinea verticalmente */
+		}
+	</style>
 
 
     <script src="js/jquery.js"></script>
@@ -577,5 +513,75 @@
 		});
 	</script>
 	
+	<script>
+		$(document).ready(function () {
+			loadPedidosCarrito(); // Cargar los pedidos al cargar la página
+		});
+	
+		function loadPedidosCarrito() {
+			$.ajax({
+				url: 'obtener_pedidos_carrito.php', // Usando el nuevo archivo PHP para obtener pedidos
+				type: 'GET',
+				dataType: 'json',
+				success: function (response) {
+					if (response.success) {
+						displayPedidosCarrito(response.pedidos);
+					} else {
+						console.error('Error al cargar los pedidos del carrito:', response.message);
+						// Puedes mostrar un mensaje al usuario si lo deseas
+					}
+				},
+				error: function (xhr, status, error) {
+					console.error('Error de conexión al cargar los pedidos del carrito:', status, error);
+				}
+			});
+		}
+	
+		function displayPedidosCarrito(pedidos) {
+			var cartBody = $('.cart_info tbody');
+			cartBody.empty(); // Limpiar el contenido actual del carrito
+	
+			if (pedidos.length > 0) {
+				$.each(pedidos, function (index, pedido) {
+					var row = $('<tr>');
+					row.append('<td class="cart_product"><a href=""><img class="imagen-producto" src="' + pedido.imagen + '" alt="' + pedido.titulo + '"></a></td>');
+					row.append('<td class="cart_description"><h4><a href="">' + pedido.titulo + '</a></h4><p>Web ID: ' + pedido.webId + '</p></td>');
+					row.append('<td class="cart_price"><p>$' + parseFloat(pedido.total).toFixed(2) + '</p></td>');
+					row.append('<td class="cart_total"><p class="cart_total_price">$' + parseFloat(pedido.total).toFixed(2) + '</p></td>');
+					row.append('<td class="cart_delete"><a class="cart_quantity_delete" href="#" data-pedido-id="' + pedido.id + '"><i class="fa fa-times"></i></a></td>');
+					cartBody.append(row);
+				});
+	
+				// Agregar funcionalidad para eliminar items del carrito
+				$('.cart_quantity_delete').click(function () {
+					var pedidoId = $(this).data('pedido-id');
+					borrarPedidoCarrito(pedidoId); // Usando la nueva función para borrar
+				});
+			} else {
+				cartBody.append('<tr><td colspan="5"><p>No hay productos en el carrito.</p></td></tr>');
+			}
+		}
+	
+		function borrarPedidoCarrito(pedidoId) {
+			$.ajax({
+				url: 'borrar_pedido_carrito.php', // Usando el nuevo archivo PHP para borrar pedidos
+				type: 'POST',
+				dataType: 'json',
+				data: { pedido_id: pedidoId }, // Enviando 'pedido_id' como espera el PHP
+				success: function (response) {
+					if (response.success) {
+						loadPedidosCarrito(); // Recargar el carrito después de eliminar
+					} else {
+						console.error('Error al eliminar el pedido del carrito:', response.message);
+						alert('Error al eliminar el pedido del carrito.');
+					}
+				},
+				error: function (xhr, status, error) {
+					console.error('Error de conexión al eliminar el pedido:', status, error);
+					alert('Error de conexión al eliminar el pedido.');
+				}
+			});
+		}
+	</script>
 </body>
 </html>

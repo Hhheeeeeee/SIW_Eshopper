@@ -12,7 +12,7 @@ if (isset($_SESSION["es_admin"]) && $_SESSION["es_admin"] == 1) {
         exit;
     }
 
-    $result = $conn->query("SELECT nombre_usuario, correo FROM final_usuarios");
+    $result = $conn->query("SELECT id, nombre_usuario, correo FROM final_usuarios");
 
     $users = [];
     while ($row = $result->fetch_assoc()) {
