@@ -170,6 +170,11 @@
 						</tbody>
 				</table>
 			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					<button type="button" class="btn btn-primary" id="comprar_carrito">Comprar</button>
+				</div>
+			</div>
 		</div>
 	</section> <!--/#cart_items-->
 
@@ -516,6 +521,10 @@
 	<script>
 		$(document).ready(function () {
 			loadPedidosCarrito(); // Cargar los pedidos al cargar la página
+			// *** AGREGAR ESTE LISTENER PARA EL BOTÓN COMPRAR ***
+			$('#comprar_carrito').click(function() {
+				procesarCompra(); // Llamar a la función para procesar la compra al hacer clic en el botón
+			});
 		});
 	
 		function loadPedidosCarrito() {
@@ -579,6 +588,27 @@
 				error: function (xhr, status, error) {
 					console.error('Error de conexión al eliminar el pedido:', status, error);
 					alert('Error de conexión al eliminar el pedido.');
+				}
+			});
+		}
+
+
+		function procesarCompra() {
+			$.ajax({
+				url: 'procesar_compra.php', // Nuevo archivo PHP para cambiar el estado de los pedidos
+				type: 'POST',
+				dataType: 'json',
+				success: function (response) {
+					if (response.success) {
+						alert('¡Compra realizada con éxito!');
+						loadPedidosCarrito(); // Recargar el carrito para que se muestre vacío (si la lógica del PHP lo hace)
+					} else {
+						alert('Error al procesar la compra:', response.message);
+					}
+				},
+				error: function (xhr, status, error) {
+					console.error('Error de conexión al procesar la compra:', status, error);
+					alert('Error de conexión al procesar la compra.');
 				}
 			});
 		}

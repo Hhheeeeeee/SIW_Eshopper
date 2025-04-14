@@ -12,6 +12,7 @@
     <link href="css/animate.css" rel="stylesheet" />
     <link href="css/main.css" rel="stylesheet" />
     <link href="css/responsive.css" rel="stylesheet" />
+
     <title>Panel de Administración</title>
     <style>
       * {
@@ -249,6 +250,38 @@
         margin-top: 20px;
       }
     </style>
+    <style>
+      #resumen-container {
+        margin-top: 20px;
+        padding: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+    }
+
+    #resumen-container h3 {
+        margin-top: 0;
+        color: #333;
+    }
+
+    #resumen-container h4 {
+        color: #555;
+    }
+
+    #resumen-container p {
+        margin-bottom: 5px;
+    }
+
+    #resumen-container ul {
+        padding-left: 20px;
+        margin-bottom: 10px;
+    }
+
+    .error {
+        color: red;
+        font-weight: bold;
+    }
+    </style>
   </head>
   <body>
     <div class="header_top">
@@ -297,49 +330,169 @@
 
     <div class="container">
       <div class="sidebar" id="sidebar">
-        <ul>
-          <li><a href="#" id="showUsers">Mostrar Usuarios</a></li>
-          <li><a href="#">Otra Opción</a></li>
-          <li><a href="#">Otra Opción</a></li>
-        </ul>
+          <ul>
+              <li><a href="#" id="showUsers">Mostrar Usuarios</a></li>
+              <li><a href="#" id="showResumen">Vista Resumen</a></li>
+              <li><a href="#" id="showActualizaBD">Actualizar DB</a></li>
+          </ul>
       </div>
-
+  
       <div class="main-content" id="mainContent">
-        <div id="welcomeMessage">
-          <h2>Bienvenido al Panel de Administración</h2>
-          <p>Selecciona una opción del menú para comenzar.</p>
-        </div>
-
-        <div id="userListContainer">
-          <h2>Usuarios</h2>
-          <input
-            type="text"
-            id="filterInput"
-            placeholder="Buscar usuario o correo..."
-          />
-          <div id="userList">Cargando...</div>
-        </div>
+          <div id="welcomeMessage">
+              <h2>Bienvenido al Panel de Administración</h2>
+              <p>Selecciona una opción del menú para comenzar.</p>
+          </div>
+  
+          <div id="userListContainer" style="display: none;">
+              <h2>Usuarios</h2>
+              <input
+                  type="text"
+                  id="filterInput"
+                  placeholder="Buscar usuario o correo..."
+              />
+              <div id="userList">Cargando...</div>
+          </div>
+  
+          <div id="resumen-container" style="display: none;">
+              <h3>Vista Resumen</h3>
+              <p>Cantidad total de productos: <span id="total-productos"></span></p>
+              <p>Número de usuarios registrados: <span id="total-usuarios"></span></p>
+              <p>Cantidad de ventas realizadas: <span id="total-ventas"></span></p>
+              <h4>Actividad Reciente:</h4>
+              <p>Últimos productos añadidos: <ul id="ultimos-productos"></ul></p>
+              <p>Últimos usuarios registrados: <ul id="ultimos-usuarios"></ul></p>
+              <p>Últimas ventas registradas: <ul id="ultimas-ventas"></ul></p>
+          </div>
+  
+          <div id="actualiza-container" style="display: none;">
+              <button id="updateDBButton" class="update-button">UpdateDB</button>
+          </div>
       </div>
-    </div>
-
-    <!-- Modal para editar usuario -->
-    <div id="editUserModal" class="modal">
+  </div>
+  
+  <div id="editUserModal" class="modal">
       <div class="modal-content">
-        <span class="close" id="closeModal">&times;</span>
-        <h3>Editar Usuario</h3>
-        <label for="editUsername">Nombre de Usuario:</label>
-        <input type="text" id="editUsername" class="form-control" /><br />
-        <label for="editPassword">Contraseña:</label>
-        <input type="password" id="editPassword" class="form-control" /><br />
-        <button id="saveChanges" class="btn btn-primary">
-          Guardar Cambios
-        </button>
-        <button id="cancelChanges" class="btn btn-secondary">Cancelar</button>
+          <span class="close" id="closeModal">&times;</span>
+          <h3>Editar Usuario</h3>
+          <label for="editUsername">Nombre de Usuario:</label>
+          <input type="text" id="editUsername" class="form-control" /><br />
+          <label for="editPassword">Contraseña:</label>
+          <input type="password" id="editPassword" class="form-control" /><br />
+          <button id="saveChanges" class="btn btn-primary">
+              Guardar Cambios
+          </button>
+          <button id="cancelChanges" class="btn btn-secondary">Cancelar</button>
       </div>
-    </div>
+  </div>
 
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+      .update-button {
+          background-color: #ff8c00; /* Naranja */
+          color: white;
+          padding: 10px 15px;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          font-size: 16px;
+          transition: background-color 0.3s ease;
+      }
+      
+      .update-button:hover {
+          background-color: #e67e00; /* Naranja más oscuro al pasar el ratón */
+      }
+    </style>
+  
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  
+  <!--Actualiza BBDD-->
+  <script>
+      $(document).ready(function () {
+          $("#showActualizaBD").click(function () {
+              $("#welcomeMessage").hide();
+              $("#userListContainer").hide();
+              $("#resumen-container").hide();
+              $("#actualiza-container").show();
+          });
+  
+          $("#updateDBButton").click(function() {
+              $.ajax({
+                  url: '../../../../Tablas_finales/actualiza_productos.php',
+                  type: 'GET',
+                  dataType: 'html',
+                  success: function(response) {
+                      $("#mainContent").html('<h3>Actualización de Base de Datos</h3><pre>' + response + '</pre>');
+                      console.log("Base de datos actualizada:", response);
+                      console.log("Base de datos actualizada. Revisa los logs en la pantalla.");
+                      $("#welcomeMessage").show();
+                  },
+                  error: function(xhr, status, error) {
+                      $("#mainContent").html('<p class="error">Error al actualizar la base de datos: ' + error + '</p>');
+                      console.log("Error al actualizar la base de datos:", status, error);
+                      console.log("Error al actualizar la base de datos.");
+                      $("#welcomeMessage").show();
+                  }
+              });
+          });
+      });
+  </script>
+
+  <!--Vista Resumen-->
+  <script>
+    $(document).ready(function () {
+        const $resumenContainer = $("#resumen-container"); // Asegúrate de tener este ID en tu HTML
+
+        $("#showResumen").click(function () {
+            $("#welcomeMessage").hide();
+            $("#userListContainer").hide();
+            $("#resumen-container").show();
+            cargarResumen();
+        });
+
+        function cargarResumen() {
+            $.ajax({
+                url: 'obtener_resumen.php', // Archivo PHP para obtener los datos del resumen
+                type: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        $('#total-productos').text(response.total_productos);
+                        $('#total-usuarios').text(response.total_usuarios);
+                        $('#total-ventas').text(response.total_ventas);
+
+                        $('#ultimos-productos').empty();
+                        $.each(response.ultimos_productos, function(index, producto) {
+                            $('#ultimos-productos').append('<li>' + producto.titulo + ' (' + producto.fecha_creacion + ')</li>');
+                        });
+
+                        $('#ultimos-usuarios').empty();
+                        $.each(response.ultimos_usuarios, function(index, usuario) {
+                            $('#ultimos-usuarios').append('<li>' + usuario.nombre + ' (' + usuario.fecha_registro + ')</li>');
+                        });
+
+                        $('#ultimas-ventas').empty();
+                        if (response.ultimas_ventas && response.ultimas_ventas.length > 0) {
+                            $.each(response.ultimas_ventas, function(index, venta) {
+                                $('#ultimas-ventas').append('<li>Usuario ID: ' + venta.user_id + ', Total: ' + venta.total + ', Producto: ' + venta.titulo + ' (' + venta.fecha_pedido + ')</li>');
+                            });
+                        } else {
+                            $('#ultimas-ventas').append('<li>No hay ventas recientes.</li>');
+                        }
+
+                    } else {
+                        console.error('Error al cargar el resumen:', response.message);
+                        $resumenContainer.html('<p class="error">Error al cargar el resumen.</p>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error de conexión al cargar el resumen:', status, error);
+                    $resumenContainer.html('<p class="error">Error de conexión al servidor.</p>');
+                }
+            });
+        }
+    });
+  </script>
+    
+    <!--Mostrar usuarios-->
     <script>
       $(document).ready(function () {
         const $sidebar = $("#sidebar");
@@ -354,6 +507,7 @@
 
         $("#showUsers").click(function () {
           $("#welcomeMessage").hide();
+          $("#resumen-container").hide();
           $("#userListContainer").show();
 
           $.ajax({
