@@ -33,19 +33,16 @@
       /* Estilo de la barra lateral */
       .sidebar {
         position: fixed;
-        top: 82px; /* Esto alinea la sidebar debajo del header */
-        left: -220px; /* Está oculto inicialmente */
+        top: 0; /* Ocupa desde arriba del todo */
+        left: -220px; /* Oculta inicialmente */
         width: 220px;
+        height: 100vh; /* Altura completa de la pantalla */
         background-color: #ffffff;
         border-right: 1px solid #ccc;
-        height: calc(
-          100vh - 80px
-        ); /* Resta la altura del header para que no se sobrepase */
-        padding-top: 10px; /* Ajuste de espacio superior */
+        padding-top: 82px; /* Espacio interno para no tapar el header */
         transition: left 0.3s ease;
         z-index: 2;
       }
-
       /* Estilo para el botón de toggle de la sidebar */
       #toggleSidebar {
         position: fixed;
@@ -108,6 +105,11 @@
 
       .main-content.shifted {
         margin-left: 220px;
+      }
+
+      .header_top.shifted {
+        margin-left: 220px;
+        transition: margin-left 0.3s ease;
       }
 
       #welcomeMessage {
@@ -251,6 +253,22 @@
       }
     </style>
     <style>
+      .update-button {
+          background-color: #ff8c00; /* Naranja */
+          color: white;
+          padding: 10px 15px;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          font-size: 16px;
+          transition: background-color 0.3s ease;
+      }
+      
+      .update-button:hover {
+          background-color: #e67e00; /* Naranja más oscuro al pasar el ratón */
+      }
+    </style>
+    <style>
       #resumen-container {
         margin-top: 20px;
         padding: 15px;
@@ -351,7 +369,25 @@
                   placeholder="Buscar usuario o correo..."
               />
               <div id="userList">Cargando...</div>
-          </div>
+          
+          
+
+              <div id="editUserModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" id="closeModal">&times;</span>
+                    <h3>Editar Usuario</h3>
+                    <label for="editUsername">Nombre de Usuario:</label>
+                    <input type="text" id="editUsername" class="form-control" /><br />
+                    <label for="editPassword">Contraseña:</label>
+                    <input type="password" id="editPassword" class="form-control" /><br />
+                    <button id="saveChanges" class="btn btn-primary">
+                        Guardar Cambios
+                    </button>
+                    <button id="cancelChanges" class="btn btn-secondary">Cancelar</button>
+                </div>
+              </div>
+
+            </div>
   
           <div id="resumen-container" style="display: none;">
               <h3>Vista Resumen</h3>
@@ -370,37 +406,7 @@
       </div>
   </div>
   
-  <div id="editUserModal" class="modal">
-      <div class="modal-content">
-          <span class="close" id="closeModal">&times;</span>
-          <h3>Editar Usuario</h3>
-          <label for="editUsername">Nombre de Usuario:</label>
-          <input type="text" id="editUsername" class="form-control" /><br />
-          <label for="editPassword">Contraseña:</label>
-          <input type="password" id="editPassword" class="form-control" /><br />
-          <button id="saveChanges" class="btn btn-primary">
-              Guardar Cambios
-          </button>
-          <button id="cancelChanges" class="btn btn-secondary">Cancelar</button>
-      </div>
-  </div>
-
-  <style>
-      .update-button {
-          background-color: #ff8c00; /* Naranja */
-          color: white;
-          padding: 10px 15px;
-          border: none;
-          border-radius: 5px;
-          cursor: pointer;
-          font-size: 16px;
-          transition: background-color 0.3s ease;
-      }
-      
-      .update-button:hover {
-          background-color: #e67e00; /* Naranja más oscuro al pasar el ratón */
-      }
-    </style>
+  
   
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   
@@ -444,6 +450,7 @@
         $("#showResumen").click(function () {
             $("#welcomeMessage").hide();
             $("#userListContainer").hide();
+            $("#actualiza-container").hide();
             $("#resumen-container").show();
             cargarResumen();
         });
@@ -509,6 +516,7 @@
           $("#welcomeMessage").hide();
           $("#resumen-container").hide();
           $("#userListContainer").show();
+          $("#actualiza-container").hide();
 
           $.ajax({
             url: "get_users.php",

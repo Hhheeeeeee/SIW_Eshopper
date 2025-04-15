@@ -20,7 +20,7 @@ if (isset($_SESSION["user_id"])) {
     $user_id = mysqli_real_escape_string($conn, $_SESSION["user_id"]);
 
     // Consulta para obtener los pedidos del carrito del usuario con estado 'Pendiente'
-    $sql = "SELECT id, total, estado, imagen, titulo, webId FROM final_pedidos WHERE user_id = '$user_id' AND estado = 'Pendiente'";
+    $sql = "SELECT id, precio_unidad, total, estado, imagen, titulo, webId FROM final_pedidos WHERE user_id = '$user_id' AND estado = 'Pendiente'";
     $result = $conn->query($sql);
 
     $pedidos = [];
@@ -28,6 +28,7 @@ if (isset($_SESSION["user_id"])) {
         while ($row = $result->fetch_assoc()) {
             $pedidos[] = [
                 "id" => $row["id"],
+                "precio_unidad"=>$row["precio_unidad"], 
                 "total" => $row["total"],
                 "estado" => $row["estado"],
                 "imagen" => $row["imagen"],

@@ -22,6 +22,11 @@ $webId = $_POST['webId'] ?? null;
 $fecha_pedido = date("Y-m-d H:i:s");
 $fecha_creacion = date("Y-m-d H:i:s");
 $ultima_modificacion = date("Y-m-d H:i:s");
+$precio_unidad =$_POST["precio"] ?? null;  
+
+
+
+
 
 // Validar que los datos necesarios estén presentes
 if (!$user_id || $total === null) {
@@ -33,11 +38,12 @@ if (!$user_id || $total === null) {
 // Escapar los datos para prevenir inyección SQL (importante!)
 $user_id = mysqli_real_escape_string($conn, $user_id);
 $total = mysqli_real_escape_string($conn, $total);
+$precio_unidad = mysqli_real_escape_string($conn, $precio_unidad);
 $estado = mysqli_real_escape_string($conn, $estado);
 
 // Insertar el nuevo pedido en la tabla 'final_pedidos'
-$sql = "INSERT INTO final_pedidos (user_id, total, estado, imagen, titulo, webId, fecha_pedido, fecha_creacion, ultima_modificacion)
-        VALUES ('$user_id', '$total', '$estado', '$imagen', '$productTitle', '$webId', '$fecha_pedido', '$fecha_creacion', '$ultima_modificacion')";
+$sql = "INSERT INTO final_pedidos (user_id, precio_unidad, total, estado, imagen, titulo, webId, fecha_pedido, fecha_creacion, ultima_modificacion)
+        VALUES ('$user_id', '$precio_unidad', '$total', '$estado', '$imagen', '$productTitle', '$webId', '$fecha_pedido', '$fecha_creacion', '$ultima_modificacion')";
 
 if ($conn->query($sql) === TRUE) {
     echo json_encode(["success" => true, "message" => "Pedido guardado correctamente."]);

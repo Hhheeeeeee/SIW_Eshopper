@@ -132,8 +132,14 @@
               <div class="shop-menu pull-right">
                 <ul class="nav navbar-nav">
                   <li>
-                    <a href="javascript:void(0);" id="accountLink"><i class="fa fa-user"></i> Account</a></li>
-								    <p id="accountMessage" style="color: red; display: none; margin-left: 10px;"></p>
+                    <a href="javascript:void(0);" id="accountLink"
+                      ><i class="fa fa-user"></i> Account</a
+                    >
+                  </li>
+                  <p
+                    id="accountMessage"
+                    style="color: red; display: none; margin-left: 10px"
+                  ></p>
                   <li>
                     <a href="#"><i class="fa fa-star"></i> Wishlist</a>
                   </li>
@@ -150,8 +156,16 @@
                   <li>
                     <a href="login.html"><i class="fa fa-lock"></i> Login</a>
                   </li>
-                  <li><a href="javascript:void(0);" id="exportLink"><i class="fa fa-file-pdf-o"></i> Exportar</a></li>
-								  <li><a href="javascript:void(0);" id="chartsLink"><i class="fa fa-bar-chart"></i> Gráficos</a></li>
+                  <li>
+                    <a href="javascript:void(0);" id="exportLink"
+                      ><i class="fa fa-file-pdf-o"></i> Exportar</a
+                    >
+                  </li>
+                  <li>
+                    <a href="javascript:void(0);" id="chartsLink"
+                      ><i class="fa fa-bar-chart"></i> Gráficos</a
+                    >
+                  </li>
                 </ul>
               </div>
             </div>
@@ -193,8 +207,8 @@
                       <li><a href="checkout.html">Checkout</a></li>
                       <li><a href="cart.html">Cart</a></li>
                       <li><a href="login.html">Login</a></li>
-                      <li><a href="export.html">Exportar</a></li> 
-										  <li><a href="charts.html">Gráficos</a></li> 
+                      <li><a href="export.html">Exportar</a></li>
+                      <li><a href="charts.html">Gráficos</a></li>
                     </ul>
                   </li>
                   <li class="dropdown">
@@ -1271,75 +1285,91 @@
         console.log("Cargando pedido");
 
         $.ajax({
-          url: 'session_check.php',
-          type: 'GET',
-          dataType: 'json',
-          success: function(sessionResponse) {
+          url: "session_check.php",
+          type: "GET",
+          dataType: "json",
+          success: function (sessionResponse) {
             if (sessionResponse.logged_in && sessionResponse.user_id) {
               var user_id = sessionResponse.user_id;
-              console.log('USER_ID:', user_id);
+              console.log("USER_ID:", user_id);
 
               var quantityInput = clickedButton.siblings('input[type="text"]');
-              console.log("Esta es la cantidad: ")
-              console.log(quantityInput)
+              console.log("Esta es la cantidad: ");
+              console.log(quantityInput);
               var quantity = quantityInput.val();
-              console.log("Esta es la cantidad bien: ")
-              console.log(quantity)
+              console.log("Esta es la cantidad bien: ");
+              console.log(quantity);
 
-
-              var priceSpan = clickedButton.closest('.product-information').find('span > span:first-child');
-              console.log("Este es el precio: ")
-              console.log(priceSpan)
+              var priceSpan = clickedButton
+                .closest(".product-information")
+                .find("span > span:first-child");
+              console.log("Este es el precio: ");
+              console.log(priceSpan);
               var priceText = priceSpan.text();
-              console.log("Este es el precio en texto: ")
-              console.log(priceText)
-              var price = parseFloat(priceText.replace('US $', ''));
+              console.log("Este es el precio en texto: ");
+              console.log(priceText);
+              var price = parseFloat(priceText.replace("US $", ""));
               var total = quantity * price;
-              var imagen = clickedButton.closest('.product-details').find('.view-product img').attr('src');
+              var imagen = clickedButton
+                .closest(".product-details")
+                .find(".view-product img")
+                .attr("src");
               console.log("URL de la imagen:", imagen);
-              
-              var productTitle = clickedButton.closest('.product-information').find('h2').text();
+
+              var productTitle = clickedButton
+                .closest(".product-information")
+                .find("h2")
+                .text();
               console.log("Título del producto:", productTitle);
 
-              var webIdElement = clickedButton.closest('.product-information').find('p:contains("Web ID:")');
-              var webId = webIdElement.text().replace('Web ID:', '').trim();
+              var webIdElement = clickedButton
+                .closest(".product-information")
+                .find('p:contains("Web ID:")');
+              var webId = webIdElement.text().replace("Web ID:", "").trim();
               console.log("Web ID:", webId);
 
               var pedidoData = {
                 user_id: user_id,
+                precio: price,
                 total: total,
-                estado: 'Pendiente',
+                estado: "Pendiente",
                 imagen: imagen,
                 productTitle: productTitle,
-                webId: webId
+                webId: webId,
               };
 
               $.ajax({
-                url: 'guardar_pedido.php',
-                type: 'POST',
-                dataType: 'json',
+                url: "guardar_pedido.php",
+                type: "POST",
+                dataType: "json",
                 data: pedidoData,
-                success: function(pedidoResponse) {
+                success: function (pedidoResponse) {
                   if (pedidoResponse.success) {
-                    console.log('Producto añadido al carrito!');
+                    console.log("Producto añadido al carrito!");
                   } else {
-                    console.log('Error al añadir el producto al carrito: ' + pedidoResponse.message);
+                    console.log(
+                      "Error al añadir el producto al carrito: " +
+                        pedidoResponse.message
+                    );
                   }
                 },
-                error: function() {
-                  console.log('Error de conexión al servidor al guardar el pedido.');
-                }
+                error: function () {
+                  console.log(
+                    "Error de conexión al servidor al guardar el pedido."
+                  );
+                },
               });
-
             } else {
-              console.log("Debes estar logueado para añadir productos al carrito.");
+              console.log(
+                "Debes estar logueado para añadir productos al carrito."
+              );
             }
           },
-          error: function(xhr, status, error) {
+          error: function (xhr, status, error) {
             console.error("Error al verificar sesión:", status, error);
-          }
+          },
         });
-      };
+      }
     </script>
 
     <!-- Obtener info del producto e insertarlo en html-->
@@ -1524,7 +1554,7 @@
         console.log("Botón cart pulsado prueba");
       });
     </script>
-    
+
     <script>
       $(document).ready(function () {
         $("#exportLink").on("click", function (e) {
@@ -1539,7 +1569,9 @@
                   window.location.href = "/Eshopper/export.html";
                 }
               } else {
-                $("#accountMessage").text("No has iniciado sesión. Redirigiendo...").show();
+                $("#accountMessage")
+                  .text("No has iniciado sesión. Redirigiendo...")
+                  .show();
                 setTimeout(() => {
                   window.location.href = "/Eshopper/login.html";
                 }, 2000);
@@ -1547,12 +1579,12 @@
             },
             error: function () {
               alert("Error en el servidor. Inténtalo más tarde.");
-            }
+            },
           });
         });
       });
     </script>
-    
+
     <script>
       $(document).ready(function () {
         $("#chartsLink").on("click", function (e) {
@@ -1567,7 +1599,9 @@
                   window.location.href = "/Eshopper/charts.html";
                 }
               } else {
-                $("#accountMessage").text("No has iniciado sesión. Redirigiendo...").show();
+                $("#accountMessage")
+                  .text("No has iniciado sesión. Redirigiendo...")
+                  .show();
                 setTimeout(() => {
                   window.location.href = "/Eshopper/login.html";
                 }, 2000);
@@ -1575,7 +1609,7 @@
             },
             error: function () {
               alert("Error en el servidor. Inténtalo más tarde.");
-            }
+            },
           });
         });
       });
