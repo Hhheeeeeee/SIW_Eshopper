@@ -410,37 +410,68 @@
   
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   
-  <!--Actualiza BBDD-->
   <script>
-      $(document).ready(function () {
-          $("#showActualizaBD").click(function () {
-              $("#welcomeMessage").hide();
-              $("#userListContainer").hide();
-              $("#resumen-container").hide();
-              $("#actualiza-container").show();
-          });
-  
-          $("#updateDBButton").click(function() {
-              $.ajax({
-                  url: '../../../../Tablas_finales/actualiza_productos.php',
-                  type: 'GET',
-                  dataType: 'html',
-                  success: function(response) {
-                      $("#mainContent").html('<h3>Actualización de Base de Datos</h3><pre>' + response + '</pre>');
-                      console.log("Base de datos actualizada:", response);
-                      console.log("Base de datos actualizada. Revisa los logs en la pantalla.");
-                      $("#welcomeMessage").show();
-                  },
-                  error: function(xhr, status, error) {
-                      $("#mainContent").html('<p class="error">Error al actualizar la base de datos: ' + error + '</p>');
-                      console.log("Error al actualizar la base de datos:", status, error);
-                      console.log("Error al actualizar la base de datos.");
-                      $("#welcomeMessage").show();
-                  }
-              });
-          });
+    $(document).ready(function () {
+      // Mostrar contenedor de actualización
+      $("#showActualizaBD").click(function () {
+        $("#welcomeMessage").hide();
+        $("#userListContainer").hide();
+        $("#resumen-container").hide();
+        $("#actualiza-container").show();
       });
+  
+      // Actualizar base de datos
+      $("#updateDBButton").click(function () {
+        console.log("Intentando acceder a la URL de actualización...");
+
+        // Eliminar todos los mensajes anteriores (carga, éxito, error)
+        $("#actualiza-container .success-msg, #actualiza-container .error-msg, #actualiza-container .total-productos, #actualiza-container .productos-actualizados, #actualiza-container .productos-sin-actualizacion, #actualiza-container .fallos-en-la-api, #actualiza-container .loading-msg").remove();
+
+        // Mostrar mensaje de carga
+        $("#actualiza-container").append('<p class="loading-msg">🔄 Actualizando base de datos...</p>');
+
+        // Enviar solicitud AJAX
+        $.ajax({
+          url: 'actualiza_productos.php',
+          type: 'GET',
+          dataType: 'json',  // Esperamos una respuesta en formato JSON
+          success: function (response) {
+            console.log("✅ Conexión exitosa a actualiza_productos.php");
+
+            // Eliminar mensaje de carga antes de mostrar el resultado
+            $("#actualiza-container .loading-msg").remove();
+
+            // Verifica si la respuesta tiene éxito y muestra solo una vez
+            if (response.success) {
+              $("#actualiza-container").append('<p class="success-msg">✅ Base de datos actualizada correctamente.</p>');
+              $("#actualiza-container").append('<p class = "total-productos">Total productos: ' + response.total + '</p>');
+              $("#actualiza-container").append('<p class = "productos-actualizados">Productos actualizados: ' + response.actualizados + '</p>');
+              $("#actualiza-container").append('<p class = "productos-sin-actualizacion">Productos sin actualizacion: ' + response.sin_actualizacion + '</p>');
+              $("#actualiza-container").append('<p class = "fallos-en-la-api">Fallos en la API: ' + response.fallos_api + '</p>');
+            } else {
+              $("#actualiza-container").append('<p class="error-msg">❌ Hubo un problema al actualizar la base de datos.</p>');
+            }
+          },
+          error: function (xhr, status, error) {
+            // Eliminar mensaje de carga
+            $("#actualiza-container .loading-msg").remove();
+
+            // Eliminar mensajes anteriores (si algo se quedó)
+            $("#actualiza-container .success-msg, #actualiza-container .error-msg, #actualiza-container .total-productos, #actualiza-container .productos-actualizados, #actualiza-container .productos-sin-actualizacion, #actualiza-container .fallos-en-la-api, #actualiza-container .loading-msg").remove();
+
+            // Mostrar mensaje de error
+            $("#actualiza-container").append('<p class="error-msg">❌ Error: ' + error + '</p>');
+            console.log("Error al actualizar la base de datos:", status, error);
+          }
+        });
+      });
+
+
+    });
   </script>
+  
+
+
 
   <!--Vista Resumen-->
   <script>
