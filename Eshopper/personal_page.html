@@ -137,6 +137,35 @@
       .show-btn:hover {
         background-color: #b75c10; /* Un color un poco más oscuro */
       }
+    </style>
+    <style>
+      /* Estilo del menú desplegable */
+
+      #submenuVer {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        padding: 10px;
+        border-radius: 5px;
+      }
+
+      #submenuVer li {
+        list-style: none;
+      }
+
+      #submenuVer li a {
+        text-decoration: none;
+        padding: 8px;
+        display: block;
+        color: #333;
+      }
+
+      #submenuVer li a:hover {
+        background-color: #ddd;
+      }
     </style></head
   ><!--/head-->
 
@@ -233,10 +262,26 @@
               <div class="shop-menu pull-right">
                 <ul class="nav navbar-nav">
                   <li>
-                    <a href="javascript:void(0);" id="accountLink"><i class="fa fa-user"></i> Account</a></li>
-								    <p id="accountMessage" style="color: red; display: none; margin-left: 10px;"></p>
-                  <li>
-                    <a href="#"><i class="fa fa-star"></i> Wishlist</a>
+                    <a href="javascript:void(0);" id="accountLink"
+                      ><i class="fa fa-user"></i> Account</a
+                    >
+                  </li>
+                  <p
+                    id="accountMessage"
+                    style="color: red; display: none; margin-left: 10px"
+                  ></p>
+                  <li class="dropdown">
+                    <a
+                      href="#"
+                      id="verMenu"
+                      class="dropdown-toggle"
+                      data-toggle="dropdown"
+                      ><i class="fa fa-star"></i> Ver <b class="caret"></b
+                    ></a>
+                    <ul class="dropdown-menu" id="submenuVer">
+                      <li><a href="#" id="verPedidos">Pedidos</a></li>
+                      <li><a href="#" id="verProductos">Productos</a></li>
+                    </ul>
                   </li>
                   <li>
                     <a href="checkout.html"
@@ -251,8 +296,16 @@
                   <li>
                     <a href="login.html"><i class="fa fa-lock"></i> Login</a>
                   </li>
-                  <li><a href="javascript:void(0);" id="exportLink"><i class="fa fa-file-pdf-o"></i> Exportar</a></li>
-								  <li><a href="javascript:void(0);" id="chartsLink"><i class="fa fa-bar-chart"></i> Gráficos</a></li>
+                  <li>
+                    <a href="javascript:void(0);" id="exportLink"
+                      ><i class="fa fa-file-pdf-o"></i> Exportar</a
+                    >
+                  </li>
+                  <li>
+                    <a href="javascript:void(0);" id="chartsLink"
+                      ><i class="fa fa-bar-chart"></i> Gráficos</a
+                    >
+                  </li>
                 </ul>
               </div>
             </div>
@@ -292,8 +345,8 @@
                       <li><a href="checkout.html">Checkout</a></li>
                       <li><a href="cart.html">Cart</a></li>
                       <li><a href="login.html">Login</a></li>
-                      <li><a href="export.html">Exportar</a></li> 
-										  <li><a href="charts.html">Gráficos</a></li> 
+                      <li><a href="export.html">Exportar</a></li>
+                      <li><a href="charts.html">Gráficos</a></li>
                     </ul>
                   </li>
                   <li class="dropdown">
@@ -661,11 +714,15 @@
             dataType: "json",
             success: function (response) {
               if (response.logged_in) {
-                if (window.location.pathname.indexOf("personal_page.html") === -1) {
+                if (
+                  window.location.pathname.indexOf("personal_page.html") === -1
+                ) {
                   window.location.href = "/Eshopper/personal_page.html";
                 }
               } else {
-                $("#accountMessage").text("No has iniciado sesión. Redirigiendo...").show();
+                $("#accountMessage")
+                  .text("No has iniciado sesión. Redirigiendo...")
+                  .show();
                 setTimeout(() => {
                   window.location.href = "/Eshopper/login.html";
                 }, 2000);
@@ -673,12 +730,12 @@
             },
             error: function () {
               alert("Error en el servidor. Inténtalo más tarde.");
-            }
+            },
           });
         });
       });
     </script>
-    
+
     <script>
       $(document).ready(function () {
         $("#exportLink").on("click", function (e) {
@@ -693,7 +750,9 @@
                   window.location.href = "/Eshopper/export.html";
                 }
               } else {
-                $("#accountMessage").text("No has iniciado sesión. Redirigiendo...").show();
+                $("#accountMessage")
+                  .text("No has iniciado sesión. Redirigiendo...")
+                  .show();
                 setTimeout(() => {
                   window.location.href = "/Eshopper/login.html";
                 }, 2000);
@@ -701,12 +760,12 @@
             },
             error: function () {
               alert("Error en el servidor. Inténtalo más tarde.");
-            }
+            },
           });
         });
       });
     </script>
-    
+
     <script>
       $(document).ready(function () {
         $("#chartsLink").on("click", function (e) {
@@ -721,7 +780,9 @@
                   window.location.href = "/Eshopper/charts.html";
                 }
               } else {
-                $("#accountMessage").text("No has iniciado sesión. Redirigiendo...").show();
+                $("#accountMessage")
+                  .text("No has iniciado sesión. Redirigiendo...")
+                  .show();
                 setTimeout(() => {
                   window.location.href = "/Eshopper/login.html";
                 }, 2000);
@@ -729,10 +790,56 @@
             },
             error: function () {
               alert("Error en el servidor. Inténtalo más tarde.");
-            }
+            },
           });
         });
       });
+    </script>
+    <script>
+      $(document).ready(function () {
+        $("#verMenu").click(function () {
+          $("#submenuVer").toggle();
+        });
+
+        $("#verPedidos").click(function () {
+          verificarSesion(() => {
+            window.location.href = "ver.html?tipo=pedidos";
+          });
+        });
+
+        $("#verProductos").click(function () {
+          verificarSesion(() => {
+            let selectedCategory = getSelectedCategory();
+            window.location.href =
+              "ver.html?tipo=productos&categoria=" + selectedCategory;
+          });
+        });
+      });
+
+      // Función para verificar si el usuario está logueado
+      function verificarSesion(callback) {
+        $.ajax({
+          url: "session_check.php",
+          method: "GET",
+          dataType: "json",
+          success: function (response) {
+            if (response.logged_in) {
+              callback(); // Usuario registrado, ejecutar acción
+            } else {
+              alert("Debes estar registrado para acceder a esta sección.");
+            }
+          },
+          error: function () {
+            alert("Error al verificar la sesión del usuario.");
+          },
+        });
+      }
+
+      function getSelectedCategory() {
+        return typeof selectedCategory !== "undefined"
+          ? selectedCategory
+          : "all";
+      }
     </script>
   </body>
 </html>

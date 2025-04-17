@@ -36,7 +36,51 @@
     <link
       rel="apple-touch-icon-precomposed"
       href="images/ico/apple-touch-icon-57-precomposed.png"
-    /></head
+    />
+    <style>
+      .alert-dialog {
+        position: absolute;
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+        padding: 10px 15px;
+        border-radius: 5px;
+        font-size: 14px;
+        font-weight: bold;
+        z-index: 1000;
+        white-space: nowrap;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      }
+    </style>
+    <style>
+      /* Estilo del menú desplegable */
+
+      #submenuVer {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        padding: 10px;
+        border-radius: 5px;
+      }
+
+      #submenuVer li {
+        list-style: none;
+      }
+
+      #submenuVer li a {
+        text-decoration: none;
+        padding: 8px;
+        display: block;
+        color: #333;
+      }
+
+      #submenuVer li a:hover {
+        background-color: #ddd;
+      }
+    </style></head
   ><!--/head-->
 
   <body>
@@ -140,8 +184,18 @@
                     id="accountMessage"
                     style="color: red; display: none; margin-left: 10px"
                   ></p>
-                  <li>
-                    <a href="#"><i class="fa fa-star"></i> Wishlist</a>
+                  <li class="dropdown">
+                    <a
+                      href="#"
+                      id="verMenu"
+                      class="dropdown-toggle"
+                      data-toggle="dropdown"
+                      ><i class="fa fa-star"></i> Ver <b class="caret"></b
+                    ></a>
+                    <ul class="dropdown-menu" id="submenuVer">
+                      <li><a href="#" id="verPedidos">Pedidos</a></li>
+                      <li><a href="#" id="verProductos">Productos</a></li>
+                    </ul>
                   </li>
                   <li>
                     <a href="checkout.html"
@@ -523,6 +577,9 @@
                       <i class="fa fa-shopping-cart"></i>
                       Add to cart
                     </button>
+                    <div class="alert-dialog" style="display: none">
+                      ¡Añadido al carrito!
+                    </div>
                   </span>
                   <p><b>Availability:</b> In Stock</p>
                   <p><b>Condition:</b> New</p>
@@ -1278,7 +1335,23 @@
         console.log("Botón cart2 pulsado");
         // Guardamos el botón que fue clickeado
         var clickedButton = $(this);
+
         loadPedidos(clickedButton);
+
+        var alertDiv = clickedButton.siblings(".alert-dialog")[0]; // Cambié .next() por .siblings()
+
+        // Obtenemos la posición del botón
+        const offset = clickedButton.offset();
+
+        // Colocamos el mensaje arriba y alineado con el botón
+        alertDiv.style.top = `${offset.top - 40}px`; // 40px arriba del botón
+        alertDiv.style.left = `${offset.left}px`; // Alineamos al borde izquierdo del botón
+        alertDiv.style.display = "block"; // Mostramos el mensaje
+
+        // Ocultamos después de 2 segundos
+        setTimeout(() => {
+          alertDiv.style.display = "none";
+        }, 2000);
       });
 
       function loadPedidos(clickedButton) {
@@ -1336,6 +1409,7 @@
                 imagen: imagen,
                 productTitle: productTitle,
                 webId: webId,
+                cantidad: quantity,
               };
 
               $.ajax({
@@ -1613,6 +1687,52 @@
           });
         });
       });
+    </script>
+    <script>
+      $(document).ready(function () {
+        $("#verMenu").click(function () {
+          $("#submenuVer").toggle();
+        });
+
+        $("#verPedidos").click(function () {
+          verificarSesion(() => {
+            window.location.href = "ver.html?tipo=pedidos";
+          });
+        });
+
+        $("#verProductos").click(function () {
+          verificarSesion(() => {
+            let selectedCategory = getSelectedCategory();
+            window.location.href =
+              "ver.html?tipo=productos&categoria=" + selectedCategory;
+          });
+        });
+      });
+
+      // Función para verificar si el usuario está logueado
+      function verificarSesion(callback) {
+        $.ajax({
+          url: "session_check.php",
+          method: "GET",
+          dataType: "json",
+          success: function (response) {
+            if (response.logged_in) {
+              callback(); // Usuario registrado, ejecutar acción
+            } else {
+              alert("Debes estar registrado para acceder a esta sección.");
+            }
+          },
+          error: function () {
+            alert("Error al verificar la sesión del usuario.");
+          },
+        });
+      }
+
+      function getSelectedCategory() {
+        return typeof selectedCategory !== "undefined"
+          ? selectedCategory
+          : "all";
+      }
     </script>
   </body>
 </html>

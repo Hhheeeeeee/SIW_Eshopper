@@ -78,6 +78,35 @@
         display: inline-block;
         padding: 5px;
       }
+    </style>
+    <style>
+      /* Estilo del menú desplegable */
+
+      #submenuVer {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        padding: 10px;
+        border-radius: 5px;
+      }
+
+      #submenuVer li {
+        list-style: none;
+      }
+
+      #submenuVer li a {
+        text-decoration: none;
+        padding: 8px;
+        display: block;
+        color: #333;
+      }
+
+      #submenuVer li a:hover {
+        background-color: #ddd;
+      }
     </style></head
   ><!--/head-->
 
@@ -182,8 +211,18 @@
                     id="accountMessage"
                     style="color: red; display: none; margin-left: 10px"
                   ></p>
-                  <li>
-                    <a href="#"><i class="fa fa-star"></i> Wishlist</a>
+                  <li class="dropdown">
+                    <a
+                      href="#"
+                      id="verMenu"
+                      class="dropdown-toggle"
+                      data-toggle="dropdown"
+                      ><i class="fa fa-star"></i> Ver <b class="caret"></b
+                    ></a>
+                    <ul class="dropdown-menu" id="submenuVer">
+                      <li><a href="#" id="verPedidos">Pedidos</a></li>
+                      <li><a href="#" id="verProductos">Productos</a></li>
+                    </ul>
                   </li>
                   <li>
                     <a href="checkout.html"
@@ -289,6 +328,9 @@
               <tr class="cart_menu">
                 <td class="image">Item</td>
                 <td class="description">Description</td>
+                <td class="quantity">Cantidad</td>
+                <!-- NUEVA COLUMNA -->
+
                 <td class="price">Precio</td>
                 <td></td>
               </tr>
@@ -296,7 +338,7 @@
             <tbody></tbody>
             <tfoot>
               <tr>
-                <td colspan="2"></td>
+                <td colspan="3"></td>
                 <td>
                   <strong>Total:</strong> <span id="precioTotal">$0.00</span>
                 </td>
@@ -753,29 +795,21 @@
                 pedido.webId +
                 "</p></td>"
             );
-            row.append(
-              '<td class="cart_price">' +
-                '<small style="color: gray; display: block;">$' +
-                parseFloat(pedido.precio_unidad).toFixed(2) +
-                " x " +
-                cantidad +
-                "</small>" +
-                "<p>$" +
-                parseFloat(pedido.total) +
-                "</p>" +
-                "</td>"
-            );
+            row.append(`
+              <td class="cart_quantity">
+                <input type="number" min="1" class="input-cantidad" data-pedido-id="${pedido.id}" data-precio="${precio_unidad}" value="${cantidad}">
+              </td>
+            `);
+            row.append(`
+              <td class="cart_price total-item">
+                $${total.toFixed(2)}
+              </td>
+            `);
             row.append(
               '<td class="cart_delete"><a class="cart_quantity_delete" href="#" data-pedido-id="' +
                 pedido.id +
                 '"><i class="fa fa-times"></i></a></td>'
             );
-
-            /*row.append('<td class="cart_product"><a href=""><img class="imagen-producto" src="' + pedido.imagen + '" alt="' + pedido.titulo + '"></a></td>');
-					row.append('<td class="cart_description"><h4><a href="">' + pedido.titulo + '</a></h4><p>Web ID: ' + pedido.webId + '</p></td>');
-					row.append('<td class="cart_price"><p>$' + parseFloat(pedido.total).toFixed(2) + '</p></td>');
-					row.append('<td class="cart_total"><p class="cart_total_price">$' + parseFloat(pedido.total).toFixed(2) + '</p></td>');
-					row.append('<td class="cart_delete"><a class="cart_quantity_delete" href="#" data-pedido-id="' + pedido.id + '"><i class="fa fa-times"></i></a></td>');*/
             cartBody.append(row);
           });
 
@@ -786,7 +820,111 @@
             var pedidoId = $(this).data("pedido-id");
             borrarPedidoCarrito(pedidoId); // Usando la nueva función para borrar
           });
+
+          // Detectar cambios en la cantidad
+          /*
+          $(".input-cantidad").on("input", function () {
+            let pedidoId = input.data("data-pedido-id");
+            let input = $(this);
+            let cantidad = parseInt(input.val());
+            let precioUnidad = parseFloat(input.data("precio"));
+            if (isNaN(cantidad) || cantidad < 1) cantidad = 1;
+            let nuevoTotal = precioUnidad * cantidad;
+
+            // Actualizar el precio en la columna de ese producto
+            input
+              .closest("tr")
+              .find(".total-item")
+              .text(`$${nuevoTotal.toFixed(2)}`);
+
+            // Recalcular el total del carrito
+            let total = 0;
+            $(".input-cantidad").each(function () {
+              let cant = parseInt($(this).val());
+              let precio = parseFloat($(this).data("precio"));
+              total += cant * precio;
+            });
+            $("#precioTotal").text(`$${total.toFixed(2)}`);
+
+            // Actualizar el total en el servidor (base de datos)
+
+            $.ajax({
+              url: "actualizar_cantidad.php",
+              type: "POST",
+              data: {
+                pedido_id: pedidoId,
+                cantidad: cantidad,
+                total: nuevoTotal,
+              },
+              success: function (response) {
+                console.log(
+                  "Cantidad actualizada en la base de datos:",
+                  response
+                );
+              },
+              error: function () {
+                console.error(
+                  "Error al actualizar la cantidad en la base de datos."
+                );
+              },
+            });
+          });*/
+
+          $(".input-cantidad").on("blur", function () {
+            let input = $(this);
+            let cantidad = parseInt(input.val());
+            let precioUnidad = parseFloat(input.data("precio"));
+            let pedidoId = input.data("pedido-id");
+
+            if (isNaN(cantidad) || cantidad < 1) return;
+
+            let nuevoTotal = precioUnidad * cantidad;
+
+            // Actualiza el total individual
+            input
+              .closest("tr")
+              .find(".total-item")
+              .text(`$${nuevoTotal.toFixed(2)}`);
+
+            // Actualiza el total general del carrito
+            let total = 0;
+            $(".input-cantidad").each(function () {
+              let cant = parseInt($(this).val());
+              let precio = parseFloat($(this).data("precio"));
+              if (!isNaN(cant) && cant >= 1) {
+                total += cant * precio;
+              }
+            });
+            $("#precioTotal").text(`$${total.toFixed(2)}`);
+
+            console.log("Pedido ID:", pedidoId);
+            console.log("Cantidad:", cantidad);
+            console.log("Nuevo Total:", nuevoTotal);
+
+            // Ejecutar AJAX solo cuando el input pierde foco
+            $.ajax({
+              url: "actualizar_cantidad.php",
+              type: "POST",
+              data: {
+                pedido_id: pedidoId,
+                cantidad: cantidad,
+                total: nuevoTotal,
+              },
+              success: function (response) {
+                console.log(
+                  "Cantidad actualizada en la base de datos:",
+                  response
+                );
+              },
+              error: function () {
+                console.error(
+                  "Error al actualizar la cantidad en la base de datos."
+                );
+              },
+            });
+          });
         } else {
+          $("#precioTotal").text("$" + 0.0);
           cartBody.append(
             '<tr><td colspan="5"><p>No hay productos en el carrito.</p></td></tr>'
           );
@@ -843,6 +981,52 @@
             alert("Error de conexión al procesar la compra.");
           },
         });
+      }
+    </script>
+    <script>
+      $(document).ready(function () {
+        $("#verMenu").click(function () {
+          $("#submenuVer").toggle();
+        });
+
+        $("#verPedidos").click(function () {
+          verificarSesion(() => {
+            window.location.href = "ver.html?tipo=pedidos";
+          });
+        });
+
+        $("#verProductos").click(function () {
+          verificarSesion(() => {
+            let selectedCategory = getSelectedCategory();
+            window.location.href =
+              "ver.html?tipo=productos&categoria=" + selectedCategory;
+          });
+        });
+      });
+
+      // Función para verificar si el usuario está logueado
+      function verificarSesion(callback) {
+        $.ajax({
+          url: "session_check.php",
+          method: "GET",
+          dataType: "json",
+          success: function (response) {
+            if (response.logged_in) {
+              callback(); // Usuario registrado, ejecutar acción
+            } else {
+              alert("Debes estar registrado para acceder a esta sección.");
+            }
+          },
+          error: function () {
+            alert("Error al verificar la sesión del usuario.");
+          },
+        });
+      }
+
+      function getSelectedCategory() {
+        return typeof selectedCategory !== "undefined"
+          ? selectedCategory
+          : "all";
       }
     </script>
   </body>

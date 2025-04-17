@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/font-awesome.min.css" rel="stylesheet" />
+    <link href="css/prettyPhoto.css" rel="stylesheet" />
+    <link href="css/price-range.css" rel="stylesheet" />
+    <link href="css/animate.css" rel="stylesheet" />
+    <link href="css/main.css" rel="stylesheet" />
+    <link href="css/responsive.css" rel="stylesheet" />
+    <title>Ver Pedidos o Productos</title>
+    <style>
+      /* Ajustes para el header */
+      .header_top {
+        height: 80px; /* Esto establece la altura del header */
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header_top">
+      <!--header_top-->
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="contactinfo">
+              <ul class="nav nav-pills">
+                <li>
+                  <a href="#"><i class="fa fa-phone"></i> +2 95 01 88 821</a>
+                </li>
+                <li>
+                  <a href="#"><i class="fa fa-envelope"></i> info@domain.com</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="social-icons pull-right">
+              <ul class="nav navbar-nav">
+                <li>
+                  <a href="#"><i class="fa fa-facebook"></i></a>
+                </li>
+                <li>
+                  <a href="#"><i class="fa fa-twitter"></i></a>
+                </li>
+                <li>
+                  <a href="#"><i class="fa fa-linkedin"></i></a>
+                </li>
+                <li>
+                  <a href="#"><i class="fa fa-dribbble"></i></a>
+                </li>
+                <li>
+                  <a href="#"><i class="fa fa-google-plus"></i></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          <!-- Título que se ajustará dinámicamente según el tipo -->
+          <h2 id="titulo">Cargando...</h2>
+
+          <!-- Contenedor para historial de pedidos -->
+          <div id="pedidos" style="margin-top: 20px"></div>
+        </div>
+      </div>
+
+      <!-- Contenedor para productos (con Bootstrap grid) -->
+      <div class="row features_items" style="margin-top: 30px">
+        <!-- Los productos se cargarán aquí dinámicamente -->
+      </div>
+    </div>
+
+    <footer class="text-center p-3 mt-5 bg-light">
+      <p>&copy; 2023 Tu Tienda Online</p>
+    </footer>
+  </body>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <script>
+    $(document).ready(function () {
+      // Obtener parámetros de la URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const tipo = urlParams.get("tipo"); // 'pedidos' o 'productos'
+      const categoria = urlParams.get("categoria") || "all"; // valor por defecto si no viene
+
+      if (tipo === "pedidos") {
+        $("#titulo").text("Historial de Pedidos");
+        loadPedidos();
+      } else if (tipo === "productos") {
+        $("#titulo").text("Listado de Productos");
+        loadProductos(categoria);
+      }
+    });
+
+    // Cargar productos por categoría
+    function loadProductos(categoria = "all") {
+      $.ajax({
+        url: "get_products_by_category.php",
+        type: "GET",
+        data: { category: categoria },
+        dataType: "json",
+        success: function (response) {
+          if (response.success) {
+            // Determinar el título con categoría
+            const categoriaTexto =
+              categoria !== "all"
+                ? `Categoría: ${categoria}`
+                : "Todos los productos";
+
+            let productsHtml = `
+          <h4 class="mb-3">${categoriaTexto}</h4>
+          <table class="table table-striped table-bordered">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Imagen</th>
+                <th>Nombre</th>
+                <th>Precio</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+
+            response.products.forEach((product) => {
+              productsHtml += `
+            <tr>
+              <td>${product.id}</td>
+              <td><img src="${product.image}" alt="${
+                product.name
+              }" style="width: 80px; height: auto;" /></td>
+              <td>${product.name}</td>
+              <td>$${parseFloat(product.price).toFixed(2)}</td>
+            </tr>
+          `;
+            });
+
+            productsHtml += `
+            </tbody>
+          </table>
+        `;
+
+            $(".features_items").html(productsHtml);
+          } else {
+            $(".features_items").html(
+              "<p>No se encontraron productos para esta categoría.</p>"
+            );
+          }
+        },
+        error: function () {
+          $(".features_items").html("<p>Error al cargar productos.</p>");
+        },
+      });
+    }
+
+    // Cargar historial de pedidos
+    function loadPedidos() {
+      $.ajax({
+        url: "obtener_pedidos_carrito.php", // Este es el archivo correcto que consulta la DB
+        type: "GET",
+        dataType: "json",
+        success: function (response) {
+          if (response.success) {
+            let pedidosHtml = `
+          <table class="table table-striped table-bordered">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Título</th>
+                <th>Estado</th>
+                <th>Precio Unidad</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+
+            response.pedidos.forEach((pedido) => {
+              pedidosHtml += `
+            <tr>
+              <td>${pedido.id}</td>
+              <td>${pedido.titulo}</td>
+              <td>${pedido.estado}</td>
+              <td>$${parseFloat(pedido.precio_unidad).toFixed(2)}</td>
+              <td>$${parseFloat(pedido.total).toFixed(2)}</td>
+            </tr>
+          `;
+            });
+
+            pedidosHtml += `
+            </tbody>
+          </table>
+        `;
+
+            $("#pedidos").html(pedidosHtml);
+          } else {
+            $("#pedidos").html(
+              "<p>No se encontraron pedidos en el carrito.</p>"
+            );
+          }
+        },
+        error: function () {
+          $("#pedidos").html("<p>Error al cargar los pedidos.</p>");
+        },
+      });
+    }
+  </script>
+</html>
