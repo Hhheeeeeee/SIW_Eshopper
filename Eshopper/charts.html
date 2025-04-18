@@ -37,6 +37,17 @@
       rel="apple-touch-icon-precomposed"
       href="images/ico/apple-touch-icon-57-precomposed.png"
     />
+
+    <style>
+      .chart-container {
+          width: 80%;
+          margin: 20px auto;
+          border: 1px solid #ccc;
+          padding: 15px;
+          border-radius: 5px;
+      }
+    </style>
+
     <style>
       /* Estilo del menú desplegable */
 
@@ -65,8 +76,76 @@
       #submenuVer li a:hover {
         background-color: #ddd;
       }
-    </style></head
-  ><!--/head-->
+
+      .chart-container {
+        display: flex;
+        justify-content: center; /* Centra horizontalmente los elementos dentro del flex container */
+        align-items: center;
+        /* Aquí van las reglas de estilo que quieres aplicar */
+        width: 700px; /* Ejemplo de ancho */
+        height: 550px;
+      }
+
+      #titulo{
+        font-size: 20px;
+        margin-right: 20px;
+      }
+
+      #productosPorCategoriaChart{
+        width: 500px !important; /* Usar !important si otros estilos están afectando */
+        height: 400px !important;
+      }
+      #ratingProductosChart{
+        width: 500px !important; /* Usar !important si otros estilos están afectando */
+        height: 500px !important;
+      }
+      #pedidosPorMesChart{
+        width: 500px !important; /* Usar !important si otros estilos están afectando */
+        height: 400px !important;
+      }
+      #precioPromedioCategoriaChart{
+        width: 500px !important; /* Usar !important si otros estilos están afectando */
+        height: 400px !important;
+      }
+      #distribucionOfertasChart{
+        width: 500px !important; /* Usar !important si otros estilos están afectando */
+        height: 500px !important;
+      }
+      #usuariosAcumuladosChart{
+        width: 500px !important; /* Usar !important si otros estilos están afectando */
+        height: 400px !important;
+      }
+      #precioRatingChart{
+        width: 500px !important; /* Usar !important si otros estilos están afectando */
+        height: 400px !important;
+      }
+      #topVendedoresChart{
+        width: 500px !important; /* Usar !important si otros estilos están afectando */
+        height: 400px !important;
+      }
+      #pedidosPorEstadoChart{
+        width: 500px !important; /* Usar !important si otros estilos están afectando */
+        height: 500px !important;
+      }
+      #diferenciaPrecioTabla{
+        width: 400px !important; /* Usar !important si otros estilos están afectando */
+        height: 400px !important;
+        margin-top: 200px !important;
+        margin-left: 100px !important;
+      }
+      #originalPriceHeader,[id^="originalPriceCell-"] {
+        padding-right: 20px; /* Ajusta este valor según la distancia deseada */
+      }
+
+      #offerPriceHeader,[id^="offerPriceCell-"] {
+        padding-right: 20px; /* Ajusta este valor según la distancia deseada */
+      }
+      #titulo_principal{
+        margin-left:425px;
+      }
+
+    </style>
+  </head><!--/head-->
 
   <body>
     <header id="header">
@@ -274,6 +353,68 @@
     </header>
     <!--/header-->
 
+    <section>
+      <div class="container">
+          <div class="row">
+              <div class="col-sm-12">
+                  <h2 id = "titulo_principal">Visualización de Datos</h2>
+
+                  <div class="chart-container">
+                      <h3 id = "titulo">Cantidad de Productos por Categoría</h3>
+                      <canvas id="productosPorCategoriaChart"></canvas>
+                  </div>
+
+                  <div class="chart-container">
+                      <h3 id = "titulo">Distribución del Rating de los Productos</h3>
+                      <canvas id="ratingProductosChart"></canvas>
+                  </div>
+
+                  <div class="chart-container">
+                      <h3 id = "titulo">Nuevos Pedidos por Mes</h3>
+                      <canvas id="pedidosPorMesChart"></canvas>
+                  </div>
+
+                  <div class="chart-container">
+                      <h3 id = "titulo">Precio Promedio por Categoría</h3>
+                      <canvas id="precioPromedioCategoriaChart"></canvas>
+                  </div>
+
+                  <div class="chart-container">
+                      <h3 id = "titulo">Distribución de Productos con/sin Oferta</h3>
+                      <canvas id="distribucionOfertasChart"></canvas>
+                  </div>
+
+                  <div class="chart-container">
+                      <h3 id = "titulo">Usuarios Acumulados por Mes</h3>
+                      <canvas id="usuariosAcumuladosChart"></canvas>
+                  </div>
+
+                  <div class="chart-container">
+                      <h3 id = "titulo">Precio vs. Rating Promedio (Dispersión)</h3>
+                      <canvas id="precioRatingChart"></canvas>
+                  </div>
+
+                  <div class="chart-container">
+                      <h3 id = "titulo">Top Vendedores por Cantidad Vendida</h3>
+                      <canvas id="topVendedoresChart"></canvas>
+                  </div>
+
+                  <div class="chart-container">
+                      <h3 id = "titulo">Distribución de pedidos por estado </h3>
+                      <canvas id="pedidosPorEstadoChart"></canvas>
+                  </div>
+
+                  <div class="chart-container">
+                      <h3 id = "titulo">Diferencia de Precio por Oferta</h3>
+                      <div id="diferenciaPrecioTabla">
+                      </div>
+                  </div>
+
+              </div>
+          </div>
+      </div>
+    </section>
+
     <footer id="footer">
       <!--Footer-->
       <div class="footer-top">
@@ -454,6 +595,8 @@
     <script src="js/jquery.scrollUp.min.js"></script>
     <script src="js/jquery.prettyPhoto.js"></script>
     <script src="js/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script>
       $(document).ready(function () {
         $("#accountLink").on("click", function (e) {
@@ -591,5 +734,246 @@
           : "all";
       }
     </script>
+
+
+  <script>
+    $(document).ready(function() {
+        $.ajax({
+            url: 'create_charts.php',
+            method: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                if (data.success) {
+                    // --- Gráfico de columnas: Cantidad de productos por categoría ---
+                    const productosPorCategoriaCtx = document.getElementById('productosPorCategoriaChart').getContext('2d');
+                    new Chart(productosPorCategoriaCtx, {
+                        type: 'bar',
+                        data: {
+                            // Usamos id_categoria como etiqueta por ahora
+                            labels: data.productos_por_categoria.map(item => item.id_categoria),
+                            datasets: [{
+                                label: 'Cantidad de Productos',
+                                data: data.productos_por_categoria.map(item => parseInt(item.cantidad_productos)),
+                                backgroundColor: 'rgba(54, 162, 235, 0.8)'
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    precision: 0
+                                }
+                            }
+                        }
+                    });
+
+                    // --- Gráfico de tarta: Distribución del rating de los productos ---
+                    const ratingProductosCtx = document.getElementById('ratingProductosChart').getContext('2d');
+                    new Chart(ratingProductosCtx, {
+                        type: 'pie',
+                        data: {
+                            labels: data.rating_productos.map(item => `Rating ${item.rating}`),
+                            datasets: [{
+                                data: data.rating_productos.map(item => parseInt(item.total_productos)),
+                                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']
+                            }]
+                        },
+                        options: {
+                            // Opciones del gráfico
+                        }
+                    });
+
+                    // --- Gráfico de líneas: Nuevos pedidos por mes ---
+                    const pedidosPorMesCtx = document.getElementById('pedidosPorMesChart').getContext('2d');
+                    new Chart(pedidosPorMesCtx, {
+                        type: 'line',
+                        data: {
+                            labels: data.pedidos_por_mes.map(item => item.mes),
+                            datasets: [{
+                                label: 'Nuevos Pedidos',
+                                data: data.pedidos_por_mes.map(item => parseInt(item.total_pedidos)),
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                fill: false
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    precision: 0
+                                }
+                            }
+                        }
+                    });
+
+                    // --- Gráfico de columnas: Precio promedio por categoría ---
+                    const precioPromedioCategoriaCtx = document.getElementById('precioPromedioCategoriaChart').getContext('2d');
+                    new Chart(precioPromedioCategoriaCtx, {
+                        type: 'bar',
+                        data: {
+                          labels: data.precio_promedio_por_categoria.map(item => item.categoria_id),
+                            datasets: [{
+                                label: 'Precio Promedio',
+                                data: data.precio_promedio_por_categoria.map(item => parseFloat(item.precio_promedio).toFixed(2)),
+                                backgroundColor: 'rgba(255, 99, 132, 0.8)'
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+
+                    // --- Gráfico de tarta: Distribución de Productos con/sin Oferta ---
+                    const distribucionOfertasCtx = document.getElementById('distribucionOfertasChart').getContext('2d');
+                    new Chart(distribucionOfertasCtx, {
+                        type: 'pie',
+                        data: {
+                            labels: data.distribucion_ofertas.map(item => item.tiene_oferta),
+                            datasets: [{
+                                data: data.distribucion_ofertas.map(item => parseInt(item.total_productos)),
+                                backgroundColor: ['#007bff', '#6c757d']
+                            }]
+                        },
+                        options: {
+                            // Opciones del gráfico
+                        }
+                    });
+
+                    // --- Gráfico de líneas: Usuarios Acumulados por Mes ---
+                    const usuariosAcumuladosCtx = document.getElementById('usuariosAcumuladosChart').getContext('2d');
+                    new Chart(usuariosAcumuladosCtx, {
+                        type: 'line',
+                        data: {
+                            labels: data.usuarios_acumulados_por_mes.map(item => item.mes),
+                            datasets: [{
+                                label: 'Usuarios Acumulados',
+                                data: data.usuarios_acumulados_por_mes.map(item => parseInt(item.total_acumulado)),
+                                borderColor: 'rgba(255, 206, 86, 1)',
+                                fill: false
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    precision: 0
+                                }
+                            }
+                        }
+                    });
+
+                    // --- Gráfico de dispersión: Precio vs. Rating Promedio ---
+                    const precioRatingCtx = document.getElementById('precioRatingChart').getContext('2d');
+                    new Chart(precioRatingCtx, {
+                        type: 'scatter',
+                        data: {
+                            datasets: [{
+                                label: 'Precio vs. Rating Promedio',
+                                data: data.precio_rating_data.map(item => ({
+                                    x: parseFloat(item.rating), // Usando 'rating' del PHP
+                                    y: parseFloat(item.precio) // Usando 'precio' del PHP
+                                })),
+                                backgroundColor: 'rgba(153, 102, 255, 0.8)'
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Rating del Producto'
+                                    },
+                                    beginAtZero: true,
+                                    ticks: {
+                                        stepSize: 1
+                                    }
+                                },
+                                y: {
+                                    title: {
+                                        display: true,
+                                        text: 'Precio Promedio'
+                                    },
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+
+                    // --- Gráfico de barras: Top Vendedores por Cantidad Vendida ---
+                    const topVendedoresCtx = document.getElementById('topVendedoresChart').getContext('2d');
+                    new Chart(topVendedoresCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: data.top_vendedores.map(item => item.vendedor),
+                            datasets: [{
+                                label: 'Cantidad Vendida',
+                                data: data.top_vendedores.map(item => parseInt(item.total_vendidos)),
+                                backgroundColor: 'rgba(0, 123, 255, 0.8)'
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    precision: 0
+                                }
+                            }
+                        }
+                    });
+
+                    // --- Gráfico de tarta: Distribución de pedidos por estado ---
+                    const pedidosPorEstadoCtx = document.getElementById('pedidosPorEstadoChart').getContext('2d');
+                    new Chart(pedidosPorEstadoCtx, {
+                        type: 'pie',
+                        data: {
+                            labels: data.distribucion_pedidos_estado.map(item => item.estado),
+                            datasets: [{
+                                data: data.distribucion_pedidos_estado.map(item => parseInt(item.total_pedidos)),
+                                backgroundColor: ['#28a745', '#ffc107', '#dc3545', '#17a2b8', '#6f42c1'] // Ejemplo de colores
+                            }]
+                        },
+                        options: {
+                            // Opciones del gráfico
+                        }
+                    });
+
+                    // --- Mostrar la diferencia de precio en una tabla ---
+                    if (data.diferencia_precio_oferta && data.diferencia_precio_oferta.length > 0) {
+                        let tablaHTML = '<table><thead><tr>';
+                        tablaHTML += '<th id="originalPriceHeader">Precio Original</th>';
+                        tablaHTML += '<th id="offerPriceHeader">Precio Oferta</th>';
+                        tablaHTML += '<th id="differenceHeader">Diferencia</th>';
+                        tablaHTML += '</tr></thead><tbody>';
+
+                        data.diferencia_precio_oferta.forEach((item, index) => {
+                            tablaHTML += '<tr>';
+                            tablaHTML += `<td id="originalPriceCell-${index}">${parseFloat(item.precio_original).toFixed(2)}</td>`;
+                            tablaHTML += `<td id="offerPriceCell-${index}">${parseFloat(item.precio_oferta).toFixed(2)}</td>`;
+                            tablaHTML += `<td id="differenceCell-${index}">${parseFloat(item.diferencia_precio).toFixed(2)}</td>`;
+                            tablaHTML += '</tr>';
+                        });
+
+                        tablaHTML += '</tbody></table>';
+                        $('#diferenciaPrecioTabla').html(tablaHTML);
+                    }
+
+                } else {
+                    console.error("Error al obtener los datos:", data.message);
+                    $('#accountMessage').text(data.message).show();
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Error en la llamada AJAX:", error);
+                $('#accountMessage').text("Error en la llamada AJAX").show();
+            }
+        });
+    });
+  </script>
+
+
   </body>
 </html>
