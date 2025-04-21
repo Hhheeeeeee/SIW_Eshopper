@@ -283,6 +283,7 @@
 									<ul class="dropdown-menu" id="submenuVer">
 									<li><a href="#" id="verPedidos">Pedidos</a></li>
 									<li><a href="#" id="verProductos">Productos</a></li>
+									<li><a href="#" id="verOfertas">Ofertas</a></li>
 									</ul>
 								</li>
   
@@ -1844,6 +1845,12 @@ function loadProducts(category, minPrice = 0, maxPrice = 600) {
 		verificarSesion(() => {
 		  let selectedCategory = getSelectedCategory();
 		  window.location.href = 'ver.html?tipo=productos&categoria=' + selectedCategory;
+		});
+	  });
+
+	  $('#verOfertas').click(function () {
+		verificarSesion(() => {
+		  window.location.href = 'ver.html?tipo=ofertas';
 		});
 	  });
 	});

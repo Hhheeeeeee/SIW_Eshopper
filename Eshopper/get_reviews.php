@@ -22,7 +22,7 @@ if (empty($product_id)) {
 
 
 // Consulta SQL para obtener las opiniones del producto
-$sql = "SELECT usuario_nombre, comentario, fecha 
+$sql = "SELECT usuario_nombre, comentario, rating, fecha 
         FROM final_opiniones 
         WHERE producto_id = ? 
         ORDER BY fecha DESC";

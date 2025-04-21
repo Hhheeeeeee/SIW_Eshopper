@@ -92,15 +92,80 @@
       const urlParams = new URLSearchParams(window.location.search);
       const tipo = urlParams.get("tipo"); // 'pedidos' o 'productos'
       const categoria = urlParams.get("categoria") || "all"; // valor por defecto si no viene
-
       if (tipo === "pedidos") {
         $("#titulo").text("Historial de Pedidos");
         loadPedidos();
       } else if (tipo === "productos") {
         $("#titulo").text("Listado de Productos");
         loadProductos(categoria);
+      } else if (tipo === "opiniones") {
+        $("#titulo").text("Opiniones de Productos");
+        const id = urlParams.get("productId");
+        loadOpiniones(id);
+      } else if (tipo === "ofertas") {
+        $("#titulo").text("Ofertas");
+        loadOfertas();
+      } else {
+        $("#titulo").text("Tipo no válido");
+        $(".features_items").html(
+          "<p>Tipo no válido. Por favor, selecciona un tipo correcto.</p>"
+        );
       }
     });
+
+    function loadOpiniones(id) {
+      console.log("ID recibido:", id);
+      $.ajax({
+        url: "get_reviews.php",
+        type: "GET",
+        data: { id: id },
+        dataType: "json",
+        success: function (response) {
+          if (response.success) {
+            let opinionesHtml = `
+          <table class="table table-striped table-bordered">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Opinión</th>
+                <th>Calificación</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+
+            response.reviews.forEach((opinion) => {
+              opinionesHtml += `
+            <tr>
+              
+              <td>${opinion.usuario}</td>
+              <td>${opinion.comentario}</td>
+              <td>${opinion.rating}</td>
+              <td>${opinion.fecha}</td>
+            </tr>
+          `;
+            });
+
+            opinionesHtml += `
+            </tbody>
+          </table>
+        `;
+
+            $(".features_items").html(opinionesHtml);
+          } else {
+            $(".features_items").html(
+              "<p>No se encontraron opiniones para este producto.</p>"
+            );
+          }
+        },
+        error: function (xhr, status, error) {
+          console.error("AJAX error:", status, error);
+          console.log("Response text:", xhr.responseText);
+          $(".features_items").html("<p>Error al cargar opiniones.</p>");
+        },
+      });
+    }
 
     // Cargar productos por categoría
     function loadProductos(categoria = "all") {
@@ -210,6 +275,58 @@
         },
         error: function () {
           $("#pedidos").html("<p>Error al cargar los pedidos.</p>");
+        },
+      });
+    }
+
+    // Cargar ofertas
+    function loadOfertas() {
+      $.ajax({
+        url: "get_ofertas.php",
+        type: "GET",
+        dataType: "json",
+        success: function (response) {
+          if (response.success) {
+            let ofertasHtml = `
+        <table class="table table-striped table-bordered">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Imagen</th>
+              <th>Nombre</th>
+              <th>Precio Original</th>
+              <th>Precio Oferta</th>
+            </tr>
+          </thead>
+          <tbody>
+        `;
+
+            response.offers.forEach((oferta) => {
+              ofertasHtml += `
+          <tr>
+            <td>${oferta.id}</td>
+            <td><img src="${oferta.imagen}" alt="${
+                oferta.titulo
+              }" style="width: 80px; height: auto;" /></td>
+            <td>${oferta.titulo}</td>
+            <td>$${parseFloat(oferta.precio_original).toFixed(2)}</td>
+            <td>$${parseFloat(oferta.precio_oferta).toFixed(2)}</td>
+          </tr>
+        `;
+            });
+
+            ofertasHtml += `
+          </tbody>
+        </table>
+      `;
+
+            $(".features_items").html(ofertasHtml);
+          } else {
+            $(".features_items").html("<p>No se encontraron ofertas.</p>");
+          }
+        },
+        error: function () {
+          $(".features_items").html("<p>Error al cargar las ofertas.</p>");
         },
       });
     }

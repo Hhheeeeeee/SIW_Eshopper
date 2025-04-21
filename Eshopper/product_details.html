@@ -195,6 +195,7 @@
                     <ul class="dropdown-menu" id="submenuVer">
                       <li><a href="#" id="verPedidos">Pedidos</a></li>
                       <li><a href="#" id="verProductos">Productos</a></li>
+                      <li><a href="#" id="verOpiniones">Opiniones</a></li>
                     </ul>
                   </li>
                   <li>
@@ -1624,12 +1625,6 @@
     </script>
 
     <script>
-      $(".btn.cart").click(function () {
-        console.log("Botón cart pulsado prueba");
-      });
-    </script>
-
-    <script>
       $(document).ready(function () {
         $("#exportLink").on("click", function (e) {
           e.preventDefault();
@@ -1705,6 +1700,15 @@
             let selectedCategory = getSelectedCategory();
             window.location.href =
               "ver.html?tipo=productos&categoria=" + selectedCategory;
+          });
+        });
+
+        $("#verOpiniones").click(function () {
+          verificarSesion(() => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get("id");
+            window.location.href =
+              "ver.html?tipo=opiniones&productId=" + productId;
           });
         });
       });
