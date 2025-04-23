@@ -105,6 +105,9 @@
       } else if (tipo === "ofertas") {
         $("#titulo").text("Ofertas");
         loadOfertas();
+      } else if (tipo === "categorias") {
+        $("#titulo").text("Categorías");
+        loadCategorias();
       } else {
         $("#titulo").text("Tipo no válido");
         $(".features_items").html(
@@ -112,6 +115,66 @@
         );
       }
     });
+
+    function loadCategorias() {
+      $.ajax({
+        url: "get_categories.php", // Ruta al archivo PHP
+        type: "GET",
+        dataType: "json", // Esperamos una respuesta JSON
+        success: function (response) {
+          // Si la respuesta contiene categorías
+          let categoriesHtml = `
+        <table class="table table-striped table-bordered">
+          <thead>
+            <tr>
+              <th>Categoría Principal</th>
+              <th>Subcategoría</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+          // Recorrer las categorías principales y sus subcategorías
+          for (const mainCategory in response) {
+            if (response.hasOwnProperty(mainCategory)) {
+              let subCategories = response[mainCategory];
+
+              // Mostrar la categoría principal solo una vez con rowspan para todas sus subcategorías
+              let firstRow = true; // Para identificar la primera fila de la categoría principal
+
+              subCategories.forEach((subCategory, index) => {
+                if (firstRow) {
+                  categoriesHtml += `
+                <tr>
+                  <td rowspan="${subCategories.length}">${mainCategory}</td>
+                  <td>${subCategory}</td>
+                </tr>
+              `;
+                  firstRow = false; // A partir de aquí no es necesario repetir la categoría principal
+                } else {
+                  categoriesHtml += `
+                <tr>
+                  <td>${subCategory}</td>
+                </tr>
+              `;
+                }
+              });
+            }
+          }
+
+          categoriesHtml += `
+        </tbody>
+      </table>
+      `;
+
+          $(".features_items").html(categoriesHtml); // Mostrar la tabla en el contenedor correspondiente
+        },
+        error: function (xhr, status, error) {
+          console.error("AJAX error:", status, error);
+          $(".features_items").html("<p>Error al cargar las categorías.</p>");
+        },
+      });
+    }
 
     function loadOpiniones(id) {
       console.log("ID recibido:", id);

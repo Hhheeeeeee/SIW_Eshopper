@@ -284,6 +284,7 @@
 									<li><a href="#" id="verPedidos">Pedidos</a></li>
 									<li><a href="#" id="verProductos">Productos</a></li>
 									<li><a href="#" id="verOfertas">Ofertas</a></li>
+									<li><a href="#" id="verCategorias">Categorias</a></li>
 									</ul>
 								</li>
   
@@ -1853,6 +1854,13 @@ function loadProducts(category, minPrice = 0, maxPrice = 600) {
 		  window.location.href = 'ver.html?tipo=ofertas';
 		});
 	  });
+
+	  $('#verCategorias').click(function () {
+		verificarSesion(() => {
+		  window.location.href = 'ver.html?tipo=categorias';
+		});
+	  });
+
 	});
   
 	// Función para verificar si el usuario está logueado
