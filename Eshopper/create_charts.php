@@ -19,6 +19,17 @@ if ($conn->connect_error) {
 
 $response = ["success" => false];
 
+// --- Obtener el total de productos ---
+$sql_total_productos = "SELECT COUNT(id) AS total_productos FROM final_productos";
+$result_total_productos = $conn->query($sql_total_productos);
+
+if ($result_total_productos && $result_total_productos->num_rows > 0) {
+    $row_total_productos = $result_total_productos->fetch_assoc();
+    $response["total_productos"] = intval($row_total_productos["total_productos"]);
+} else {
+    $response["total_productos"] = 0; // O algún otro valor por defecto si no hay productos
+}
+
 // --- Gráfico de columnas: Cantidad de productos por categoría ---
 $sql_productos_por_categoria = "SELECT fp.id_categoria, COUNT(fp.id) AS cantidad_productos
                                 FROM final_productos fp

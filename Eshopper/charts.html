@@ -143,6 +143,10 @@
       #titulo_principal{
         margin-left:425px;
       }
+      #totalProductosContainer{
+        font-size: 1.5em; 
+        margin-top: 10px;
+      }
 
     </style>
   </head><!--/head-->
@@ -358,7 +362,10 @@
           <div class="row">
               <div class="col-sm-12">
                   <h2 id = "titulo_principal">Visualización de Datos</h2>
-
+                  <div class="chart-container">
+                    <h3 id = "titulo">Total de Productos en Catálogo: </h3>
+                    <div id="totalProductosContainer"></div>
+                 </div>
                   <div class="chart-container">
                       <h3 id = "titulo">Cantidad de Productos por Categoría</h3>
                       <canvas id="productosPorCategoriaChart"></canvas>
@@ -744,6 +751,12 @@
             dataType: 'json',
             success: function(data) {
                 if (data.success) {
+                    // --- Mostrar el total de productos ---
+                    if (data.total_productos !== undefined) {
+                        $('#totalProductosContainer').text( + data.total_productos);
+                    } else {
+                        console.warn("El total de productos no se recibió en los datos.");
+                    }
                     // --- Gráfico de columnas: Cantidad de productos por categoría ---
                     const productosPorCategoriaCtx = document.getElementById('productosPorCategoriaChart').getContext('2d');
                     new Chart(productosPorCategoriaCtx, {
