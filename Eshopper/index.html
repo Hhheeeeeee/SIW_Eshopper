@@ -1,510 +1,702 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
     <title>Home | E-Shopper</title>
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/font-awesome.min.css" rel="stylesheet">
-    <link href="css/prettyPhoto.css" rel="stylesheet">
-    <link href="css/price-range.css" rel="stylesheet">
-    <link href="css/animate.css" rel="stylesheet">
-	<link href="css/main.css" rel="stylesheet">
-	<link href="css/responsive.css" rel="stylesheet">
-	<style>
-        /* Usar Flexbox en las filas */
-		.row {
-			display: flex;
-			flex-wrap: wrap;  /* Asegura que los elementos se ajusten si no caben */
-			align-items: stretch; /* Asegura que todas las columnas tengan la misma altura */
-		}
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/font-awesome.min.css" rel="stylesheet" />
+    <link href="css/prettyPhoto.css" rel="stylesheet" />
+    <link href="css/price-range.css" rel="stylesheet" />
+    <link href="css/animate.css" rel="stylesheet" />
+    <link href="css/main.css" rel="stylesheet" />
+    <link href="css/responsive.css" rel="stylesheet" />
+    <style>
+      /* Usar Flexbox en las filas */
+      .row {
+        display: flex;
+        flex-wrap: wrap; /* Asegura que los elementos se ajusten si no caben */
+        align-items: stretch; /* Asegura que todas las columnas tengan la misma altura */
+      }
 
-		/* Asegura que las columnas dentro de la fila tengan la misma altura */
-		.col-sm-4 {
-			display: flex;
-			flex-direction: column;
-			justify-content: space-between; /* Distribuye el contenido de manera uniforme */
-			margin-bottom: 20px; /* Ajusta según sea necesario */
-		}
+      /* Asegura que las columnas dentro de la fila tengan la misma altura */
+      .col-sm-4 {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between; /* Distribuye el contenido de manera uniforme */
+        margin-bottom: 20px; /* Ajusta según sea necesario */
+      }
 
-		/* Ajuste de las imágenes para que usen el espacio restante */
-		.product-image-wrapper {
-			display: flex;
-			flex-direction: column;
-			flex-grow: 1;
-			padding: 10px; /* Ajusta si es necesario */
-		}
+      /* Ajuste de las imágenes para que usen el espacio restante */
+      .product-image-wrapper {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        padding: 10px; /* Ajusta si es necesario */
+      }
 
-		/* Limita la altura del texto dentro de la columna */
-		.productinfo p {
-			max-height: 60px; /* Establece la altura máxima que debe mostrar el texto */
-			overflow: hidden; /* Oculta el texto que excede el límite */
-			text-overflow: ellipsis; /* Agrega los puntos suspensivos (...) si el texto se corta */
-			transition: max-height 0.3s ease; /* Agrega una transición suave */
-		}
+      /* Limita la altura del texto dentro de la columna */
+      .productinfo p {
+        max-height: 60px; /* Establece la altura máxima que debe mostrar el texto */
+        overflow: hidden; /* Oculta el texto que excede el límite */
+        text-overflow: ellipsis; /* Agrega los puntos suspensivos (...) si el texto se corta */
+        transition: max-height 0.3s ease; /* Agrega una transición suave */
+      }
 
-		/* Cuando el usuario pasa el cursor, se muestra todo el texto */
-		.col-sm-4:hover .productinfo p {
-			max-height: none; /* Expande el texto para mostrarlo completo */
-			overflow: visible; /* Hace visible el texto completo */
-		}
+      /* Cuando el usuario pasa el cursor, se muestra todo el texto */
+      .col-sm-4:hover .productinfo p {
+        max-height: none; /* Expande el texto para mostrarlo completo */
+        overflow: visible; /* Hace visible el texto completo */
+      }
 
-		/* Si deseas una transición suave en el hover, puedes agregarla a la propiedad "max-height" */
-		.productinfo p {
-			transition: max-height 0.3s ease-in-out;
-		}
-
+      /* Si deseas una transición suave en el hover, puedes agregarla a la propiedad "max-height" */
+      .productinfo p {
+        transition: max-height 0.3s ease-in-out;
+      }
     </style>
-	<style>
-		.panel.panel-default {
-			margin-bottom: 10px; /* Aumenta la separación entre categorías */
-			padding: 10px;
-			border-radius: 5px; /* Bordes redondeados */
-			background-color: #f9f9f9; /* Color de fondo */
-		}
-	
-		.panel-heading {
-			background-color: #e0e0e0; /* Fondo del encabezado */
-			padding: 10px;
-			border-radius: 5px;
-		}
-	
-		.panel-body {
-			background-color: #ffffff; /* Fondo del contenido */
-			padding: 10px;
-		}
-	
-		.panel-body ul {
-			list-style: none;
-			padding: 0;
-		}
-	
-		.panel-body ul li {
-			padding: 5px 0; /* Espaciado entre elementos de la lista */
-		}
-	</style>
-	<style>
-		/* Estilos para el contenedor principal */
-		.price-filter {
-			background: #f9f9f9;
-			padding: 15px;
-			border-radius: 8px;
-			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-			text-align: center;
-			max-width: 400px;
-			margin: auto;
-		}
-		
-		/* Estilos para los inputs y sliders */
-		.price-slider-container {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			gap: 10px;
-			margin: 15px 0;
-		}
-		
-		/* Estilos para los inputs numéricos */
-		.price-input {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			font-size: 14px;
-		}
-		
-		.price-input input {
-			width: 60px;
-			padding: 5px;
-			text-align: center;
-			border: 1px solid #ccc;
-			border-radius: 5px;
-		}
-		
-		/* Estilos para el slider */
-		.slider-wrapper {
-			flex: 1;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			position: relative;
-		}
-		
-		.slider-wrapper input[type="range"] {
-			width: 100%;
-			margin: 5px 0;
-		}
-		
-		/* Estilos para el botón */
-		#applyPriceFilter {
-			background: #ff5722;
-			color: white;
-			border: none;
-			padding: 8px 15px;
-			border-radius: 5px;
-			cursor: pointer;
-			font-size: 16px;
-			transition: 0.3s;
-		}
-		
-		#applyPriceFilter:hover {
-			background: #e64a19;
-		}
-		</style>
+    <style>
+      .panel.panel-default {
+        margin-bottom: 10px; /* Aumenta la separación entre categorías */
+        padding: 10px;
+        border-radius: 5px; /* Bordes redondeados */
+        background-color: #f9f9f9; /* Color de fondo */
+      }
 
-		<style>
-			.offer-price {
-				font-size: 1.5em;
-				color: orange;
-			}
-			
-			.original-price {
-				font-size: 1em;
-				color: red;
-			}
-		</style>
-		<style> /* Estilo del menú desplegable */
-			
-			#submenuVer {
-			display: none;
-			position: absolute;
-			background-color: #f9f9f9;
-			min-width: 160px;
-			box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-			z-index: 1;
-			padding: 10px;
-			border-radius: 5px;
-			}
+      .panel-heading {
+        background-color: #e0e0e0; /* Fondo del encabezado */
+        padding: 10px;
+        border-radius: 5px;
+      }
 
-			#submenuVer li {
-			list-style: none;
-			}
+      .panel-body {
+        background-color: #ffffff; /* Fondo del contenido */
+        padding: 10px;
+      }
 
-			#submenuVer li a {
-			text-decoration: none;
-			padding: 8px;
-			display: block;
-			color: #333;
-			}
+      .panel-body ul {
+        list-style: none;
+        padding: 0;
+      }
 
-			#submenuVer li a:hover {
-			background-color: #ddd;
-			}
+      .panel-body ul li {
+        padding: 5px 0; /* Espaciado entre elementos de la lista */
+      }
+    </style>
+    <style>
+      /* Estilos para el contenedor principal */
+      .price-filter {
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        max-width: 400px;
+        margin: auto;
+      }
 
-		</style>
-	
+      /* Estilos para los inputs y sliders */
+      .price-slider-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin: 15px 0;
+      }
+
+      /* Estilos para los inputs numéricos */
+      .price-input {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-size: 14px;
+      }
+
+      .price-input input {
+        width: 60px;
+        padding: 5px;
+        text-align: center;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+
+      /* Estilos para el slider */
+      .slider-wrapper {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+      }
+
+      .slider-wrapper input[type="range"] {
+        width: 100%;
+        margin: 5px 0;
+      }
+
+      /* Estilos para el botón */
+      #applyPriceFilter {
+        background: #ff5722;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: 0.3s;
+      }
+
+      #applyPriceFilter:hover {
+        background: #e64a19;
+      }
+    </style>
+
+    <style>
+      .offer-price {
+        font-size: 1.5em;
+        color: orange;
+      }
+
+      .original-price {
+        font-size: 1em;
+        color: red;
+      }
+    </style>
+    <style>
+      /* Estilo del menú desplegable */
+
+      #submenuExportar {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        padding: 10px;
+        border-radius: 5px;
+      }
+
+      #submenuExportar li {
+        list-style: none;
+      }
+
+      #submenuExportar li a {
+        text-decoration: none;
+        padding: 8px;
+        display: block;
+        color: #333;
+      }
+
+      #submenuExportar li a:hover {
+        background-color: #e64a19;
+      }
+
+      #submenuVer {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        padding: 10px;
+        border-radius: 5px;
+      }
+
+      #submenuVer li {
+        list-style: none;
+      }
+
+      #submenuVer li a {
+        text-decoration: none;
+        padding: 8px;
+        display: block;
+        color: #333;
+      }
+
+      #submenuVer li a:hover {
+        background-color: #e64a19;
+      }
+    </style>
+
     <!--[if lt IE 9]>
-    <script src="js/html5shiv.js"></script>
-    <script src="js/respond.min.js"></script>
-    <![endif]-->       
-    <link rel="shortcut icon" href="images/ico/favicon.ico">
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/ico/apple-touch-icon-144-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
-</head><!--/head-->
+      <script src="js/html5shiv.js"></script>
+      <script src="js/respond.min.js"></script>
+    <![endif]-->
+    <link rel="shortcut icon" href="images/ico/favicon.ico" />
+    <link
+      rel="apple-touch-icon-precomposed"
+      sizes="144x144"
+      href="images/ico/apple-touch-icon-144-precomposed.png"
+    />
+    <link
+      rel="apple-touch-icon-precomposed"
+      sizes="114x114"
+      href="images/ico/apple-touch-icon-114-precomposed.png"
+    />
+    <link
+      rel="apple-touch-icon-precomposed"
+      sizes="72x72"
+      href="images/ico/apple-touch-icon-72-precomposed.png"
+    />
+    <link
+      rel="apple-touch-icon-precomposed"
+      href="images/ico/apple-touch-icon-57-precomposed.png"
+    /></head
+  ><!--/head-->
 
-<body>
-	<div class="header_top"><!--header_top-->
-		<div class="container">
-			<div class="row">
-				<div class="col-sm-6">
-					<div class="contactinfo">
-						<ul class="nav nav-pills">
-							<li><a href="#"><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
-							<li><a href="#"><i class="fa fa-envelope"></i> info@domain.com</a></li>
-						</ul>
-					</div>
-				</div>
-				<div class="col-sm-6">
-					<div class="social-icons pull-right">
-						<ul class="nav navbar-nav">
-							<li><a href="#"><i class="fa fa-facebook"></i></a></li>
-							<li><a href="#"><i class="fa fa-twitter"></i></a></li>
-							<li><a href="#"><i class="fa fa-linkedin"></i></a></li>
-							<li><a href="#"><i class="fa fa-dribbble"></i></a></li>
-							<li><a href="#"><i class="fa fa-google-plus"></i></a></li>
-						</ul>
-					</div>
-				</div>
-			</div>
-			<!-- Mostrar la última actualización -->
-			<div class="row">
-				<div class="col-sm-12">
-					<div class="last-update">
-						<p><strong>Última actualización:</strong> <span id="last-update">Cargando...</span></p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div><!--/header_top-->
-	
-		
-		<div class="header-middle"><!--header-middle-->
-			<div class="container">
-				<div class="row">
-					<div class="col-sm-4">
-						<div class="logo pull-left">
-							<a href="index.html"><img src="images/home/logo.png" alt="" /></a>
-						</div>
-						<div class="btn-group pull-right">
-							<div class="btn-group">
-								<button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
-									USA
-									<span class="caret"></span>
-								</button>
-								<ul class="dropdown-menu">
-									<li><a href="#">Canada</a></li>
-									<li><a href="#">UK</a></li>
-								</ul>
-							</div>
-							
-							<div class="btn-group">
-								<button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
-									DOLLAR
-									<span class="caret"></span>
-								</button>
-								<ul class="dropdown-menu">
-									<li><a href="#">Canadian Dollar</a></li>
-									<li><a href="#">Pound</a></li>
-								</ul>
-							</div>
-						</div>
-					</div>
-					<div class="col-sm-8">
-						<div class="shop-menu pull-right">
-							<ul class="nav navbar-nav">
-								<li><a href="javascript:void(0);" id="accountLink"><i class="fa fa-user"></i> Account</a></li>
-								<p id="accountMessage" style="color: red; display: none; margin-left: 10px;"></p>
-								<!-- Menú principal -->
-								<li class="dropdown">
-									<a href="#" id="verMenu" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-star"></i> Ver <b class="caret"></b></a>
-									<ul class="dropdown-menu" id="submenuVer">
-									<li><a href="#" id="verPedidos">Pedidos</a></li>
-									<li><a href="#" id="verProductos">Productos</a></li>
-									<li><a href="#" id="verOfertas">Ofertas</a></li>
-									<li><a href="#" id="verCategorias">Categorias</a></li>
-									</ul>
-								</li>
-  
-								<li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li>
-								<li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart</a></li>
-								<li><a href="login.html"><i class="fa fa-lock"></i> Login</a></li>
-								<li><a href="javascript:void(0);" id="exportLink"><i class="fa fa-file-pdf-o"></i> Exportar</a></li>
-								<li><a href="javascript:void(0);" id="chartsLink"><i class="fa fa-bar-chart"></i> Gráficos</a></li>
-							</ul>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div><!--/header-middle-->
-	
-		<div class="header-bottom"><!--header-bottom-->
-			<div class="container">
-				<div class="row">
-					<div class="col-sm-9">
-						<div class="navbar-header">
-							<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-								<span class="sr-only">Toggle navigation</span>
-								<span class="icon-bar"></span>
-								<span class="icon-bar"></span>
-								<span class="icon-bar"></span>
-							</button>
-						</div>
-						<div class="mainmenu pull-left">
-							<ul class="nav navbar-nav collapse navbar-collapse">
-								<li><a href="index.html" class="active">Home</a></li>
-								<li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
-                                    <ul role="menu" class="sub-menu">
-                                        <li><a href="shop.html">Products</a></li>
-										<li><a href="product-details.html">Product Details</a></li> 
-										<li><a href="checkout.html">Checkout</a></li> 
-										<li><a href="cart.html">Cart</a></li> 
-										<li><a href="login.html">Login</a></li> 
-										<li><a href="export.html">Exportar</a></li> 
-										<li><a href="charts.html">Gráficos</a></li> 
-                                    </ul>
-                                </li> 
-								<li class="dropdown"><a href="#">Blog<i class="fa fa-angle-down"></i></a>
-                                    <ul role="menu" class="sub-menu">
-                                        <li><a href="blog.html">Blog List</a></li>
-										<li><a href="blog-single.html">Blog Single</a></li>
-                                    </ul>
-                                </li> 
-								<li><a href="404.html">404</a></li>
-								<li><a href="contact-us.html">Contact</a></li>
-							</ul>
-						</div>
-					</div>
-					<div class="col-sm-3">
-						<div class="search_box pull-right">
-							<input type="text" placeholder="Search"/>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div><!--/header-bottom-->
-	</header><!--/header-->
-	
-	<section id="slider">
-		<div class="container">
-			<div class="row">
-				<div class="col-sm-12">
-					<div id="slider-carousel" class="carousel slide" data-ride="carousel">
-						<!-- Indicadores del slider -->
-						<ol class="carousel-indicators">
-							<!-- Se generarán dinámicamente en el script -->
-						</ol>
-	
-						<!-- Contenedor de los slides -->
-						<div class="carousel-inner" id="slider-items">
-							<!-- Se generarán dinámicamente en el script -->
-						</div>
-	
-						<!-- Controles del slider -->
-						<a href="#slider-carousel" class="left control-carousel hidden-xs" data-slide="prev">
-							<i class="fa fa-angle-left"></i>
-						</a>
-						<a href="#slider-carousel" class="right control-carousel hidden-xs" data-slide="next">
-							<i class="fa fa-angle-right"></i>
-						</a>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
-	
-	
-	<section>
-		<div class="container">
-			<div class="row">
-				<div class="col-sm-3">
-					<div class="left-sidebar">
-						<h2>Category</h2>
-						<div class="panel-group category-products" id="accordian"><!--category-productsr-->
-							<div class="panel panel-default">
-								<div class="panel-heading">
-									<h4 class="panel-title">
-										<a data-toggle="collapse" data-parent="#accordian" href="#sportswear">
-											<span class="badge pull-right"><i class="fa fa-plus"></i></span>
-											Sportswear
-										</a>
-									</h4>
-								</div>
-								<div id="sportswear" class="panel-collapse collapse">
-									<div class="panel-body">
-										<ul>
-											<li><a href="#">Nike </a></li>
-											<li><a href="#">Under Armour </a></li>
-											<li><a href="#">Adidas </a></li>
-											<li><a href="#">Puma</a></li>
-											<li><a href="#">ASICS </a></li>
-										</ul>
-									</div>
-								</div>
-							</div>
-							<div class="panel panel-default">
-								<div class="panel-heading">
-									<h4 class="panel-title">
-										<a data-toggle="collapse" data-parent="#accordian" href="#mens">
-											<span class="badge pull-right"><i class="fa fa-plus"></i></span>
-											Mens
-										</a>
-									</h4>
-								</div>
-								<div id="mens" class="panel-collapse collapse">
-									<div class="panel-body">
-										<ul>
-											<li><a href="#">Fendi</a></li>
-											<li><a href="#">Guess</a></li>
-											<li><a href="#">Valentino</a></li>
-											<li><a href="#">Dior</a></li>
-											<li><a href="#">Versace</a></li>
-											<li><a href="#">Armani</a></li>
-											<li><a href="#">Prada</a></li>
-											<li><a href="#">Dolce and Gabbana</a></li>
-											<li><a href="#">Chanel</a></li>
-											<li><a href="#">Gucci</a></li>
-										</ul>
-									</div>
-								</div>
-							</div>
-							
-							<div class="panel panel-default">
-								<div class="panel-heading">
-									<h4 class="panel-title">
-										<a data-toggle="collapse" data-parent="#accordian" href="#womens">
-											<span class="badge pull-right"><i class="fa fa-plus"></i></span>
-											Womens
-										</a>
-									</h4>
-								</div>
-								<div id="womens" class="panel-collapse collapse">
-									<div class="panel-body">
-										<ul>
-											<li><a href="#">Fendi</a></li>
-											<li><a href="#">Guess</a></li>
-											<li><a href="#">Valentino</a></li>
-											<li><a href="#">Dior</a></li>
-											<li><a href="#">Versace</a></li>
-										</ul>
-									</div>
-								</div>
-							</div>
-							<div class="panel panel-default">
-								<div class="panel-heading">
-									<h4 class="panel-title"><a href="#">Kids</a></h4>
-								</div>
-							</div>
-							<div class="panel panel-default">
-								<div class="panel-heading">
-									<h4 class="panel-title"><a href="#">Fashion</a></h4>
-								</div>
-							</div>
-							<div class="panel panel-default">
-								<div class="panel-heading">
-									<h4 class="panel-title"><a href="#">Households</a></h4>
-								</div>
-							</div>
-							<div class="panel panel-default">
-								<div class="panel-heading">
-									<h4 class="panel-title"><a href="#">Interiors</a></h4>
-								</div>
-							</div>
-							<div class="panel panel-default">
-								<div class="panel-heading">
-									<h4 class="panel-title"><a href="#">Clothing</a></h4>
-								</div>
-							</div>
-							<div class="panel panel-default">
-								<div class="panel-heading">
-									<h4 class="panel-title"><a href="#">Bags</a></h4>
-								</div>
-							</div>
-							<div class="panel panel-default">
-								<div class="panel-heading">
-									<h4 class="panel-title"><a href="#">Shoes</a></h4>
-								</div>
-							</div>
-						</div><!--/category-products-->
-					
-						<div class="brands_products"><!--brands_products-->
-							<h2>Brands</h2>
-							<div class="brands-name">
-								<ul class="nav nav-pills nav-stacked">
-									<li><a href="#"> <span class="pull-right">(50)</span>Acne</a></li>
-									<li><a href="#"> <span class="pull-right">(56)</span>Grüne Erde</a></li>
-									<li><a href="#"> <span class="pull-right">(27)</span>Albiro</a></li>
-									<li><a href="#"> <span class="pull-right">(32)</span>Ronhill</a></li>
-									<li><a href="#"> <span class="pull-right">(5)</span>Oddmolly</a></li>
-									<li><a href="#"> <span class="pull-right">(9)</span>Boudestijn</a></li>
-									<li><a href="#"> <span class="pull-right">(4)</span>Rösch creative culture</a></li>
-								</ul>
-							</div>
-						</div><!--/brands_products-->
-						
-						<!--
+  <body>
+    <header>
+      <div class="header_top">
+        <!--header_top-->
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-6">
+              <div class="contactinfo">
+                <ul class="nav nav-pills">
+                  <li>
+                    <a href="#"><i class="fa fa-phone"></i> +2 95 01 88 821</a>
+                  </li>
+                  <li>
+                    <a href="#"
+                      ><i class="fa fa-envelope"></i> info@domain.com</a
+                    >
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="social-icons pull-right">
+                <ul class="nav navbar-nav">
+                  <li>
+                    <a href="#"><i class="fa fa-facebook"></i></a>
+                  </li>
+                  <li>
+                    <a href="#"><i class="fa fa-twitter"></i></a>
+                  </li>
+                  <li>
+                    <a href="#"><i class="fa fa-linkedin"></i></a>
+                  </li>
+                  <li>
+                    <a href="#"><i class="fa fa-dribbble"></i></a>
+                  </li>
+                  <li>
+                    <a href="#"><i class="fa fa-google-plus"></i></a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <!-- Mostrar la última actualización -->
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="last-update">
+                <p>
+                  <strong>Última actualización:</strong>
+                  <span id="last-update">Cargando...</span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--/header_top-->
+
+      <div class="header-middle">
+        <!--header-middle-->
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-4">
+              <div class="logo pull-left">
+                <a href="index.html"
+                  ><img src="images/home/logo.png" alt=""
+                /></a>
+              </div>
+              <div class="btn-group pull-right">
+                <div class="btn-group">
+                  <button
+                    type="button"
+                    class="btn btn-default dropdown-toggle usa"
+                    data-toggle="dropdown"
+                  >
+                    USA
+                    <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a href="#">Canada</a></li>
+                    <li><a href="#">UK</a></li>
+                  </ul>
+                </div>
+
+                <div class="btn-group">
+                  <button
+                    type="button"
+                    class="btn btn-default dropdown-toggle usa"
+                    data-toggle="dropdown"
+                  >
+                    DOLLAR
+                    <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a href="#">Canadian Dollar</a></li>
+                    <li><a href="#">Pound</a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-8">
+              <div class="shop-menu pull-right">
+                <ul class="nav navbar-nav">
+                  <li>
+                    <a href="javascript:void(0);" id="accountLink"
+                      ><i class="fa fa-user"></i> Account</a
+                    >
+                  </li>
+                  <p
+                    id="accountMessage"
+                    style="color: red; display: none; margin-left: 10px"
+                  ></p>
+                  <!-- Menú principal -->
+                  <li class="dropdown">
+                    <a
+                      href="#"
+                      id="verMenu"
+                      class="dropdown-toggle"
+                      data-toggle="dropdown"
+                      ><i class="fa fa-star"></i> Ver <b class="caret"></b
+                    ></a>
+                    <ul class="dropdown-menu" id="submenuVer">
+                      <li><a href="#" id="verPedidos">Pedidos</a></li>
+                      <li><a href="#" id="verProductos">Productos</a></li>
+                      <li><a href="#" id="verOfertas">Ofertas</a></li>
+                      <li><a href="#" id="verCategorias">Categorias</a></li>
+                    </ul>
+                  </li>
+
+                  <li>
+                    <a href="checkout.html"
+                      ><i class="fa fa-crosshairs"></i> Checkout</a
+                    >
+                  </li>
+                  <li>
+                    <a href="cart.html"
+                      ><i class="fa fa-shopping-cart"></i> Cart</a
+                    >
+                  </li>
+                  <li>
+                    <a href="login.html"><i class="fa fa-lock"></i> Login</a>
+                  </li>
+                  <li>
+                    <!--<a href="javascript:void(0);" id="exportLink">
+						<i class="fa fa-file-pdf-o"></i> Exportar
+					</a>-->
+                    <a
+                      href="#"
+                      id="verMenuExportar"
+                      class="dropdown-toggle"
+                      data-toggle="dropdown"
+                      ><i class="fa fa-file-pdf-o"></i> Exportar
+                      <b class="caret"></b
+                    ></a>
+                    <ul class="dropdown-menu" id="submenuExportar">
+                      <li><a href="#" id="exportarPedidos">Pedidos</a></li>
+                      <li><a href="#" id="exportarProductos">Productos</a></li>
+                      <li><a href="#" id="exportarOfertas">Ofertas</a></li>
+                      <li>
+                        <a href="#" id="exportarCategorias">Categorias</a>
+                      </li>
+                    </ul>
+                  </li>
+                  <li>
+                    <a href="javascript:void(0);" id="chartsLink"
+                      ><i class="fa fa-bar-chart"></i> Gráficos</a
+                    >
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--/header-middle-->
+
+      <div class="header-bottom">
+        <!--header-bottom-->
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-9">
+              <div class="navbar-header">
+                <button
+                  type="button"
+                  class="navbar-toggle"
+                  data-toggle="collapse"
+                  data-target=".navbar-collapse"
+                >
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+              </div>
+              <div class="mainmenu pull-left">
+                <ul class="nav navbar-nav collapse navbar-collapse">
+                  <li><a href="index.html" class="active">Home</a></li>
+                  <li class="dropdown">
+                    <a href="#">Shop<i class="fa fa-angle-down"></i></a>
+                    <ul role="menu" class="sub-menu">
+                      <li><a href="shop.html">Products</a></li>
+                      <li>
+                        <a href="product-details.html">Product Details</a>
+                      </li>
+                      <li><a href="checkout.html">Checkout</a></li>
+                      <li><a href="cart.html">Cart</a></li>
+                      <li><a href="login.html">Login</a></li>
+                      <li><a href="export.html">Exportar</a></li>
+                      <li><a href="charts.html">Gráficos</a></li>
+                    </ul>
+                  </li>
+                  <li class="dropdown">
+                    <a href="#">Blog<i class="fa fa-angle-down"></i></a>
+                    <ul role="menu" class="sub-menu">
+                      <li><a href="blog.html">Blog List</a></li>
+                      <li><a href="blog-single.html">Blog Single</a></li>
+                    </ul>
+                  </li>
+                  <li><a href="404.html">404</a></li>
+                  <li><a href="contact-us.html">Contact</a></li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-sm-3">
+              <div class="search_box pull-right">
+                <input type="text" placeholder="Search" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--/header-bottom-->
+    </header>
+    <!--/header-->
+
+    <section id="slider">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-12">
+            <div
+              id="slider-carousel"
+              class="carousel slide"
+              data-ride="carousel"
+            >
+              <!-- Indicadores del slider -->
+              <ol class="carousel-indicators">
+                <!-- Se generarán dinámicamente en el script -->
+              </ol>
+
+              <!-- Contenedor de los slides -->
+              <div class="carousel-inner" id="slider-items">
+                <!-- Se generarán dinámicamente en el script -->
+              </div>
+
+              <!-- Controles del slider -->
+              <a
+                href="#slider-carousel"
+                class="left control-carousel hidden-xs"
+                data-slide="prev"
+              >
+                <i class="fa fa-angle-left"></i>
+              </a>
+              <a
+                href="#slider-carousel"
+                class="right control-carousel hidden-xs"
+                data-slide="next"
+              >
+                <i class="fa fa-angle-right"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-3">
+            <div class="left-sidebar">
+              <h2>Category</h2>
+              <div class="panel-group category-products" id="accordian">
+                <!--category-productsr-->
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                      <a
+                        data-toggle="collapse"
+                        data-parent="#accordian"
+                        href="#sportswear"
+                      >
+                        <span class="badge pull-right"
+                          ><i class="fa fa-plus"></i
+                        ></span>
+                        Sportswear
+                      </a>
+                    </h4>
+                  </div>
+                  <div id="sportswear" class="panel-collapse collapse">
+                    <div class="panel-body">
+                      <ul>
+                        <li><a href="#">Nike </a></li>
+                        <li><a href="#">Under Armour </a></li>
+                        <li><a href="#">Adidas </a></li>
+                        <li><a href="#">Puma</a></li>
+                        <li><a href="#">ASICS </a></li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                      <a
+                        data-toggle="collapse"
+                        data-parent="#accordian"
+                        href="#mens"
+                      >
+                        <span class="badge pull-right"
+                          ><i class="fa fa-plus"></i
+                        ></span>
+                        Mens
+                      </a>
+                    </h4>
+                  </div>
+                  <div id="mens" class="panel-collapse collapse">
+                    <div class="panel-body">
+                      <ul>
+                        <li><a href="#">Fendi</a></li>
+                        <li><a href="#">Guess</a></li>
+                        <li><a href="#">Valentino</a></li>
+                        <li><a href="#">Dior</a></li>
+                        <li><a href="#">Versace</a></li>
+                        <li><a href="#">Armani</a></li>
+                        <li><a href="#">Prada</a></li>
+                        <li><a href="#">Dolce and Gabbana</a></li>
+                        <li><a href="#">Chanel</a></li>
+                        <li><a href="#">Gucci</a></li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                      <a
+                        data-toggle="collapse"
+                        data-parent="#accordian"
+                        href="#womens"
+                      >
+                        <span class="badge pull-right"
+                          ><i class="fa fa-plus"></i
+                        ></span>
+                        Womens
+                      </a>
+                    </h4>
+                  </div>
+                  <div id="womens" class="panel-collapse collapse">
+                    <div class="panel-body">
+                      <ul>
+                        <li><a href="#">Fendi</a></li>
+                        <li><a href="#">Guess</a></li>
+                        <li><a href="#">Valentino</a></li>
+                        <li><a href="#">Dior</a></li>
+                        <li><a href="#">Versace</a></li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title"><a href="#">Kids</a></h4>
+                  </div>
+                </div>
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title"><a href="#">Fashion</a></h4>
+                  </div>
+                </div>
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title"><a href="#">Households</a></h4>
+                  </div>
+                </div>
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title"><a href="#">Interiors</a></h4>
+                  </div>
+                </div>
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title"><a href="#">Clothing</a></h4>
+                  </div>
+                </div>
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title"><a href="#">Bags</a></h4>
+                  </div>
+                </div>
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title"><a href="#">Shoes</a></h4>
+                  </div>
+                </div>
+              </div>
+              <!--/category-products-->
+
+              <div class="brands_products">
+                <!--brands_products-->
+                <h2>Brands</h2>
+                <div class="brands-name">
+                  <ul class="nav nav-pills nav-stacked">
+                    <li>
+                      <a href="#"> <span class="pull-right">(50)</span>Acne</a>
+                    </li>
+                    <li>
+                      <a href="#">
+                        <span class="pull-right">(56)</span>Grüne Erde</a
+                      >
+                    </li>
+                    <li>
+                      <a href="#">
+                        <span class="pull-right">(27)</span>Albiro</a
+                      >
+                    </li>
+                    <li>
+                      <a href="#">
+                        <span class="pull-right">(32)</span>Ronhill</a
+                      >
+                    </li>
+                    <li>
+                      <a href="#">
+                        <span class="pull-right">(5)</span>Oddmolly</a
+                      >
+                    </li>
+                    <li>
+                      <a href="#">
+                        <span class="pull-right">(9)</span>Boudestijn</a
+                      >
+                    </li>
+                    <li>
+                      <a href="#">
+                        <span class="pull-right">(4)</span>Rösch creative
+                        culture</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <!--/brands_products-->
+
+              <!--
 						<div class="price-range">
 							<h2>Price Range</h2>
 							<div class="well text-center">
@@ -526,36 +718,66 @@
 						</div>
 					-->
 
-					<div class="price-filter">
-						<h2>Filtrar por Precio</h2>
-						<div class="price-slider-container">
-							<div class="price-input">
-								<label for="priceMin">Mín:</label>
-								<input type="number" id="priceMin" value="250" min="0" max="600" step="5">
-							</div>
-							<div class="slider-wrapper">
-								<input type="range" id="priceSliderMin" min="0" max="600" step="5" value="250">
-								<input type="range" id="priceSliderMax" min="0" max="600" step="5" value="450">
-							</div>
-							<div class="price-input">
-								<label for="priceMax">Máx:</label>
-								<input type="number" id="priceMax" value="450" min="0" max="600" step="5">
-							</div>
-						</div>
-						<button id="applyPriceFilter">Filtrar</button>
-					</div>
-						
-						<div class="shipping text-center"><!--shipping-->
-							<img src="images/home/shipping.jpg" alt="" />
-						</div><!--/shipping-->
-					
-					</div>
-				</div>
-				
-				<div class="col-sm-9 padding-right">
-					<div class="features_items"><!--features_items-->
-						<h2 class="title text-center">Features Items</h2>
-						<!--<div class="col-sm-4">
+              <div class="price-filter">
+                <h2>Filtrar por Precio</h2>
+                <div class="price-slider-container">
+                  <div class="price-input">
+                    <label for="priceMin">Mín:</label>
+                    <input
+                      type="number"
+                      id="priceMin"
+                      value="250"
+                      min="0"
+                      max="600"
+                      step="5"
+                    />
+                  </div>
+                  <div class="slider-wrapper">
+                    <input
+                      type="range"
+                      id="priceSliderMin"
+                      min="0"
+                      max="600"
+                      step="5"
+                      value="250"
+                    />
+                    <input
+                      type="range"
+                      id="priceSliderMax"
+                      min="0"
+                      max="600"
+                      step="5"
+                      value="450"
+                    />
+                  </div>
+                  <div class="price-input">
+                    <label for="priceMax">Máx:</label>
+                    <input
+                      type="number"
+                      id="priceMax"
+                      value="450"
+                      min="0"
+                      max="600"
+                      step="5"
+                    />
+                  </div>
+                </div>
+                <button id="applyPriceFilter">Filtrar</button>
+              </div>
+
+              <div class="shipping text-center">
+                <!--shipping-->
+                <img src="images/home/shipping.jpg" alt="" />
+              </div>
+              <!--/shipping-->
+            </div>
+          </div>
+
+          <div class="col-sm-9 padding-right">
+            <div class="features_items">
+              <!--features_items-->
+              <h2 class="title text-center">Features Items</h2>
+              <!--<div class="col-sm-4">
 							<div class="product-image-wrapper">
 								<div class="single-products">
 										<div class="productinfo text-center">
@@ -707,629 +929,692 @@
 								</div>
 							</div>
 						</div>-->
-						
-					</div><!--features_items-->
-					
-					<div class="category-tab"><!--category-tab-->
-						<div class="col-sm-12">
-							<ul class="nav nav-tabs">
-								<li class="active"><a href="#tshirt" data-toggle="tab">T-Shirt</a></li>
-								<li><a href="#blazers" data-toggle="tab">Blazers</a></li>
-								<li><a href="#sunglass" data-toggle="tab">Sunglass</a></li>
-								<li><a href="#kids" data-toggle="tab">Kids</a></li>
-								<li><a href="#poloshirt" data-toggle="tab">Polo shirt</a></li>
-							</ul>
-						</div>
-						<div class="tab-content">
-							<div class="tab-pane fade active in" id="tshirt" >
-								<div class="col-sm-3">
-									<div class="product-image-wrapper">
-										<div class="single-products">
-											<div class="productinfo text-center">
-												<img src="images/home/gallery1.jpg" alt="" />
-												<h2>$56</h2>
-												<p>Easy Polo Black Edition</p>
-												<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-											</div>
-											
-										</div>
-									</div>
-								</div>
-								<div class="col-sm-3">
-									<div class="product-image-wrapper">
-										<div class="single-products">
-											<div class="productinfo text-center">
-												<img src="images/home/gallery2.jpg" alt="" />
-												<h2>$56</h2>
-												<p>Easy Polo Black Edition</p>
-												<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-											</div>
-											
-										</div>
-									</div>
-								</div>
-								<div class="col-sm-3">
-									<div class="product-image-wrapper">
-										<div class="single-products">
-											<div class="productinfo text-center">
-												<img src="images/home/gallery3.jpg" alt="" />
-												<h2>$56</h2>
-												<p>Easy Polo Black Edition</p>
-												<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-											</div>
-											
-										</div>
-									</div>
-								</div>
-								<div class="col-sm-3">
-									<div class="product-image-wrapper">
-										<div class="single-products">
-											<div class="productinfo text-center">
-												<img src="images/home/gallery4.jpg" alt="" />
-												<h2>$56</h2>
-												<p>Easy Polo Black Edition</p>
-												<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-											</div>
-											
-										</div>
-									</div>
-								</div>
-							</div>
-							
-							<div class="tab-pane fade" id="blazers" >
-								<div class="col-sm-3">
-									<div class="product-image-wrapper">
-										<div class="single-products">
-											<div class="productinfo text-center">
-												<img src="images/home/gallery4.jpg" alt="" />
-												<h2>$56</h2>
-												<p>Easy Polo Black Edition</p>
-												<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-											</div>
-											
-										</div>
-									</div>
-								</div>
-								<div class="col-sm-3">
-									<div class="product-image-wrapper">
-										<div class="single-products">
-											<div class="productinfo text-center">
-												<img src="images/home/gallery3.jpg" alt="" />
-												<h2>$56</h2>
-												<p>Easy Polo Black Edition</p>
-												<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-											</div>
-											
-										</div>
-									</div>
-								</div>
-								<div class="col-sm-3">
-									<div class="product-image-wrapper">
-										<div class="single-products">
-											<div class="productinfo text-center">
-												<img src="images/home/gallery2.jpg" alt="" />
-												<h2>$56</h2>
-												<p>Easy Polo Black Edition</p>
-												<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-											</div>
-											
-										</div>
-									</div>
-								</div>
-								<div class="col-sm-3">
-									<div class="product-image-wrapper">
-										<div class="single-products">
-											<div class="productinfo text-center">
-												<img src="images/home/gallery1.jpg" alt="" />
-												<h2>$56</h2>
-												<p>Easy Polo Black Edition</p>
-												<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-											</div>
-											
-										</div>
-									</div>
-								</div>
-							</div>
-							
-							<div class="tab-pane fade" id="sunglass" >
-								<div class="col-sm-3">
-									<div class="product-image-wrapper">
-										<div class="single-products">
-											<div class="productinfo text-center">
-												<img src="images/home/gallery3.jpg" alt="" />
-												<h2>$56</h2>
-												<p>Easy Polo Black Edition</p>
-												<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-											</div>
-											
-										</div>
-									</div>
-								</div>
-								<div class="col-sm-3">
-									<div class="product-image-wrapper">
-										<div class="single-products">
-											<div class="productinfo text-center">
-												<img src="images/home/gallery4.jpg" alt="" />
-												<h2>$56</h2>
-												<p>Easy Polo Black Edition</p>
-												<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-											</div>
-											
-										</div>
-									</div>
-								</div>
-								<div class="col-sm-3">
-									<div class="product-image-wrapper">
-										<div class="single-products">
-											<div class="productinfo text-center">
-												<img src="images/home/gallery1.jpg" alt="" />
-												<h2>$56</h2>
-												<p>Easy Polo Black Edition</p>
-												<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-											</div>
-											
-										</div>
-									</div>
-								</div>
-								<div class="col-sm-3">
-									<div class="product-image-wrapper">
-										<div class="single-products">
-											<div class="productinfo text-center">
-												<img src="images/home/gallery2.jpg" alt="" />
-												<h2>$56</h2>
-												<p>Easy Polo Black Edition</p>
-												<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-											</div>
-											
-										</div>
-									</div>
-								</div>
-							</div>
-							
-							<div class="tab-pane fade" id="kids" >
-								<div class="col-sm-3">
-									<div class="product-image-wrapper">
-										<div class="single-products">
-											<div class="productinfo text-center">
-												<img src="images/home/gallery1.jpg" alt="" />
-												<h2>$56</h2>
-												<p>Easy Polo Black Edition</p>
-												<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-											</div>
-											
-										</div>
-									</div>
-								</div>
-								<div class="col-sm-3">
-									<div class="product-image-wrapper">
-										<div class="single-products">
-											<div class="productinfo text-center">
-												<img src="images/home/gallery2.jpg" alt="" />
-												<h2>$56</h2>
-												<p>Easy Polo Black Edition</p>
-												<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-											</div>
-											
-										</div>
-									</div>
-								</div>
-								<div class="col-sm-3">
-									<div class="product-image-wrapper">
-										<div class="single-products">
-											<div class="productinfo text-center">
-												<img src="images/home/gallery3.jpg" alt="" />
-												<h2>$56</h2>
-												<p>Easy Polo Black Edition</p>
-												<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-											</div>
-											
-										</div>
-									</div>
-								</div>
-								<div class="col-sm-3">
-									<div class="product-image-wrapper">
-										<div class="single-products">
-											<div class="productinfo text-center">
-												<img src="images/home/gallery4.jpg" alt="" />
-												<h2>$56</h2>
-												<p>Easy Polo Black Edition</p>
-												<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-											</div>
-											
-										</div>
-									</div>
-								</div>
-							</div>
-							
-							<div class="tab-pane fade" id="poloshirt" >
-								<div class="col-sm-3">
-									<div class="product-image-wrapper">
-										<div class="single-products">
-											<div class="productinfo text-center">
-												<img src="images/home/gallery2.jpg" alt="" />
-												<h2>$56</h2>
-												<p>Easy Polo Black Edition</p>
-												<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-											</div>
-											
-										</div>
-									</div>
-								</div>
-								<div class="col-sm-3">
-									<div class="product-image-wrapper">
-										<div class="single-products">
-											<div class="productinfo text-center">
-												<img src="images/home/gallery4.jpg" alt="" />
-												<h2>$56</h2>
-												<p>Easy Polo Black Edition</p>
-												<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-											</div>
-											
-										</div>
-									</div>
-								</div>
-								<div class="col-sm-3">
-									<div class="product-image-wrapper">
-										<div class="single-products">
-											<div class="productinfo text-center">
-												<img src="images/home/gallery3.jpg" alt="" />
-												<h2>$56</h2>
-												<p>Easy Polo Black Edition</p>
-												<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-											</div>
-											
-										</div>
-									</div>
-								</div>
-								<div class="col-sm-3">
-									<div class="product-image-wrapper">
-										<div class="single-products">
-											<div class="productinfo text-center">
-												<img src="images/home/gallery1.jpg" alt="" />
-												<h2>$56</h2>
-												<p>Easy Polo Black Edition</p>
-												<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-											</div>
-											
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div><!--/category-tab-->
-					
-					<div class="recommended_items"><!--recommended_items-->
-						<h2 class="title text-center">recommended items</h2>
-						
-						<div id="recommended-item-carousel" class="carousel slide" data-ride="carousel">
-							<div class="carousel-inner">
-								<div class="item active">	
-									<div class="col-sm-4">
-										<div class="product-image-wrapper">
-											<div class="single-products">
-												<div class="productinfo text-center">
-													<img src="images/home/recommend1.jpg" alt="" />
-													<h2>$56</h2>
-													<p>Easy Polo Black Edition</p>
-													<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-												</div>
-												
-											</div>
-										</div>
-									</div>
-									<div class="col-sm-4">
-										<div class="product-image-wrapper">
-											<div class="single-products">
-												<div class="productinfo text-center">
-													<img src="images/home/recommend2.jpg" alt="" />
-													<h2>$56</h2>
-													<p>Easy Polo Black Edition</p>
-													<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-												</div>
-												
-											</div>
-										</div>
-									</div>
-									<div class="col-sm-4">
-										<div class="product-image-wrapper">
-											<div class="single-products">
-												<div class="productinfo text-center">
-													<img src="images/home/recommend3.jpg" alt="" />
-													<h2>$56</h2>
-													<p>Easy Polo Black Edition</p>
-													<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-												</div>
-												
-											</div>
-										</div>
-									</div>
-								</div>
-								<div class="item">	
-									<div class="col-sm-4">
-										<div class="product-image-wrapper">
-											<div class="single-products">
-												<div class="productinfo text-center">
-													<img src="images/home/recommend1.jpg" alt="" />
-													<h2>$56</h2>
-													<p>Easy Polo Black Edition</p>
-													<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-												</div>
-												
-											</div>
-										</div>
-									</div>
-									<div class="col-sm-4">
-										<div class="product-image-wrapper">
-											<div class="single-products">
-												<div class="productinfo text-center">
-													<img src="images/home/recommend2.jpg" alt="" />
-													<h2>$56</h2>
-													<p>Easy Polo Black Edition</p>
-													<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-												</div>
-												
-											</div>
-										</div>
-									</div>
-									<div class="col-sm-4">
-										<div class="product-image-wrapper">
-											<div class="single-products">
-												<div class="productinfo text-center">
-													<img src="images/home/recommend3.jpg" alt="" />
-													<h2>$56</h2>
-													<p>Easy Polo Black Edition</p>
-													<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-												</div>
-												
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							 <a class="left recommended-item-control" href="#recommended-item-carousel" data-slide="prev">
-								<i class="fa fa-angle-left"></i>
-							  </a>
-							  <a class="right recommended-item-control" href="#recommended-item-carousel" data-slide="next">
-								<i class="fa fa-angle-right"></i>
-							  </a>			
-						</div>
-					</div><!--/recommended_items-->
-					
-				</div>
-			</div>
-		</div>
-	</section>
-	
-	<footer id="footer"><!--Footer-->
-		<div class="footer-top">
-			<div class="container">
-				<div class="row">
-					<div class="col-sm-2">
-						<div class="companyinfo">
-							<h2><span>e</span>-shopper</h2>
-							<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit,sed do eiusmod tempor</p>
-						</div>
-					</div>
-					<div class="col-sm-7">
-						<div class="col-sm-3">
-							<div class="video-gallery text-center">
-								<a href="#">
-									<div class="iframe-img">
-										<img src="images/home/iframe1.png" alt="" />
-									</div>
-									<div class="overlay-icon">
-										<i class="fa fa-play-circle-o"></i>
-									</div>
-								</a>
-								<p>Circle of Hands</p>
-								<h2>24 DEC 2014</h2>
-							</div>
-						</div>
-						
-						<div class="col-sm-3">
-							<div class="video-gallery text-center">
-								<a href="#">
-									<div class="iframe-img">
-										<img src="images/home/iframe2.png" alt="" />
-									</div>
-									<div class="overlay-icon">
-										<i class="fa fa-play-circle-o"></i>
-									</div>
-								</a>
-								<p>Circle of Hands</p>
-								<h2>24 DEC 2014</h2>
-							</div>
-						</div>
-						
-						<div class="col-sm-3">
-							<div class="video-gallery text-center">
-								<a href="#">
-									<div class="iframe-img">
-										<img src="images/home/iframe3.png" alt="" />
-									</div>
-									<div class="overlay-icon">
-										<i class="fa fa-play-circle-o"></i>
-									</div>
-								</a>
-								<p>Circle of Hands</p>
-								<h2>24 DEC 2014</h2>
-							</div>
-						</div>
-						
-						<div class="col-sm-3">
-							<div class="video-gallery text-center">
-								<a href="#">
-									<div class="iframe-img">
-										<img src="images/home/iframe4.png" alt="" />
-									</div>
-									<div class="overlay-icon">
-										<i class="fa fa-play-circle-o"></i>
-									</div>
-								</a>
-								<p>Circle of Hands</p>
-								<h2>24 DEC 2014</h2>
-							</div>
-						</div>
-					</div>
-					<div class="col-sm-3">
-						<div class="address">
-							<img src="images/home/map.png" alt="" />
-							<p>505 S Atlantic Ave Virginia Beach, VA(Virginia)</p>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		
-		<div class="footer-widget">
-			<div class="container">
-				<div class="row">
-					<div class="col-sm-2">
-						<div class="single-widget">
-							<h2>Service</h2>
-							<ul class="nav nav-pills nav-stacked">
-								<li><a href="#">Online Help</a></li>
-								<li><a href="#">Contact Us</a></li>
-								<li><a href="#">Order Status</a></li>
-								<li><a href="#">Change Location</a></li>
-								<li><a href="#">FAQ’s</a></li>
-							</ul>
-						</div>
-					</div>
-					<div class="col-sm-2">
-						<div class="single-widget">
-							<h2>Quock Shop</h2>
-							<ul class="nav nav-pills nav-stacked">
-								<li><a href="#">T-Shirt</a></li>
-								<li><a href="#">Mens</a></li>
-								<li><a href="#">Womens</a></li>
-								<li><a href="#">Gift Cards</a></li>
-								<li><a href="#">Shoes</a></li>
-							</ul>
-						</div>
-					</div>
-					<div class="col-sm-2">
-						<div class="single-widget">
-							<h2>Policies</h2>
-							<ul class="nav nav-pills nav-stacked">
-								<li><a href="#">Terms of Use</a></li>
-								<li><a href="#">Privecy Policy</a></li>
-								<li><a href="#">Refund Policy</a></li>
-								<li><a href="#">Billing System</a></li>
-								<li><a href="#">Ticket System</a></li>
-							</ul>
-						</div>
-					</div>
-					<div class="col-sm-2">
-						<div class="single-widget">
-							<h2>About Shopper</h2>
-							<ul class="nav nav-pills nav-stacked">
-								<li><a href="#">Company Information</a></li>
-								<li><a href="#">Careers</a></li>
-								<li><a href="#">Store Location</a></li>
-								<li><a href="#">Affillate Program</a></li>
-								<li><a href="#">Copyright</a></li>
-							</ul>
-						</div>
-					</div>
-					<div class="col-sm-3 col-sm-offset-1">
-						<div class="single-widget">
-							<h2>About Shopper</h2>
-							<form action="#" class="searchform">
-								<input type="text" placeholder="Your email address" />
-								<button type="submit" class="btn btn-default"><i class="fa fa-arrow-circle-o-right"></i></button>
-								<p>Get the most recent updates from <br />our site and be updated your self...</p>
-							</form>
-						</div>
-					</div>
-					
-				</div>
-			</div>
-		</div>
-		
-		<div class="footer-bottom">
-			<div class="container">
-				<div class="row">
-					<p class="pull-left">Copyright © 2013 E-SHOPPER Inc. All rights reserved.</p>
-					<p class="pull-right">Designed by <span><a target="_blank" href="http://www.themeum.com">Themeum</a></span></p>
-				</div>
-			</div>
-		</div>
-		
-	</footer><!--/Footer-->
-	
+            </div>
+            <!--features_items-->
 
-  
+            <div class="category-tab">
+              <!--category-tab-->
+              <div class="col-sm-12">
+                <ul class="nav nav-tabs">
+                  <li class="active">
+                    <a href="#tshirt" data-toggle="tab">T-Shirt</a>
+                  </li>
+                  <li><a href="#blazers" data-toggle="tab">Blazers</a></li>
+                  <li><a href="#sunglass" data-toggle="tab">Sunglass</a></li>
+                  <li><a href="#kids" data-toggle="tab">Kids</a></li>
+                  <li><a href="#poloshirt" data-toggle="tab">Polo shirt</a></li>
+                </ul>
+              </div>
+              <div class="tab-content">
+                <div class="tab-pane fade active in" id="tshirt">
+                  <div class="col-sm-3">
+                    <div class="product-image-wrapper">
+                      <div class="single-products">
+                        <div class="productinfo text-center">
+                          <img src="images/home/gallery1.jpg" alt="" />
+                          <h2>$56</h2>
+                          <p>Easy Polo Black Edition</p>
+                          <a href="#" class="btn btn-default add-to-cart"
+                            ><i class="fa fa-shopping-cart"></i>Add to cart</a
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-3">
+                    <div class="product-image-wrapper">
+                      <div class="single-products">
+                        <div class="productinfo text-center">
+                          <img src="images/home/gallery2.jpg" alt="" />
+                          <h2>$56</h2>
+                          <p>Easy Polo Black Edition</p>
+                          <a href="#" class="btn btn-default add-to-cart"
+                            ><i class="fa fa-shopping-cart"></i>Add to cart</a
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-3">
+                    <div class="product-image-wrapper">
+                      <div class="single-products">
+                        <div class="productinfo text-center">
+                          <img src="images/home/gallery3.jpg" alt="" />
+                          <h2>$56</h2>
+                          <p>Easy Polo Black Edition</p>
+                          <a href="#" class="btn btn-default add-to-cart"
+                            ><i class="fa fa-shopping-cart"></i>Add to cart</a
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-3">
+                    <div class="product-image-wrapper">
+                      <div class="single-products">
+                        <div class="productinfo text-center">
+                          <img src="images/home/gallery4.jpg" alt="" />
+                          <h2>$56</h2>
+                          <p>Easy Polo Black Edition</p>
+                          <a href="#" class="btn btn-default add-to-cart"
+                            ><i class="fa fa-shopping-cart"></i>Add to cart</a
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="tab-pane fade" id="blazers">
+                  <div class="col-sm-3">
+                    <div class="product-image-wrapper">
+                      <div class="single-products">
+                        <div class="productinfo text-center">
+                          <img src="images/home/gallery4.jpg" alt="" />
+                          <h2>$56</h2>
+                          <p>Easy Polo Black Edition</p>
+                          <a href="#" class="btn btn-default add-to-cart"
+                            ><i class="fa fa-shopping-cart"></i>Add to cart</a
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-3">
+                    <div class="product-image-wrapper">
+                      <div class="single-products">
+                        <div class="productinfo text-center">
+                          <img src="images/home/gallery3.jpg" alt="" />
+                          <h2>$56</h2>
+                          <p>Easy Polo Black Edition</p>
+                          <a href="#" class="btn btn-default add-to-cart"
+                            ><i class="fa fa-shopping-cart"></i>Add to cart</a
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-3">
+                    <div class="product-image-wrapper">
+                      <div class="single-products">
+                        <div class="productinfo text-center">
+                          <img src="images/home/gallery2.jpg" alt="" />
+                          <h2>$56</h2>
+                          <p>Easy Polo Black Edition</p>
+                          <a href="#" class="btn btn-default add-to-cart"
+                            ><i class="fa fa-shopping-cart"></i>Add to cart</a
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-3">
+                    <div class="product-image-wrapper">
+                      <div class="single-products">
+                        <div class="productinfo text-center">
+                          <img src="images/home/gallery1.jpg" alt="" />
+                          <h2>$56</h2>
+                          <p>Easy Polo Black Edition</p>
+                          <a href="#" class="btn btn-default add-to-cart"
+                            ><i class="fa fa-shopping-cart"></i>Add to cart</a
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="tab-pane fade" id="sunglass">
+                  <div class="col-sm-3">
+                    <div class="product-image-wrapper">
+                      <div class="single-products">
+                        <div class="productinfo text-center">
+                          <img src="images/home/gallery3.jpg" alt="" />
+                          <h2>$56</h2>
+                          <p>Easy Polo Black Edition</p>
+                          <a href="#" class="btn btn-default add-to-cart"
+                            ><i class="fa fa-shopping-cart"></i>Add to cart</a
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-3">
+                    <div class="product-image-wrapper">
+                      <div class="single-products">
+                        <div class="productinfo text-center">
+                          <img src="images/home/gallery4.jpg" alt="" />
+                          <h2>$56</h2>
+                          <p>Easy Polo Black Edition</p>
+                          <a href="#" class="btn btn-default add-to-cart"
+                            ><i class="fa fa-shopping-cart"></i>Add to cart</a
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-3">
+                    <div class="product-image-wrapper">
+                      <div class="single-products">
+                        <div class="productinfo text-center">
+                          <img src="images/home/gallery1.jpg" alt="" />
+                          <h2>$56</h2>
+                          <p>Easy Polo Black Edition</p>
+                          <a href="#" class="btn btn-default add-to-cart"
+                            ><i class="fa fa-shopping-cart"></i>Add to cart</a
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-3">
+                    <div class="product-image-wrapper">
+                      <div class="single-products">
+                        <div class="productinfo text-center">
+                          <img src="images/home/gallery2.jpg" alt="" />
+                          <h2>$56</h2>
+                          <p>Easy Polo Black Edition</p>
+                          <a href="#" class="btn btn-default add-to-cart"
+                            ><i class="fa fa-shopping-cart"></i>Add to cart</a
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="tab-pane fade" id="kids">
+                  <div class="col-sm-3">
+                    <div class="product-image-wrapper">
+                      <div class="single-products">
+                        <div class="productinfo text-center">
+                          <img src="images/home/gallery1.jpg" alt="" />
+                          <h2>$56</h2>
+                          <p>Easy Polo Black Edition</p>
+                          <a href="#" class="btn btn-default add-to-cart"
+                            ><i class="fa fa-shopping-cart"></i>Add to cart</a
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-3">
+                    <div class="product-image-wrapper">
+                      <div class="single-products">
+                        <div class="productinfo text-center">
+                          <img src="images/home/gallery2.jpg" alt="" />
+                          <h2>$56</h2>
+                          <p>Easy Polo Black Edition</p>
+                          <a href="#" class="btn btn-default add-to-cart"
+                            ><i class="fa fa-shopping-cart"></i>Add to cart</a
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-3">
+                    <div class="product-image-wrapper">
+                      <div class="single-products">
+                        <div class="productinfo text-center">
+                          <img src="images/home/gallery3.jpg" alt="" />
+                          <h2>$56</h2>
+                          <p>Easy Polo Black Edition</p>
+                          <a href="#" class="btn btn-default add-to-cart"
+                            ><i class="fa fa-shopping-cart"></i>Add to cart</a
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-3">
+                    <div class="product-image-wrapper">
+                      <div class="single-products">
+                        <div class="productinfo text-center">
+                          <img src="images/home/gallery4.jpg" alt="" />
+                          <h2>$56</h2>
+                          <p>Easy Polo Black Edition</p>
+                          <a href="#" class="btn btn-default add-to-cart"
+                            ><i class="fa fa-shopping-cart"></i>Add to cart</a
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="tab-pane fade" id="poloshirt">
+                  <div class="col-sm-3">
+                    <div class="product-image-wrapper">
+                      <div class="single-products">
+                        <div class="productinfo text-center">
+                          <img src="images/home/gallery2.jpg" alt="" />
+                          <h2>$56</h2>
+                          <p>Easy Polo Black Edition</p>
+                          <a href="#" class="btn btn-default add-to-cart"
+                            ><i class="fa fa-shopping-cart"></i>Add to cart</a
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-3">
+                    <div class="product-image-wrapper">
+                      <div class="single-products">
+                        <div class="productinfo text-center">
+                          <img src="images/home/gallery4.jpg" alt="" />
+                          <h2>$56</h2>
+                          <p>Easy Polo Black Edition</p>
+                          <a href="#" class="btn btn-default add-to-cart"
+                            ><i class="fa fa-shopping-cart"></i>Add to cart</a
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-3">
+                    <div class="product-image-wrapper">
+                      <div class="single-products">
+                        <div class="productinfo text-center">
+                          <img src="images/home/gallery3.jpg" alt="" />
+                          <h2>$56</h2>
+                          <p>Easy Polo Black Edition</p>
+                          <a href="#" class="btn btn-default add-to-cart"
+                            ><i class="fa fa-shopping-cart"></i>Add to cart</a
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-3">
+                    <div class="product-image-wrapper">
+                      <div class="single-products">
+                        <div class="productinfo text-center">
+                          <img src="images/home/gallery1.jpg" alt="" />
+                          <h2>$56</h2>
+                          <p>Easy Polo Black Edition</p>
+                          <a href="#" class="btn btn-default add-to-cart"
+                            ><i class="fa fa-shopping-cart"></i>Add to cart</a
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!--/category-tab-->
+
+            <div class="recommended_items">
+              <!--recommended_items-->
+              <h2 class="title text-center">recommended items</h2>
+
+              <div
+                id="recommended-item-carousel"
+                class="carousel slide"
+                data-ride="carousel"
+              >
+                <div class="carousel-inner">
+                  <div class="item active">
+                    <div class="col-sm-4">
+                      <div class="product-image-wrapper">
+                        <div class="single-products">
+                          <div class="productinfo text-center">
+                            <img src="images/home/recommend1.jpg" alt="" />
+                            <h2>$56</h2>
+                            <p>Easy Polo Black Edition</p>
+                            <a href="#" class="btn btn-default add-to-cart"
+                              ><i class="fa fa-shopping-cart"></i>Add to cart</a
+                            >
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-4">
+                      <div class="product-image-wrapper">
+                        <div class="single-products">
+                          <div class="productinfo text-center">
+                            <img src="images/home/recommend2.jpg" alt="" />
+                            <h2>$56</h2>
+                            <p>Easy Polo Black Edition</p>
+                            <a href="#" class="btn btn-default add-to-cart"
+                              ><i class="fa fa-shopping-cart"></i>Add to cart</a
+                            >
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-4">
+                      <div class="product-image-wrapper">
+                        <div class="single-products">
+                          <div class="productinfo text-center">
+                            <img src="images/home/recommend3.jpg" alt="" />
+                            <h2>$56</h2>
+                            <p>Easy Polo Black Edition</p>
+                            <a href="#" class="btn btn-default add-to-cart"
+                              ><i class="fa fa-shopping-cart"></i>Add to cart</a
+                            >
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="item">
+                    <div class="col-sm-4">
+                      <div class="product-image-wrapper">
+                        <div class="single-products">
+                          <div class="productinfo text-center">
+                            <img src="images/home/recommend1.jpg" alt="" />
+                            <h2>$56</h2>
+                            <p>Easy Polo Black Edition</p>
+                            <a href="#" class="btn btn-default add-to-cart"
+                              ><i class="fa fa-shopping-cart"></i>Add to cart</a
+                            >
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-4">
+                      <div class="product-image-wrapper">
+                        <div class="single-products">
+                          <div class="productinfo text-center">
+                            <img src="images/home/recommend2.jpg" alt="" />
+                            <h2>$56</h2>
+                            <p>Easy Polo Black Edition</p>
+                            <a href="#" class="btn btn-default add-to-cart"
+                              ><i class="fa fa-shopping-cart"></i>Add to cart</a
+                            >
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-4">
+                      <div class="product-image-wrapper">
+                        <div class="single-products">
+                          <div class="productinfo text-center">
+                            <img src="images/home/recommend3.jpg" alt="" />
+                            <h2>$56</h2>
+                            <p>Easy Polo Black Edition</p>
+                            <a href="#" class="btn btn-default add-to-cart"
+                              ><i class="fa fa-shopping-cart"></i>Add to cart</a
+                            >
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <a
+                  class="left recommended-item-control"
+                  href="#recommended-item-carousel"
+                  data-slide="prev"
+                >
+                  <i class="fa fa-angle-left"></i>
+                </a>
+                <a
+                  class="right recommended-item-control"
+                  href="#recommended-item-carousel"
+                  data-slide="next"
+                >
+                  <i class="fa fa-angle-right"></i>
+                </a>
+              </div>
+            </div>
+            <!--/recommended_items-->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer id="footer">
+      <!--Footer-->
+      <div class="footer-top">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-2">
+              <div class="companyinfo">
+                <h2><span>e</span>-shopper</h2>
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit,sed
+                  do eiusmod tempor
+                </p>
+              </div>
+            </div>
+            <div class="col-sm-7">
+              <div class="col-sm-3">
+                <div class="video-gallery text-center">
+                  <a href="#">
+                    <div class="iframe-img">
+                      <img src="images/home/iframe1.png" alt="" />
+                    </div>
+                    <div class="overlay-icon">
+                      <i class="fa fa-play-circle-o"></i>
+                    </div>
+                  </a>
+                  <p>Circle of Hands</p>
+                  <h2>24 DEC 2014</h2>
+                </div>
+              </div>
+
+              <div class="col-sm-3">
+                <div class="video-gallery text-center">
+                  <a href="#">
+                    <div class="iframe-img">
+                      <img src="images/home/iframe2.png" alt="" />
+                    </div>
+                    <div class="overlay-icon">
+                      <i class="fa fa-play-circle-o"></i>
+                    </div>
+                  </a>
+                  <p>Circle of Hands</p>
+                  <h2>24 DEC 2014</h2>
+                </div>
+              </div>
+
+              <div class="col-sm-3">
+                <div class="video-gallery text-center">
+                  <a href="#">
+                    <div class="iframe-img">
+                      <img src="images/home/iframe3.png" alt="" />
+                    </div>
+                    <div class="overlay-icon">
+                      <i class="fa fa-play-circle-o"></i>
+                    </div>
+                  </a>
+                  <p>Circle of Hands</p>
+                  <h2>24 DEC 2014</h2>
+                </div>
+              </div>
+
+              <div class="col-sm-3">
+                <div class="video-gallery text-center">
+                  <a href="#">
+                    <div class="iframe-img">
+                      <img src="images/home/iframe4.png" alt="" />
+                    </div>
+                    <div class="overlay-icon">
+                      <i class="fa fa-play-circle-o"></i>
+                    </div>
+                  </a>
+                  <p>Circle of Hands</p>
+                  <h2>24 DEC 2014</h2>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-3">
+              <div class="address">
+                <img src="images/home/map.png" alt="" />
+                <p>505 S Atlantic Ave Virginia Beach, VA(Virginia)</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-widget">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-2">
+              <div class="single-widget">
+                <h2>Service</h2>
+                <ul class="nav nav-pills nav-stacked">
+                  <li><a href="#">Online Help</a></li>
+                  <li><a href="#">Contact Us</a></li>
+                  <li><a href="#">Order Status</a></li>
+                  <li><a href="#">Change Location</a></li>
+                  <li><a href="#">FAQ’s</a></li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-sm-2">
+              <div class="single-widget">
+                <h2>Quock Shop</h2>
+                <ul class="nav nav-pills nav-stacked">
+                  <li><a href="#">T-Shirt</a></li>
+                  <li><a href="#">Mens</a></li>
+                  <li><a href="#">Womens</a></li>
+                  <li><a href="#">Gift Cards</a></li>
+                  <li><a href="#">Shoes</a></li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-sm-2">
+              <div class="single-widget">
+                <h2>Policies</h2>
+                <ul class="nav nav-pills nav-stacked">
+                  <li><a href="#">Terms of Use</a></li>
+                  <li><a href="#">Privecy Policy</a></li>
+                  <li><a href="#">Refund Policy</a></li>
+                  <li><a href="#">Billing System</a></li>
+                  <li><a href="#">Ticket System</a></li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-sm-2">
+              <div class="single-widget">
+                <h2>About Shopper</h2>
+                <ul class="nav nav-pills nav-stacked">
+                  <li><a href="#">Company Information</a></li>
+                  <li><a href="#">Careers</a></li>
+                  <li><a href="#">Store Location</a></li>
+                  <li><a href="#">Affillate Program</a></li>
+                  <li><a href="#">Copyright</a></li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-sm-3 col-sm-offset-1">
+              <div class="single-widget">
+                <h2>About Shopper</h2>
+                <form action="#" class="searchform">
+                  <input type="text" placeholder="Your email address" />
+                  <button type="submit" class="btn btn-default">
+                    <i class="fa fa-arrow-circle-o-right"></i>
+                  </button>
+                  <p>
+                    Get the most recent updates from <br />our site and be
+                    updated your self...
+                  </p>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="container">
+          <div class="row">
+            <p class="pull-left">
+              Copyright © 2013 E-SHOPPER Inc. All rights reserved.
+            </p>
+            <p class="pull-right">
+              Designed by
+              <span
+                ><a target="_blank" href="http://www.themeum.com"
+                  >Themeum</a
+                ></span
+              >
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!--/Footer-->
+
     <script src="js/jquery.js"></script>
-	<script src="js/bootstrap.min.js"></script>
-	<script src="js/jquery.scrollUp.min.js"></script>
-	<script src="js/price-range.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.scrollUp.min.js"></script>
+    <script src="js/price-range.js"></script>
     <script src="js/jquery.prettyPhoto.js"></script>
     <script src="js/main.js"></script>
+    <!--Para exportar a PDF y para esytructurar en forma de tabla-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.72/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.72/vfs_fonts.js"></script>
+    <!-- SCRIPTS DINAMICOS-->
 
+    <!--script: actualizacion-->
+    <script>
+      // Función para cargar la última fecha de actualización
+      function cargarUltimaActualizacion() {
+        $.ajax({
+          url: "get_last_update.php", // Ruta al archivo PHP
+          type: "GET",
+          dataType: "json",
+          success: function (response) {
+            $("#last-update").text(response.last_update);
+          },
+          error: function (xhr, status, errorThrown) {
+            console.error("Status: " + status + ", Error: " + errorThrown);
+            $("#last-update").text("Error al cargar");
+          },
+        });
+      }
 
+      $(document).ready(function () {
+        cargarUltimaActualizacion();
+        setInterval(cargarUltimaActualizacion, 60000); //Cada minuto se recarga
+      });
+    </script>
 
-	<!-- SCRIPTS DINAMICOS-->
+    <!--script: productos-->
+    <script>
+      $(document).ready(function () {
+        console.log(
+          "Ejecutando petición AJAX para cargar productos y ofertas..."
+        );
 
-	<!--script: actualizacion-->
-	<script>
-		// Función para cargar la última fecha de actualización
-		function cargarUltimaActualizacion() {
-			$.ajax({
-				url: 'get_last_update.php',  // Ruta al archivo PHP
-				type: 'GET',
-				dataType: 'json',
-				success: function(response) {
-					$('#last-update').text(response.last_update);
+        // Petición para obtener los productos
+        $.ajax({
+          url: "get_products.php", // Archivo PHP que devuelve los productos en formato JSON
+          type: "GET",
+          dataType: "json",
+          success: function (response) {
+            if (response.success) {
+              console.log("Productos cargados correctamente");
 
-				},
-				error: function(xhr, status, errorThrown) {  
-					console.error("Status: " + status + ", Error: " + errorThrown);
-					$('#last-update').text('Error al cargar');
-				}
-			});
-		}
-	
-		$(document).ready(function() {
-			cargarUltimaActualizacion();
-			setInterval(cargarUltimaActualizacion, 60000); //Cada minuto se recarga
-		});
-	</script>
+              // Petición para obtener las ofertas
+              $.ajax({
+                url: "get_ofertas_y_productos.php", // Archivo PHP que devuelve las ofertas en formato JSON
+                type: "GET",
+                dataType: "json",
+                success: function (offersResponse) {
+                  console.log("Ofertas cargadas correctamente");
+                  if (offersResponse.success) {
+                    // Guardamos los ids de productos que están en oferta en un array
+                    let offersIds = offersResponse.offers.map(
+                      (offer) => offer.id
+                    );
+                    // Variables para el HTML de productos
+                    let productsHtml = "";
 
-	<!--script: productos-->
-	<script>
-		$(document).ready(function () {
-			console.log("Ejecutando petición AJAX para cargar productos y ofertas...");
-		
-			// Petición para obtener los productos
-			$.ajax({
-				url: 'get_products.php', // Archivo PHP que devuelve los productos en formato JSON
-				type: 'GET',
-				dataType: 'json',
-				success: function (response) {
-					if (response.success) {
-						console.log("Productos cargados correctamente");
-		
-						// Petición para obtener las ofertas
-						$.ajax({
-							url: 'get_ofertas_y_productos.php', // Archivo PHP que devuelve las ofertas en formato JSON
-							type: 'GET',
-							dataType: 'json',
-							success: function (offersResponse) {
-								console.log("Ofertas cargadas correctamente");
-								if (offersResponse.success) {
-									// Guardamos los ids de productos que están en oferta en un array
-									let offersIds = offersResponse.offers.map(offer => offer.id);
-									// Variables para el HTML de productos
-									let productsHtml = '';
-		
-									// Recorremos los productos y verificamos si están en oferta
-									response.products.slice(0, 8).forEach(product => {
-										let isInOffer = offersIds.includes(product.id);
-		
-										// Solo mostramos los productos que no están en oferta
-										if (!isInOffer) {
-											productsHtml += `
+                    // Recorremos los productos y verificamos si están en oferta
+                    response.products.slice(0, 8).forEach((product) => {
+                      let isInOffer = offersIds.includes(product.id);
+
+                      // Solo mostramos los productos que no están en oferta
+                      if (!isInOffer) {
+                        productsHtml += `
 												<div class="col-sm-4">
 													<div class="product-image-wrapper">
 														<div class="single-products">
@@ -1360,105 +1645,114 @@
 													</div>
 												</div>
 											`;
-										}
-									});
-		
-									// Agregar los productos al contenedor
-									$('.features_items').append(productsHtml);
-		
-									// Agregar evento de clic solo en el overlay
-									$('.product-overlay').on('click', function (e) {
-										e.preventDefault();
-										e.stopPropagation();
-										let productId = $(this).data('id');
-										console.log("Producto seleccionado desde overlay:", productId);
-										openProductDetails(productId);
-									});
-		
-									// Evitar que los enlaces dentro del overlay interfieran con el evento de clic
-									$('.product-overlay a').on('click', function (e) {
-										e.stopPropagation();
-									});
-								}
-							},
-							error: function (xhr, status, error) {
-								console.error("Error cargando ofertas:", error);
-							}
-						});
-					}
-				},
-				error: function (xhr, status, error) {
-					console.error("Error cargando productos:", error);
-				}
-			});
-		});
-		
-		// Función para redirigir a la página de detalles del producto
-		function openProductDetails(productId) {
-			console.log("Redirigiendo a la página de detalles del producto:", productId);
-			window.location.href = `product_details.html?id=${productId}`;
-		}
-	</script>
-		
+                      }
+                    });
 
-<!--Obtener categorias y manejar slider price-range-->
+                    // Agregar los productos al contenedor
+                    $(".features_items").append(productsHtml);
 
-<script>
-$(document).ready(function () {
+                    // Agregar evento de clic solo en el overlay
+                    $(".product-overlay").on("click", function (e) {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      let productId = $(this).data("id");
+                      console.log(
+                        "Producto seleccionado desde overlay:",
+                        productId
+                      );
+                      openProductDetails(productId);
+                    });
 
-	$("#priceMin").on("input", function () {
-        $("#priceSliderMin").val($(this).val());
-    });
+                    // Evitar que los enlaces dentro del overlay interfieran con el evento de clic
+                    $(".product-overlay a").on("click", function (e) {
+                      e.stopPropagation();
+                    });
+                  }
+                },
+                error: function (xhr, status, error) {
+                  console.error("Error cargando ofertas:", error);
+                },
+              });
+            }
+          },
+          error: function (xhr, status, error) {
+            console.error("Error cargando productos:", error);
+          },
+        });
+      });
 
-    $("#priceMax").on("input", function () {
-        $("#priceSliderMax").val($(this).val());
-    });
+      // Función para redirigir a la página de detalles del producto
+      function openProductDetails(productId) {
+        console.log(
+          "Redirigiendo a la página de detalles del producto:",
+          productId
+        );
+        window.location.href = `product_details.html?id=${productId}`;
+      }
+    </script>
 
-    $("#priceSliderMin").on("input", function () {
-        $("#priceMin").val($(this).val());
-    });
+    <!--Obtener categorias y manejar slider price-range-->
 
-    $("#priceSliderMax").on("input", function () {
-        $("#priceMax").val($(this).val());
-    });
+    <script>
+      $(document).ready(function () {
+        $("#priceMin").on("input", function () {
+          $("#priceSliderMin").val($(this).val());
+        });
 
-    // Al hacer clic en "Filtrar"
-    $("#applyPriceFilter").on("click", function () {
-        let minPrice = parseInt($("#priceMin").val());
-        let maxPrice = parseInt($("#priceMax").val());
+        $("#priceMax").on("input", function () {
+          $("#priceSliderMax").val($(this).val());
+        });
 
-        if (minPrice > maxPrice) {
+        $("#priceSliderMin").on("input", function () {
+          $("#priceMin").val($(this).val());
+        });
+
+        $("#priceSliderMax").on("input", function () {
+          $("#priceMax").val($(this).val());
+        });
+
+        // Al hacer clic en "Filtrar"
+        $("#applyPriceFilter").on("click", function () {
+          let minPrice = parseInt($("#priceMin").val());
+          let maxPrice = parseInt($("#priceMax").val());
+
+          if (minPrice > maxPrice) {
             alert("El precio mínimo no puede ser mayor que el máximo.");
             return;
-        }
+          }
 
-        console.log("Filtrando productos:", minPrice, "-", maxPrice);
-        filterProductsByPrice(minPrice, maxPrice);
-    });
+          console.log("Filtrando productos:", minPrice, "-", maxPrice);
+          filterProductsByPrice(minPrice, maxPrice);
+        });
 
-    function filterProductsByPrice(minPrice, maxPrice) {
-        $(".features_items .col-sm-4").each(function () {
-            let productPrice = parseFloat($(this).find("h2").text().replace(/[^0-9.]/g, "").trim());
+        function filterProductsByPrice(minPrice, maxPrice) {
+          $(".features_items .col-sm-4").each(function () {
+            let productPrice = parseFloat(
+              $(this)
+                .find("h2")
+                .text()
+                .replace(/[^0-9.]/g, "")
+                .trim()
+            );
 
             if (productPrice >= minPrice && productPrice <= maxPrice) {
-                $(this).show();
+              $(this).show();
             } else {
-                $(this).hide();
+              $(this).hide();
             }
-        });
-    }
+          });
+        }
 
-
-    $.ajax({
-        url: "get_categories.php",
-        method: "GET",
-        dataType: "json",
-        success: function (data) {
+        $.ajax({
+          url: "get_categories.php",
+          method: "GET",
+          dataType: "json",
+          success: function (data) {
             let menuHtml = "";
 
             $.each(data, function (category, subcategories) {
-                let categoryId = category.replace(/\s+/g, '-').toLowerCase(); // ID sin espacios
-                menuHtml += `
+              let categoryId = category.replace(/\s+/g, "-").toLowerCase(); // ID sin espacios
+              menuHtml += `
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h4 class="panel-title">
@@ -1472,11 +1766,11 @@ $(document).ready(function () {
                             <div class="panel-body">
                                 <ul>`;
 
-                $.each(subcategories, function (index, subcategory) {
-                    menuHtml += `<li><a href="#" class="category-link" data-category="${subcategory}">${subcategory}</a></li>`;
-                });
+              $.each(subcategories, function (index, subcategory) {
+                menuHtml += `<li><a href="#" class="category-link" data-category="${subcategory}">${subcategory}</a></li>`;
+              });
 
-                menuHtml += `      </ul>
+              menuHtml += `      </ul>
                             </div>
                         </div>
                     </div>`;
@@ -1484,57 +1778,59 @@ $(document).ready(function () {
 
             $(".category-products").html(menuHtml);
 
-			$(".category-link, .subcategory-link").on("click", function (e) {
-                e.preventDefault();
+            $(".category-link, .subcategory-link").on("click", function (e) {
+              e.preventDefault();
 
-				$(".category-link").removeClass("active"); // Eliminar la clase activa de otras categorías
-				$(this).addClass("active"); // Agregar clase activa a la categoría seleccionada
+              $(".category-link").removeClass("active"); // Eliminar la clase activa de otras categorías
+              $(this).addClass("active"); // Agregar clase activa a la categoría seleccionada
 
-                let selectedCategory = $(this).data("category");
-				//let minPrice = $("#priceSlider").slider("values", 0);
-                //let maxPrice = $("#priceSlider").slider("values", 1);
-                console.log("Categoría seleccionada:", selectedCategory);
-                loadProducts(selectedCategory);
-
+              let selectedCategory = $(this).data("category");
+              //let minPrice = $("#priceSlider").slider("values", 0);
+              //let maxPrice = $("#priceSlider").slider("values", 1);
+              console.log("Categoría seleccionada:", selectedCategory);
+              loadProducts(selectedCategory);
             });
-        },
-        error: function () {
+          },
+          error: function () {
             $(".category-products").html("<p>Error al cargar categorías.</p>");
+          },
+        });
+      });
+
+      var selectedCategory = "";
+
+      $(document).on(
+        "click",
+        ".category-link, .subcategory-link",
+        function (e) {
+          e.preventDefault();
+
+          selectedCategory = $(this).data("category");
+          console.log("Categoría seleccionada:", selectedCategory);
+          loadProducts(selectedCategory);
         }
-    });
-});
+      );
 
-var selectedCategory = '';
+      function loadProducts(category, minPrice = 0, maxPrice = 600) {
+        console.log("Cargando productos para la categoría:", category);
 
-$(document).on("click", ".category-link, .subcategory-link", function (e) {
-    e.preventDefault();
-	
-    selectedCategory = $(this).data("category");
-    console.log("Categoría seleccionada:", selectedCategory);
-    loadProducts(selectedCategory);
-});
+        // Mostrar un mensaje de carga temporal
+        $(".features_items").html("<p>Cargando productos...</p>");
 
-
-function loadProducts(category, minPrice = 0, maxPrice = 600) {
-    console.log("Cargando productos para la categoría:", category);
-
-    // Mostrar un mensaje de carga temporal
-    $('.features_items').html("<p>Cargando productos...</p>");
-
-    $.ajax({
-        url: "get_products_by_category.php",
-        type: "GET",
-        data: { category: category, minPrice: minPrice, maxPrice: maxPrice }, // Enviamos la categoría seleccionada
-        dataType: "json",
-        success: function (response) {
-			console.log("Categoria seleccionadaa: ", category);
-			console.log(response);
+        $.ajax({
+          url: "get_products_by_category.php",
+          type: "GET",
+          data: { category: category, minPrice: minPrice, maxPrice: maxPrice }, // Enviamos la categoría seleccionada
+          dataType: "json",
+          success: function (response) {
+            console.log("Categoria seleccionadaa: ", category);
+            console.log(response);
             if (response.success) {
-                console.log("Productos filtrados correctamente");
-                let productsHtml = '';
+              console.log("Productos filtrados correctamente");
+              let productsHtml = "";
 
-                response.products.forEach(product => {
-                    productsHtml += `
+              response.products.forEach((product) => {
+                productsHtml += `
                         <div class="col-sm-4">
                             <div class="product-image-wrapper">
                                 <div class="single-products">
@@ -1564,58 +1860,58 @@ function loadProducts(category, minPrice = 0, maxPrice = 600) {
                                 </div>
                             </div>
                         </div>`;
-                });
+              });
 
-                // Reemplazar productos en la página
-                $('.features_items').html(productsHtml);
+              // Reemplazar productos en la página
+              $(".features_items").html(productsHtml);
 
-				// Agregar evento de clic solo en el overlay
-				$('.product-overlay').on('click', function (e) {
-						e.preventDefault();
-						e.stopPropagation();
-						//let productId = $(this).data('id');
-						let productId = $(this).attr("data-id"); //Devuelve alfanumerico, no convierte a int
-						console.log("Producto seleccionado desde overlay:", productId);
-						openProductDetails(productId);
-				});
-	
-					// Evitar que los enlaces dentro del overlay interfieran con el evento de clic
-					$('.product-overlay a').on('click', function (e) {
-						e.stopPropagation();
-					});
+              // Agregar evento de clic solo en el overlay
+              $(".product-overlay").on("click", function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                //let productId = $(this).data('id');
+                let productId = $(this).attr("data-id"); //Devuelve alfanumerico, no convierte a int
+                console.log("Producto seleccionado desde overlay:", productId);
+                openProductDetails(productId);
+              });
+
+              // Evitar que los enlaces dentro del overlay interfieran con el evento de clic
+              $(".product-overlay a").on("click", function (e) {
+                e.stopPropagation();
+              });
             } else {
-                $('.features_items').html("<p>No se encontraron productos para esta categoría.</p>");
+              $(".features_items").html(
+                "<p>No se encontraron productos para esta categoría.</p>"
+              );
             }
-        },
-        error: function (xhr, status, error) {
+          },
+          error: function (xhr, status, error) {
             console.error("Error al cargar productos:", status, error);
-            $('.features_items').html("<p>Error al cargar productos.</p>");
-        }
-    });
-}
+            $(".features_items").html("<p>Error al cargar productos.</p>");
+          },
+        });
+      }
+    </script>
 
-</script>
-
-
-<!--script: ofertas-->
-<script>
-    $(document).ready(function () {
+    <!--script: ofertas-->
+    <script>
+      $(document).ready(function () {
         console.log("Ejecutando petición AJAX para cargar ofertas...");
         $.ajax({
-            url: 'get_ofertas.php', // Archivo PHP que devuelve las ofertas en formato JSON
-            type: 'GET',
-            dataType: 'json',
-            success: function (response) {
-                if (response.success) {
-                    console.log("Ofertas cargadas correctamente");
-                    let offersHtml = '';
-                    let sliderHtml = '';
-                    let slideHtml = '';
-                    let activeClass = 'active'; // Primer slide es el 'active'
+          url: "get_ofertas.php", // Archivo PHP que devuelve las ofertas en formato JSON
+          type: "GET",
+          dataType: "json",
+          success: function (response) {
+            if (response.success) {
+              console.log("Ofertas cargadas correctamente");
+              let offersHtml = "";
+              let sliderHtml = "";
+              let slideHtml = "";
+              let activeClass = "active"; // Primer slide es el 'active'
 
-                    response.offers.forEach((offer, index) => {
-                        // Estructura HTML de cada oferta para el contenido general
-                        offersHtml += `
+              response.offers.forEach((offer, index) => {
+                // Estructura HTML de cada oferta para el contenido general
+                offersHtml += `
                             <div class="col-sm-4">
                                 <div class="product-image-wrapper">
                                     <div class="single-products">
@@ -1650,8 +1946,8 @@ function loadProducts(category, minPrice = 0, maxPrice = 600) {
                                 </div>
                             </div>`;
 
-                        // Estructura HTML para el slider, agrupando productos en grupos de tres
-                        slideHtml += `
+                // Estructura HTML para el slider, agrupando productos en grupos de tres
+                slideHtml += `
                             <div class="col-sm-4">
                                 <div class="product-image-wrapper">
                                     <div class="single-products">
@@ -1686,208 +1982,467 @@ function loadProducts(category, minPrice = 0, maxPrice = 600) {
                                 </div>
                             </div>`;
 
-                        // Cuando tengamos 3 productos, añadimos un nuevo slide
-                        if ((index + 1) % 3 === 0 || index === response.offers.length - 1) {
-                            sliderHtml += `
+                // Cuando tengamos 3 productos, añadimos un nuevo slide
+                if (
+                  (index + 1) % 3 === 0 ||
+                  index === response.offers.length - 1
+                ) {
+                  sliderHtml += `
                                 <div class="item ${activeClass}">
                                     <div class="row">
                                         ${slideHtml}
                                     </div>
                                 </div>`;
-                            slideHtml = ''; // Reseteamos para el siguiente grupo
-                            activeClass = ''; // Sólo el primer slide tiene la clase 'active'
-                        }
-                    });
-
-                    // Insertamos las ofertas en el contenedor de ofertas
-                    $('.features_items').append(offersHtml);
-
-                    // Agregar evento de clic solo en el overlay
-                    $('.product-overlay').on('click', function (e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        let productId = $(this).data('id');
-                        console.log("Producto seleccionado desde overlay:", productId);
-                        openProductDetails(productId);
-                    });
-
-                    // Evitar que los enlaces dentro del overlay interfieran con el evento de clic
-                    $('.product-overlay a').on('click', function (e) {
-                        e.stopPropagation();
-                    });
-
-                    // Insertamos los productos en el slider
-                    $('#slider-items').html(sliderHtml);
-
-                    // Actualizamos los indicadores del carousel
-                    let indicatorsHtml = '';
-                    let totalSlides = Math.ceil(response.offers.length / 3);
-                    for (let i = 0; i < totalSlides; i++) {
-                        indicatorsHtml += `<li data-target="#slider-carousel" data-slide-to="${i}" class="${i === 0 ? 'active' : ''}"></li>`;
-                    }
-                    $('.carousel-indicators').html(indicatorsHtml);
+                  slideHtml = ""; // Reseteamos para el siguiente grupo
+                  activeClass = ""; // Sólo el primer slide tiene la clase 'active'
                 }
-            },
-            error: function (xhr, status, error) {
-                console.error("Status: " + status + ", Error: " + error);
-                console.log(xhr.responseText); // Ver respuesta del servidor
+              });
+
+              // Insertamos las ofertas en el contenedor de ofertas
+              $(".features_items").append(offersHtml);
+
+              // Agregar evento de clic solo en el overlay
+              $(".product-overlay").on("click", function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                let productId = $(this).data("id");
+                console.log("Producto seleccionado desde overlay:", productId);
+                openProductDetails(productId);
+              });
+
+              // Evitar que los enlaces dentro del overlay interfieran con el evento de clic
+              $(".product-overlay a").on("click", function (e) {
+                e.stopPropagation();
+              });
+
+              // Insertamos los productos en el slider
+              $("#slider-items").html(sliderHtml);
+
+              // Actualizamos los indicadores del carousel
+              let indicatorsHtml = "";
+              let totalSlides = Math.ceil(response.offers.length / 3);
+              for (let i = 0; i < totalSlides; i++) {
+                indicatorsHtml += `<li data-target="#slider-carousel" data-slide-to="${i}" class="${
+                  i === 0 ? "active" : ""
+                }"></li>`;
+              }
+              $(".carousel-indicators").html(indicatorsHtml);
             }
+          },
+          error: function (xhr, status, error) {
+            console.error("Status: " + status + ", Error: " + error);
+            console.log(xhr.responseText); // Ver respuesta del servidor
+          },
         });
-    });
+      });
 
-    // Función para redirigir a la página de detalles del producto
-    function openProductDetails(productId) {
-        console.log("Redirigiendo a la página de detalles del producto:", productId);
+      // Función para redirigir a la página de detalles del producto
+      function openProductDetails(productId) {
+        console.log(
+          "Redirigiendo a la página de detalles del producto:",
+          productId
+        );
         window.location.href = `product_details.html?id=${productId}`;
-    }
-</script>
+      }
+    </script>
 
-<script>
-    $(document).ready(function () {
+    <script>
+      $(document).ready(function () {
         $("#accountLink").on("click", function (e) {
-            e.preventDefault();
-            $.ajax({
-                url: "session_check.php",
-                type: "GET",
-                dataType: "json",
-                success: function (response) {
-                    if (response.logged_in) {
-						console.log(`Response admin ${response.is_admin}`);
-                        if (response.es_admin && window.location.pathname.indexOf("admin_panel.html") === -1) {
-							window.location.href = "/Eshopper/personal_page.html"; // Página de administrador
-                        }else if (window.location.pathname.indexOf("personal_page.html") === -1){
-							window.location.href = "/Eshopper/personal_page.html";
-						} 
-                    } else {
-                        $("#accountMessage").text("No has iniciado sesión. Redirigiendo...").show();
-                        setTimeout(() => {
-                            window.location.href = "/Eshopper/login.html";
-                        }, 2000);
-                    }
-                },
-                error: function () {
-                    alert("Error en el servidor. Inténtalo más tarde.");
+          e.preventDefault();
+          $.ajax({
+            url: "session_check.php",
+            type: "GET",
+            dataType: "json",
+            success: function (response) {
+              if (response.logged_in) {
+                console.log(`Response admin ${response.is_admin}`);
+                if (
+                  response.es_admin &&
+                  window.location.pathname.indexOf("admin_panel.html") === -1
+                ) {
+                  window.location.href = "/Eshopper/personal_page.html"; // Página de administrador
+                } else if (
+                  window.location.pathname.indexOf("personal_page.html") === -1
+                ) {
+                  window.location.href = "/Eshopper/personal_page.html";
                 }
-            });
+              } else {
+                $("#accountMessage")
+                  .text("No has iniciado sesión. Redirigiendo...")
+                  .show();
+                setTimeout(() => {
+                  window.location.href = "/Eshopper/login.html";
+                }, 2000);
+              }
+            },
+            error: function () {
+              alert("Error en el servidor. Inténtalo más tarde.");
+            },
+          });
         });
-    });
-</script>
+      });
+    </script>
 
-<script>
-    $(document).ready(function () {
+    <script>
+      $(document).ready(function () {
         $("#exportLink").on("click", function (e) {
-            e.preventDefault();
-            $.ajax({
-                url: "session_check.php",
-                type: "GET",
-                dataType: "json",
-                success: function (response) {
-                    if (response.logged_in) {
-                        if (window.location.pathname.indexOf("export.html") === -1) {
-                            window.location.href = "/Eshopper/export.html";
-                        }
-                    } else {
-                        $("#accountMessage").text("No has iniciado sesión. Redirigiendo...").show();
-                        setTimeout(() => {
-                            window.location.href = "/Eshopper/login.html";
-                        }, 2000);
-                    }
-                },
-                error: function () {
-                    alert("Error en el servidor. Inténtalo más tarde.");
+          e.preventDefault();
+          $.ajax({
+            url: "session_check.php",
+            type: "GET",
+            dataType: "json",
+            success: function (response) {
+              if (response.logged_in) {
+                if (window.location.pathname.indexOf("export.html") === -1) {
+                  window.location.href = "/Eshopper/export.html";
                 }
-            });
+              } else {
+                $("#accountMessage")
+                  .text("No has iniciado sesión. Redirigiendo...")
+                  .show();
+                setTimeout(() => {
+                  window.location.href = "/Eshopper/login.html";
+                }, 2000);
+              }
+            },
+            error: function () {
+              alert("Error en el servidor. Inténtalo más tarde.");
+            },
+          });
         });
-    });
-</script>
+      });
+    </script>
 
-<script>
-    $(document).ready(function () {
-
-
+    <script>
+      $(document).ready(function () {
         $("#chartsLink").on("click", function (e) {
-            e.preventDefault();
-            $.ajax({
-                url: "session_check.php",
-                type: "GET",
-                dataType: "json",
-                success: function (response) {
-                    if (response.logged_in) {
-                        if (window.location.pathname.indexOf("charts.html") === -1) {
-                            window.location.href = "/Eshopper/charts.html";
-                        }
-                    } else {
-                        $("#accountMessage").text("No has iniciado sesión. Redirigiendo...").show();
-                        setTimeout(() => {
-                            window.location.href = "/Eshopper/login.html";
-                        }, 2000);
-                    }
-                },
-                error: function () {
-                    alert("Error en el servidor. Inténtalo más tarde.");
+          e.preventDefault();
+          $.ajax({
+            url: "session_check.php",
+            type: "GET",
+            dataType: "json",
+            success: function (response) {
+              if (response.logged_in) {
+                if (window.location.pathname.indexOf("charts.html") === -1) {
+                  window.location.href = "/Eshopper/charts.html";
                 }
-            });
+              } else {
+                $("#accountMessage")
+                  .text("No has iniciado sesión. Redirigiendo...")
+                  .show();
+                setTimeout(() => {
+                  window.location.href = "/Eshopper/login.html";
+                }, 2000);
+              }
+            },
+            error: function () {
+              alert("Error en el servidor. Inténtalo más tarde.");
+            },
+          });
         });
-    });
-</script>
-<script>
-	$(document).ready(function () {
-	  $('#verMenu').click(function () {
-		$('#submenuVer').toggle();
-	  });
-  
-	  $('#verPedidos').click(function () {
-		verificarSesion(() => {
-		  window.location.href = 'ver.html?tipo=pedidos';
-		});
-	  });
-  
-	  $('#verProductos').click(function () {
-		verificarSesion(() => {
-		  let selectedCategory = getSelectedCategory();
-		  window.location.href = 'ver.html?tipo=productos&categoria=' + selectedCategory;
-		});
-	  });
+      });
+    </script>
+    <script>
+      $(document).ready(function () {
+        $("#verMenuExportar").click(function () {
+          $("#submenuExportar").toggle();
+        });
 
-	  $('#verOfertas').click(function () {
-		verificarSesion(() => {
-		  window.location.href = 'ver.html?tipo=ofertas';
-		});
-	  });
+        $("#verMenu").click(function () {
+          $("#submenuVer").toggle();
+        });
 
-	  $('#verCategorias').click(function () {
-		verificarSesion(() => {
-		  window.location.href = 'ver.html?tipo=categorias';
-		});
-	  });
+        $("#verPedidos").click(function () {
+          verificarSesion(() => {
+            window.location.href = "ver.html?tipo=pedidos";
+          });
+        });
 
-	});
-  
-	// Función para verificar si el usuario está logueado
-	function verificarSesion(callback) {
-	  $.ajax({
-		url: 'session_check.php',
-		method: 'GET',
-		dataType: 'json',
-		success: function (response) {
-		  if (response.logged_in) {
-			callback(); // Usuario registrado, ejecutar acción
-		  } else {
-			alert('Debes estar registrado para acceder a esta sección.');
-		  }
-		},
-		error: function () {
-		  alert('Error al verificar la sesión del usuario.');
-		}
-	  });
-	}
-  
-	function getSelectedCategory() {
-	  return typeof selectedCategory !== 'undefined' ? selectedCategory : 'all';
-	}
-  </script>
-  
+        $("#verProductos").click(function () {
+          verificarSesion(() => {
+            let selectedCategory = getSelectedCategory();
+            window.location.href =
+              "ver.html?tipo=productos&categoria=" + selectedCategory;
+          });
+        });
 
+        $("#verOfertas").click(function () {
+          verificarSesion(() => {
+            window.location.href = "ver.html?tipo=ofertas";
+          });
+        });
 
-</body>
+        $("#verCategorias").click(function () {
+          verificarSesion(() => {
+            window.location.href = "ver.html?tipo=categorias";
+          });
+        });
+      });
+
+      // Función para verificar si el usuario está logueado
+      function verificarSesion(callback) {
+        $.ajax({
+          url: "session_check.php",
+          method: "GET",
+          dataType: "json",
+          success: function (response) {
+            if (response.logged_in) {
+              callback(); // Usuario registrado, ejecutar acción
+            } else {
+              alert("Debes estar registrado para acceder a esta sección.");
+            }
+          },
+          error: function () {
+            alert("Error al verificar la sesión del usuario.");
+          },
+        });
+      }
+
+      function getSelectedCategory() {
+        return typeof selectedCategory !== "undefined"
+          ? selectedCategory
+          : "all";
+      }
+    </script>
+    <script>
+      function toDataURL(url) {
+        return new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.onload = function () {
+            const reader = new FileReader();
+            reader.onloadend = function () {
+              resolve(reader.result); // <-- resuelve en base64
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(xhr.response);
+          };
+          xhr.onerror = reject;
+          xhr.open("GET", url);
+          xhr.responseType = "blob";
+          xhr.send();
+        });
+      }
+
+      async function generarPDFConProductos() {
+        console.log("Exportar productos ..");
+        try {
+          // 1. Obtener productos
+          const response = await fetch(
+            "get_products_by_category.php?category=all"
+          );
+          const data = await response.json();
+
+          if (!data.success) {
+            alert("Error al cargar productos.");
+            return;
+          }
+
+          const products = data.products;
+
+          // 2. Convertir imágenes a base64
+          const productsWithBase64 = await Promise.all(
+            products.map(async (product) => {
+              const base64Image = await toDataURL(product.image).catch(
+                () => null
+              );
+              return {
+                id: product.id,
+                name: product.name,
+                price: product.price,
+                image: base64Image,
+              };
+            })
+          );
+
+          // 3. Crear estructura del PDF
+          const bodyTable = [
+            [
+              { text: "ID", bold: true },
+              { text: "Imagen", bold: true },
+              { text: "Nombre", bold: true },
+              { text: "Precio", bold: true },
+            ],
+          ];
+
+          productsWithBase64.forEach((product) => {
+            bodyTable.push([
+              { text: product.id.toString() },
+              product.image
+                ? { image: product.image, width: 50, height: 50 }
+                : { text: "No disponible" },
+              { text: product.name },
+              { text: `$${parseFloat(product.price).toFixed(2)}` },
+            ]);
+          });
+
+          /*
+          const docDefinition = {
+            content: [
+              {
+                text: "Listado de Productos",
+                style: "header",
+                margin: [0, 0, 0, 20],
+              },
+              {
+                table: {
+                  headerRows: 1,
+                  widths: [50, 70, "*", 60],
+                  body: bodyTable,
+                },
+              },
+            ],
+            styles: {
+              header: {
+                fontSize: 18,
+                bold: true,
+              },
+            },
+          };
+
+		  */
+          const logoBase64 = await toDataURL("images/home/logo.png").catch(
+            () => null
+          );
+
+          const headerContent = {
+            table: {
+              widths: ["auto", "*"],
+              body: [
+                [
+                  logoBase64
+                    ? { image: logoBase64, width: 80, margin: [10, 5, 10, 5] }
+                    : { text: "LOGO", margin: [20, 25, 10, 15], fontSize: 14 },
+                  {
+                    stack: [
+                      {
+                        text: "+2 95 01 88 821",
+                        fontSize: 10,
+                        color: "#ffffff",
+                        margin: [0, 25, 15, 0],
+                      },
+                      {
+                        text: "info@domain.com",
+                        fontSize: 10,
+                        color: "#ffffff",
+                        margin: [0, 5, 15, 0],
+                      },
+                      {
+                        text: "Facebook | Twitter | LinkedIn | Dribbble | Google+",
+                        fontSize: 9,
+                        color: "#ffffff",
+                        margin: [0, 5, 15, 20],
+                      },
+                    ],
+                    alignment: "right",
+                    margin: [10, 5, 10, 5],
+                  },
+                ],
+              ],
+            },
+            layout: {
+              fillColor: function (rowIndex, node, columnIndex) {
+                return "#d9d6ce"; // Gris
+              },
+              hLineWidth: () => 0,
+              vLineWidth: () => 0,
+              paddingLeft: () => 35,
+              paddingRight: () => 35,
+              paddingTop: () => 35,
+              paddingBottom: () => 45,
+            },
+            margin: [0, 0, 0, 20],
+          };
+
+          const docDefinition = {
+            content: [
+              {
+                // Cabecera con fondo extendido
+                table: {
+                  widths: ["*", "*"], // Esto hace que la tabla ocupe todo el ancho
+                  body: [
+                    [
+                      // Primer celda: Logo
+                      logoBase64
+                        ? {
+                            image: logoBase64,
+                            width: 100,
+                            margin: [10, 10, 0, 10],
+                          }
+                        : { text: "Logo", margin: [10, 10, 0, 10] },
+
+                      // Segunda celda: Información de contacto y redes
+                      {
+                        alignment: "right",
+                        stack: [
+                          {
+                            text: "+2 95 01 88 821",
+                            fontSize: 10,
+                            margin: [0, 10, 10, 0],
+                          },
+                          {
+                            text: "info@domain.com",
+                            fontSize: 10,
+                            margin: [0, 2, 10, 0],
+                          },
+                          {
+                            text: "Facebook | Twitter | LinkedIn | Dribbble | Google+",
+                            fontSize: 9,
+                            color: "gray",
+                            margin: [0, 5, 10, 10],
+                          },
+                        ],
+                      },
+                    ],
+                  ],
+                },
+                layout: {
+                  // Aquí es donde se define el color de fondo para la tabla
+                  fillColor: "#d9d6ce",
+                  hLineWidth: () => 0, // No líneas horizontales
+                  vLineWidth: () => 0, // No líneas verticales
+                  paddingLeft: () => 35,
+                  paddingRight: () => 35,
+                  paddingTop: () => 20,
+                  paddingBottom: () => 25,
+                },
+                // Márgenes negativos para que la tabla llegue a los bordes
+                margin: [-40, -40, -40, 20], // margenes negativos para los bordes
+              },
+
+              {
+                text: "Listado de Productos",
+                style: "header",
+                margin: [0, 0, 0, 20],
+              },
+              {
+                table: {
+                  headerRows: 1,
+                  widths: [50, 70, "*", 60],
+                  body: bodyTable,
+                },
+              },
+            ],
+            styles: {
+              header: {
+                fontSize: 18,
+                bold: true,
+              },
+            },
+          };
+
+          // 4. Generar PDF
+          pdfMake.createPdf(docDefinition).download("productos.pdf");
+        } catch (error) {
+          console.error("Error al generar el PDF:", error);
+          alert("Ocurrió un error al generar el PDF.");
+        }
+      }
+
+      // Llamar a la función para generar PDF
+      document
+        .getElementById("exportarProductos")
+        .addEventListener("click", generarPDFConProductos);
+    </script>
+  </body>
 </html>
