@@ -1134,6 +1134,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.72/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.72/vfs_fonts.js"></script>
+    
+    <!--script: PDF productos-->
     <script>
       function toDataURL(url) {
         return new Promise((resolve, reject) => {
@@ -1141,7 +1143,7 @@
           xhr.onload = function () {
             const reader = new FileReader();
             reader.onloadend = function () {
-              resolve(reader.result); // <-- resuelve en base64
+              resolve(reader.result);
             };
             reader.onerror = reject;
             reader.readAsDataURL(xhr.response);
@@ -1153,19 +1155,14 @@
         });
       }
 
-      // Función que devuelve el headerContent listo
       async function getHeaderContent() {
-        const logoBase64 = await toDataURL("images/home/logo.png").catch(
-          () => null
-        );
+        const logoBase64 = await toDataURL("images/home/logo.png").catch(() => null);
 
         return {
-          // Cabecera con fondo extendido
           table: {
-            widths: ["*", "*"], // Esto hace que la tabla ocupe todo el ancho
+            widths: ["*", "*"],
             body: [
               [
-                // Primer celda: Logo
                 logoBase64
                   ? {
                       image: logoBase64,
@@ -1173,8 +1170,6 @@
                       margin: [10, 10, 0, 10],
                     }
                   : { text: "Logo", margin: [10, 10, 0, 10] },
-
-                // Segunda celda: Información de contacto y redes
                 {
                   alignment: "right",
                   stack: [
@@ -1189,7 +1184,8 @@
                       margin: [0, 2, 10, 0],
                     },
                     {
-                      text: "Facebook | Twitter | LinkedIn | Dribbble | Google+",
+                      text:
+                        "Facebook | Twitter | LinkedIn | Dribbble | Google+",
                       fontSize: 9,
                       color: "gray",
                       margin: [0, 5, 10, 10],
@@ -1200,17 +1196,38 @@
             ],
           },
           layout: {
-            // Aquí es donde se define el color de fondo para la tabla
             fillColor: "#d9d6ce",
-            hLineWidth: () => 0, // No líneas horizontales
-            vLineWidth: () => 0, // No líneas verticales
+            hLineWidth: () => 0,
+            vLineWidth: () => 0,
             paddingLeft: () => 35,
             paddingRight: () => 35,
             paddingTop: () => 20,
             paddingBottom: () => 25,
           },
-          // Márgenes negativos para que la tabla llegue a los bordes
-          margin: [-40, -40, -40, 20], // margenes negativos para los bordes
+          margin: [-40, -40, -40, 20],
+        };
+      }
+
+      function getFooterDefinition() {
+        return function (currentPage, pageCount) {
+          return {
+            columns: [
+              {
+                text: "© 2025 E-SHOPPER Inc. Todos los derechos reservados.",
+                alignment: "left",
+                fontSize: 9,
+                margin: [40, 0, 0, 10],
+                color: "#FFA500",
+              },
+              {
+                text: `Diseñado por Themeum | Página ${currentPage} de ${pageCount}`,
+                alignment: "right",
+                fontSize: 9,
+                margin: [0, 0, 40, 10],
+                color: "#FFA500",
+              },
+            ],
+          };
         };
       }
 
@@ -1218,10 +1235,7 @@
         console.log("Exportar productos ..");
         try {
           const headerContent = await getHeaderContent();
-          // 1. Obtener productos
-          const response = await fetch(
-            "get_products_by_category.php?category=all"
-          );
+          const response = await fetch("get_products_by_category.php?category=all");
           const data = await response.json();
 
           if (!data.success) {
@@ -1231,12 +1245,9 @@
 
           const products = data.products;
 
-          // 2. Convertir imágenes a base64
           const productsWithBase64 = await Promise.all(
             products.map(async (product) => {
-              const base64Image = await toDataURL(product.image).catch(
-                () => null
-              );
+              const base64Image = await toDataURL(product.image).catch(() => null);
               return {
                 id: product.id,
                 name: product.name,
@@ -1246,7 +1257,6 @@
             })
           );
 
-          // 3. Crear estructura del PDF
           const bodyTable = [
             [
               { text: "ID", bold: true },
@@ -1289,9 +1299,9 @@
                 bold: true,
               },
             },
+            footer: getFooterDefinition(),
           };
 
-          // 4. Generar PDF
           pdfMake.createPdf(docDefinition).download("productos.pdf");
         } catch (error) {
           console.error("Error al generar el PDF:", error);
@@ -1302,6 +1312,171 @@
       document
         .getElementById("exportarProductos")
         .addEventListener("click", generarPDFConProductos);
+    </script>
+
+
+    <!--script: PDF pedidos-->
+    <script>
+      function toDataURL(url) {
+        return new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.onload = function () {
+            const reader = new FileReader();
+            reader.onloadend = function () {
+              resolve(reader.result); // <-- resuelve en base64
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(xhr.response);
+          };
+          xhr.onerror = reject;
+          xhr.open("GET", url);
+          xhr.responseType = "blob";
+          xhr.send();
+        });
+      }
+    
+      async function generarPDFConPedidos() {
+        console.log("Exportar pedidos ..");
+        try {
+          // 1. Obtener pedidos
+          const response = await fetch("get_pedidos.php");
+          const data = await response.json();
+    
+          console.log("Respuesta de get_pedidos.php:", data);
+    
+          if (!data.success) {
+            alert("Error al cargar pedidos.");
+            return;
+          }
+    
+          const pedidos = data.pedidos;
+    
+          // 2. Crear estructura del PDF
+          const bodyTable = [
+            [
+              { text: "ID", bold: true },
+              { text: "Título", bold: true },
+              { text: "Estado", bold: true },
+              { text: "Precio Unidad", bold: true },
+              { text: "Total", bold: true },
+            ],
+          ];
+    
+          pedidos.forEach((pedido) => {
+            bodyTable.push([
+              { text: pedido.id.toString() },
+              { text: pedido.titulo },
+              { text: pedido.estado },
+              { text: `$${parseFloat(pedido.precio_unidad).toFixed(2)}` },
+              { text: `$${parseFloat(pedido.total).toFixed(2)}` },
+            ]);
+          });
+    
+          const logoBase64 = await toDataURL("images/home/logo.png").catch(
+            () => null
+          );
+    
+          const docDefinition = {
+            content: [
+              {
+                table: {
+                  widths: ["*", "*"],
+                  body: [
+                    [
+                      logoBase64
+                        ? {
+                            image: logoBase64,
+                            width: 100,
+                            margin: [10, 10, 0, 10],
+                          }
+                        : { text: "Logo", margin: [10, 10, 0, 10] },
+                      {
+                        alignment: "right",
+                        stack: [
+                          {
+                            text: "+2 95 01 88 821",
+                            fontSize: 10,
+                            margin: [0, 10, 10, 0],
+                          },
+                          {
+                            text: "info@domain.com",
+                            fontSize: 10,
+                            margin: [0, 2, 10, 0],
+                          },
+                          {
+                            text: "Facebook | Twitter | LinkedIn | Dribbble | Google+",
+                            fontSize: 9,
+                            color: "gray",
+                            margin: [0, 5, 10, 10],
+                          },
+                        ],
+                      },
+                    ],
+                  ],
+                },
+                layout: {
+                  fillColor: "#d9d6ce",
+                  hLineWidth: () => 0,
+                  vLineWidth: () => 0,
+                  paddingLeft: () => 35,
+                  paddingRight: () => 35,
+                  paddingTop: () => 20,
+                  paddingBottom: () => 25,
+                },
+                margin: [-40, -40, -40, 20],
+              },
+              {
+                text: "Listado de Pedidos",
+                style: "header",
+                margin: [0, 0, 0, 20],
+              },
+              {
+                table: {
+                  headerRows: 1,
+                  widths: [50, "*", "*", "*", "*"],
+                  body: bodyTable,
+                },
+              },
+            ],
+            styles: {
+              header: {
+                fontSize: 18,
+                bold: true,
+              },
+            },
+            footer: function (currentPage, pageCount) {
+              return {
+                columns: [
+                  {
+                    text: "© 2025 E-SHOPPER Inc. Todos los derechos reservados.",
+                    alignment: "left",
+                    fontSize: 9,
+                    margin: [40, 0, 0, 10],
+                    color: "#FFA500", // texto naranja
+                  },
+                  {
+                    text: `Diseñado por Themeum | Página ${currentPage} de ${pageCount}`,
+                    alignment: "right",
+                    fontSize: 9,
+                    margin: [0, 0, 40, 10],
+                    color: "#FFA500", // texto naranja
+                  },
+                ],
+              };
+            },
+          };
+    
+          // 4. Generar PDF
+          pdfMake.createPdf(docDefinition).download("pedidos.pdf");
+        } catch (error) {
+          console.error("Error al generar el PDF:", error);
+          alert("Ocurrió un error al generar el PDF.");
+        }
+      }
+    
+      document
+        .getElementById("exportarPedidos")
+        .addEventListener("click", generarPDFConPedidos);
     </script>
   </body>
 </html>
