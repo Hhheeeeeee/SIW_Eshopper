@@ -387,9 +387,6 @@
                     <a href="login.html"><i class="fa fa-lock"></i> Login</a>
                   </li>
                   <li>
-                    <!--<a href="javascript:void(0);" id="exportLink">
-						<i class="fa fa-file-pdf-o"></i> Exportar
-					</a>-->
                     <a
                       href="#"
                       id="verMenuExportar"
@@ -2153,6 +2150,24 @@
           $("#submenuVer").toggle();
         });
 
+        $(document).click(function (e) {
+          if ($("#submenuExportar").is(":visible")) {
+            if (
+              !$(e.target).closest("#submenuExportar").length &&
+              !$(e.target).closest("#verMenuExportar").length
+            ) {
+              $("#submenuExportar").hide();
+            }
+          } else if ($("#submenuVer").is(":visible")) {
+            if (
+              !$(e.target).closest("#submenuVer").length &&
+              !$(e.target).closest("#verMenu").length
+            ) {
+              $("#submenuVer").hide();
+            }
+          }
+        });
+
         $("#verPedidos").click(function () {
           verificarSesion(() => {
             window.location.href = "ver.html?tipo=pedidos";
@@ -2205,6 +2220,7 @@
           : "all";
       }
     </script>
+
     <script>
       function toDataURL(url) {
         return new Promise((resolve, reject) => {
@@ -2224,9 +2240,71 @@
         });
       }
 
+      // Función que devuelve el headerContent listo
+      async function getHeaderContent() {
+        const logoBase64 = await toDataURL("images/home/logo.png").catch(
+          () => null
+        );
+
+        return {
+          // Cabecera con fondo extendido
+          table: {
+            widths: ["*", "*"], // Esto hace que la tabla ocupe todo el ancho
+            body: [
+              [
+                // Primer celda: Logo
+                logoBase64
+                  ? {
+                      image: logoBase64,
+                      width: 100,
+                      margin: [10, 10, 0, 10],
+                    }
+                  : { text: "Logo", margin: [10, 10, 0, 10] },
+
+                // Segunda celda: Información de contacto y redes
+                {
+                  alignment: "right",
+                  stack: [
+                    {
+                      text: "+2 95 01 88 821",
+                      fontSize: 10,
+                      margin: [0, 10, 10, 0],
+                    },
+                    {
+                      text: "info@domain.com",
+                      fontSize: 10,
+                      margin: [0, 2, 10, 0],
+                    },
+                    {
+                      text: "Facebook | Twitter | LinkedIn | Dribbble | Google+",
+                      fontSize: 9,
+                      color: "gray",
+                      margin: [0, 5, 10, 10],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+          layout: {
+            // Aquí es donde se define el color de fondo para la tabla
+            fillColor: "#d9d6ce",
+            hLineWidth: () => 0, // No líneas horizontales
+            vLineWidth: () => 0, // No líneas verticales
+            paddingLeft: () => 35,
+            paddingRight: () => 35,
+            paddingTop: () => 20,
+            paddingBottom: () => 25,
+          },
+          // Márgenes negativos para que la tabla llegue a los bordes
+          margin: [-40, -40, -40, 20], // margenes negativos para los bordes
+        };
+      }
+
       async function generarPDFConProductos() {
         console.log("Exportar productos ..");
         try {
+          const headerContent = await getHeaderContent();
           // 1. Obtener productos
           const response = await fetch(
             "get_products_by_category.php?category=all"
@@ -2276,9 +2354,63 @@
             ]);
           });
 
-          /*
           const docDefinition = {
             content: [
+              /*{
+                // Cabecera con fondo extendido
+                table: {
+                  widths: ["*", "*"], // Esto hace que la tabla ocupe todo el ancho
+                  body: [
+                    [
+                      // Primer celda: Logo
+                      logoBase64
+                        ? {
+                            image: logoBase64,
+                            width: 100,
+                            margin: [10, 10, 0, 10],
+                          }
+                        : { text: "Logo", margin: [10, 10, 0, 10] },
+
+                      // Segunda celda: Información de contacto y redes
+                      {
+                        alignment: "right",
+                        stack: [
+                          {
+                            text: "+2 95 01 88 821",
+                            fontSize: 10,
+                            margin: [0, 10, 10, 0],
+                          },
+                          {
+                            text: "info@domain.com",
+                            fontSize: 10,
+                            margin: [0, 2, 10, 0],
+                          },
+                          {
+                            text: "Facebook | Twitter | LinkedIn | Dribbble | Google+",
+                            fontSize: 9,
+                            color: "gray",
+                            margin: [0, 5, 10, 10],
+                          },
+                        ],
+                      },
+                    ],
+                  ],
+                },
+                layout: {
+                  // Aquí es donde se define el color de fondo para la tabla
+                  fillColor: "#d9d6ce",
+                  hLineWidth: () => 0, // No líneas horizontales
+                  vLineWidth: () => 0, // No líneas verticales
+                  paddingLeft: () => 35,
+                  paddingRight: () => 35,
+                  paddingTop: () => 20,
+                  paddingBottom: () => 25,
+                },
+                // Márgenes negativos para que la tabla llegue a los bordes
+                margin: [-40, -40, -40, 20], // margenes negativos para los bordes
+              },
+*/
+              headerContent,
               {
                 text: "Listado de Productos",
                 style: "header",
@@ -2300,59 +2432,170 @@
             },
           };
 
-		  */
+          // 4. Generar PDF
+          pdfMake.createPdf(docDefinition).download("productos.pdf");
+        } catch (error) {
+          console.error("Error al generar el PDF:", error);
+          alert("Ocurrió un error al generar el PDF.");
+        }
+      }
+
+      // Llamar a la función para generar PDF
+
+      async function generarPDFCategorias() {
+        console.log("Exportar categorías ..");
+        try {
+          const headerContent = await getHeaderContent();
+          // 1. Obtener categorías
+          const response = await fetch("get_categories.php");
+          const data = await response.json();
+
+          if (!data || Object.keys(data).length === 0) {
+            alert("Error al cargar categorías.");
+            return;
+          }
+
+          // 2. Crear estructura de la tabla para el PDF
+          const bodyTable = [
+            [
+              { text: "Categoría Principal", bold: true },
+              { text: "Subcategoría", bold: true },
+            ],
+          ];
+
+          for (const mainCategory in data) {
+            if (data.hasOwnProperty(mainCategory)) {
+              let subCategories = data[mainCategory];
+
+              subCategories.forEach((subCategory, index) => {
+                bodyTable.push([
+                  index === 0
+                    ? { text: mainCategory, rowSpan: subCategories.length }
+                    : {},
+                  { text: subCategory },
+                ]);
+              });
+            }
+          }
+
+          const docDefinition = {
+            content: [
+              headerContent,
+
+              {
+                text: "Listado de Categorías",
+                style: "header",
+                margin: [0, 0, 0, 20],
+              },
+              {
+                table: {
+                  headerRows: 1,
+                  widths: ["*", "*"],
+                  body: bodyTable,
+                },
+              },
+            ],
+            styles: {
+              header: {
+                fontSize: 18,
+                bold: true,
+              },
+            },
+          };
+
+          // 3. Generar el PDF
+          pdfMake.createPdf(docDefinition).download("categorias.pdf");
+        } catch (error) {
+          console.error("Error al generar el PDF:", error);
+          alert("Ocurrió un error al generar el PDF.");
+        }
+      }
+
+      // Botón para exportar categorías
+      document
+        .getElementById("exportarCategorias")
+        .addEventListener("click", generarPDFCategorias);
+
+      document
+        .getElementById("exportarProductos")
+        .addEventListener("click", generarPDFConProductos);
+    </script>
+
+    <script>
+      function toDataURL(url) {
+        return new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.onload = function () {
+            const reader = new FileReader();
+            reader.onloadend = function () {
+              resolve(reader.result); // <-- resuelve en base64
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(xhr.response);
+          };
+          xhr.onerror = reject;
+          xhr.open("GET", url);
+          xhr.responseType = "blob";
+          xhr.send();
+        });
+      }
+
+      async function generarPDFConOfertas() {
+        console.log("Exportar ofertas ..");
+        try {
+          // 1. Obtener ofertas
+          const response = await fetch("get_ofertas.php");
+          const data = await response.json();
+
+          if (!data.success) {
+            alert("Error al cargar ofertas.");
+            return;
+          }
+
+          const offers = data.offers;
+
+          // 2. Convertir imágenes a base64
+          const offersWithBase64 = await Promise.all(
+            offers.map(async (offer) => {
+              const base64Image = await toDataURL(offer.imagen).catch(
+                () => null
+              );
+              return {
+                id: offer.id,
+                titulo: offer.titulo,
+                precio_original: offer.precio_original,
+                precio_oferta: offer.precio_oferta,
+                imagen: base64Image,
+              };
+            })
+          );
+
+          // 3. Crear estructura del PDF
+          const bodyTable = [
+            [
+              { text: "ID", bold: true },
+              { text: "Imagen", bold: true },
+              { text: "Nombre", bold: true },
+              { text: "Precio Original", bold: true },
+              { text: "Precio Oferta", bold: true },
+            ],
+          ];
+
+          offersWithBase64.forEach((offer) => {
+            bodyTable.push([
+              { text: offer.id.toString() },
+              offer.imagen
+                ? { image: offer.imagen, width: 50, height: 50 }
+                : { text: "No disponible" },
+              { text: offer.titulo },
+              { text: `$${parseFloat(offer.precio_original).toFixed(2)}` },
+              { text: `$${parseFloat(offer.precio_oferta).toFixed(2)}` },
+            ]);
+          });
+
           const logoBase64 = await toDataURL("images/home/logo.png").catch(
             () => null
           );
-
-          const headerContent = {
-            table: {
-              widths: ["auto", "*"],
-              body: [
-                [
-                  logoBase64
-                    ? { image: logoBase64, width: 80, margin: [10, 5, 10, 5] }
-                    : { text: "LOGO", margin: [20, 25, 10, 15], fontSize: 14 },
-                  {
-                    stack: [
-                      {
-                        text: "+2 95 01 88 821",
-                        fontSize: 10,
-                        color: "#ffffff",
-                        margin: [0, 25, 15, 0],
-                      },
-                      {
-                        text: "info@domain.com",
-                        fontSize: 10,
-                        color: "#ffffff",
-                        margin: [0, 5, 15, 0],
-                      },
-                      {
-                        text: "Facebook | Twitter | LinkedIn | Dribbble | Google+",
-                        fontSize: 9,
-                        color: "#ffffff",
-                        margin: [0, 5, 15, 20],
-                      },
-                    ],
-                    alignment: "right",
-                    margin: [10, 5, 10, 5],
-                  },
-                ],
-              ],
-            },
-            layout: {
-              fillColor: function (rowIndex, node, columnIndex) {
-                return "#d9d6ce"; // Gris
-              },
-              hLineWidth: () => 0,
-              vLineWidth: () => 0,
-              paddingLeft: () => 35,
-              paddingRight: () => 35,
-              paddingTop: () => 35,
-              paddingBottom: () => 45,
-            },
-            margin: [0, 0, 0, 20],
-          };
 
           const docDefinition = {
             content: [
@@ -2409,16 +2652,15 @@
                 // Márgenes negativos para que la tabla llegue a los bordes
                 margin: [-40, -40, -40, 20], // margenes negativos para los bordes
               },
-
               {
-                text: "Listado de Productos",
+                text: "Listado de Ofertas",
                 style: "header",
                 margin: [0, 0, 0, 20],
               },
               {
                 table: {
                   headerRows: 1,
-                  widths: [50, 70, "*", 60],
+                  widths: [50, 70, "*", "*", "*"],
                   body: bodyTable,
                 },
               },
@@ -2432,7 +2674,7 @@
           };
 
           // 4. Generar PDF
-          pdfMake.createPdf(docDefinition).download("productos.pdf");
+          pdfMake.createPdf(docDefinition).download("ofertas.pdf");
         } catch (error) {
           console.error("Error al generar el PDF:", error);
           alert("Ocurrió un error al generar el PDF.");
@@ -2441,8 +2683,158 @@
 
       // Llamar a la función para generar PDF
       document
-        .getElementById("exportarProductos")
-        .addEventListener("click", generarPDFConProductos);
+        .getElementById("exportarOfertas")
+        .addEventListener("click", generarPDFConOfertas);
+    </script>
+
+    <script>
+      function toDataURL(url) {
+        return new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.onload = function () {
+            const reader = new FileReader();
+            reader.onloadend = function () {
+              resolve(reader.result); // <-- resuelve en base64
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(xhr.response);
+          };
+          xhr.onerror = reject;
+          xhr.open("GET", url);
+          xhr.responseType = "blob";
+          xhr.send();
+        });
+      }
+
+      async function generarPDFConPedidos() {
+        console.log("Exportar pedidos ..");
+        try {
+          // 1. Obtener pedidos
+          const response = await fetch("get_pedidos.php");
+          const data = await response.json();
+
+          console.log("Respuesta de get_pedidos.php:", data); // <-- Imprimimos la respuesta en la consola
+
+          if (!data.success) {
+            alert("Error al cargar pedidos.");
+            return;
+          }
+
+          const pedidos = data.pedidos;
+
+          // 2. Crear estructura del PDF
+          const bodyTable = [
+            [
+              { text: "ID", bold: true },
+              { text: "Título", bold: true },
+              { text: "Estado", bold: true },
+              { text: "Precio Unidad", bold: true },
+              { text: "Total", bold: true },
+            ],
+          ];
+
+          pedidos.forEach((pedido) => {
+            bodyTable.push([
+              { text: pedido.id.toString() },
+              { text: pedido.titulo },
+              { text: pedido.estado },
+              { text: `$${parseFloat(pedido.precio_unidad).toFixed(2)}` },
+              { text: `$${parseFloat(pedido.total).toFixed(2)}` },
+            ]);
+          });
+
+          const logoBase64 = await toDataURL("images/home/logo.png").catch(
+            () => null
+          );
+
+          const docDefinition = {
+            content: [
+              {
+                // Cabecera con fondo extendido
+                table: {
+                  widths: ["*", "*"], // Esto hace que la tabla ocupe todo el ancho
+                  body: [
+                    [
+                      // Primer celda: Logo
+                      logoBase64
+                        ? {
+                            image: logoBase64,
+                            width: 100,
+                            margin: [10, 10, 0, 10],
+                          }
+                        : { text: "Logo", margin: [10, 10, 0, 10] },
+
+                      // Segunda celda: Información de contacto y redes
+                      {
+                        alignment: "right",
+                        stack: [
+                          {
+                            text: "+2 95 01 88 821",
+                            fontSize: 10,
+                            margin: [0, 10, 10, 0],
+                          },
+                          {
+                            text: "info@domain.com",
+                            fontSize: 10,
+                            margin: [0, 2, 10, 0],
+                          },
+                          {
+                            text: "Facebook | Twitter | LinkedIn | Dribbble | Google+",
+                            fontSize: 9,
+                            color: "gray",
+                            margin: [0, 5, 10, 10],
+                          },
+                        ],
+                      },
+                    ],
+                  ],
+                },
+                layout: {
+                  // Aquí es donde se define el color de fondo para la tabla
+                  fillColor: "#d9d6ce",
+                  hLineWidth: () => 0, // No líneas horizontales
+                  vLineWidth: () => 0, // No líneas verticales
+                  paddingLeft: () => 35,
+                  paddingRight: () => 35,
+                  paddingTop: () => 20,
+                  paddingBottom: () => 25,
+                },
+                // Márgenes negativos para que la tabla llegue a los bordes
+                margin: [-40, -40, -40, 20], // margenes negativos para los bordes
+              },
+              {
+                text: "Listado de Pedidos",
+                style: "header",
+                margin: [0, 0, 0, 20],
+              },
+              {
+                table: {
+                  headerRows: 1,
+                  widths: [50, "*", "*", "*", "*"],
+                  body: bodyTable,
+                },
+              },
+            ],
+            styles: {
+              header: {
+                fontSize: 18,
+                bold: true,
+              },
+            },
+          };
+
+          // 4. Generar PDF
+          pdfMake.createPdf(docDefinition).download("pedidos.pdf");
+        } catch (error) {
+          console.error("Error al generar el PDF:", error);
+          alert("Ocurrió un error al generar el PDF.");
+        }
+      }
+
+      // Llamar a la función para generar PDF
+      document
+        .getElementById("exportarPedidos")
+        .addEventListener("click", generarPDFConPedidos);
     </script>
   </body>
 </html>
