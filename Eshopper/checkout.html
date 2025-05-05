@@ -38,7 +38,101 @@
       href="images/ico/apple-touch-icon-57-precomposed.png"
     />
     <style>
+      .table img.imagen-producto {
+        max-width: 80px;
+        height: auto;
+      }
+
+      .cart_description h4 {
+        text-align: center;
+        padding: 5px 0;
+        max-width: 180px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        transition: all 0.3s ease;
+        display: block;
+        margin: 0;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .cart_description h4:hover {
+        white-space: normal;
+        word-wrap: break-word;
+        overflow: visible;
+        word-break: break-word;
+        text-align: center;
+      }
+
+      .cart_price p,
+      .cart_total_price {
+        font-weight: bold;
+        color: #fe980f;
+      }
+
+      .cart_delete a {
+        color: #b00;
+        font-size: 18px;
+        display: inline-block;
+        padding: 5px;
+      }
+    </style>
+    <!--<style>
       /* Estilo del menú desplegable */
+
+      #submenuVer {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        padding: 10px;
+        border-radius: 5px;
+      }
+
+      #submenuVer li {
+        list-style: none;
+      }
+
+      #submenuVer li a {
+        text-decoration: none;
+        padding: 8px;
+        display: block;
+        color: #333;
+      }
+
+      #submenuVer li a:hover {
+        background-color: #ddd;
+      }
+    </style>-->
+    <style>
+      /* Estilo del menú desplegable */
+      #submenuExportar {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        padding: 10px;
+        border-radius: 5px;
+      }
+
+      #submenuExportar li {
+        list-style: none;
+      }
+
+      #submenuExportar li a {
+        text-decoration: none;
+        padding: 8px;
+        display: block;
+        color: #333;
+      }
+      #submenuExportar li a:hover {
+        background-color: #e64a19;
+      }
 
       #submenuVer {
         display: none;
@@ -196,9 +290,18 @@
                     <a href="login.html"><i class="fa fa-lock"></i> Login</a>
                   </li>
                   <li>
-                    <a href="javascript:void(0);" id="exportLink"
-                      ><i class="fa fa-file-pdf-o"></i> Exportar</a
-                    >
+                    <a
+                      href="#"
+                      id="verMenuExportar"
+                      class="dropdown-toggle"
+                      data-toggle="dropdown"
+                      ><i class="fa fa-file-pdf-o"></i> Exportar
+                      <b class="caret"></b
+                    ></a>
+                    <ul class="dropdown-menu" id="submenuExportar">
+                      <li><a href="#" id="exportarPedidos">Pedidos</a></li>
+                      <li><a href="#" id="exportarProductos">Productos</a></li>
+                    </ul>
                   </li>
                   <li>
                     <a href="javascript:void(0);" id="chartsLink"
@@ -399,142 +502,32 @@
             <thead>
               <tr class="cart_menu">
                 <td class="image">Item</td>
-                <td class="description"></td>
-                <td class="price">Price</td>
-                <td class="quantity">Quantity</td>
-                <td class="total">Total</td>
+                <td class="description">Description</td>
+                <td class="quantity">Cantidad</td>
+                <!-- NUEVA COLUMNA -->
+
+                <td class="price">Precio</td>
                 <td></td>
               </tr>
             </thead>
-            <tbody>
+            <tbody></tbody>
+            <tfoot>
               <tr>
-                <td class="cart_product">
-                  <a href=""><img src="images/cart/one.png" alt="" /></a>
+                <td colspan="3"></td>
+                <td>
+                  <strong>Total:</strong> <span id="precioTotal">$0.00</span>
                 </td>
-                <td class="cart_description">
-                  <h4><a href="">Colorblock Scuba</a></h4>
-                  <p>Web ID: 1089772</p>
-                </td>
-                <td class="cart_price">
-                  <p>$59</p>
-                </td>
-                <td class="cart_quantity">
-                  <div class="cart_quantity_button">
-                    <a class="cart_quantity_up" href=""> + </a>
-                    <input
-                      class="cart_quantity_input"
-                      type="text"
-                      name="quantity"
-                      value="1"
-                      autocomplete="off"
-                      size="2"
-                    />
-                    <a class="cart_quantity_down" href=""> - </a>
-                  </div>
-                </td>
-                <td class="cart_total">
-                  <p class="cart_total_price">$59</p>
-                </td>
-                <td class="cart_delete">
-                  <a class="cart_quantity_delete" href=""
-                    ><i class="fa fa-times"></i
-                  ></a>
-                </td>
+                <td></td>
               </tr>
-
-              <tr>
-                <td class="cart_product">
-                  <a href=""><img src="images/cart/two.png" alt="" /></a>
-                </td>
-                <td class="cart_description">
-                  <h4><a href="">Colorblock Scuba</a></h4>
-                  <p>Web ID: 1089772</p>
-                </td>
-                <td class="cart_price">
-                  <p>$59</p>
-                </td>
-                <td class="cart_quantity">
-                  <div class="cart_quantity_button">
-                    <a class="cart_quantity_up" href=""> + </a>
-                    <input
-                      class="cart_quantity_input"
-                      type="text"
-                      name="quantity"
-                      value="1"
-                      autocomplete="off"
-                      size="2"
-                    />
-                    <a class="cart_quantity_down" href=""> - </a>
-                  </div>
-                </td>
-                <td class="cart_total">
-                  <p class="cart_total_price">$59</p>
-                </td>
-                <td class="cart_delete">
-                  <a class="cart_quantity_delete" href=""
-                    ><i class="fa fa-times"></i
-                  ></a>
-                </td>
-              </tr>
-              <tr>
-                <td class="cart_product">
-                  <a href=""><img src="images/cart/three.png" alt="" /></a>
-                </td>
-                <td class="cart_description">
-                  <h4><a href="">Colorblock Scuba</a></h4>
-                  <p>Web ID: 1089772</p>
-                </td>
-                <td class="cart_price">
-                  <p>$59</p>
-                </td>
-                <td class="cart_quantity">
-                  <div class="cart_quantity_button">
-                    <a class="cart_quantity_up" href=""> + </a>
-                    <input
-                      class="cart_quantity_input"
-                      type="text"
-                      name="quantity"
-                      value="1"
-                      autocomplete="off"
-                      size="2"
-                    />
-                    <a class="cart_quantity_down" href=""> - </a>
-                  </div>
-                </td>
-                <td class="cart_total">
-                  <p class="cart_total_price">$59</p>
-                </td>
-                <td class="cart_delete">
-                  <a class="cart_quantity_delete" href=""
-                    ><i class="fa fa-times"></i
-                  ></a>
-                </td>
-              </tr>
-              <tr>
-                <td colspan="4">&nbsp;</td>
-                <td colspan="2">
-                  <table class="table table-condensed total-result">
-                    <tr>
-                      <td>Cart Sub Total</td>
-                      <td>$59</td>
-                    </tr>
-                    <tr>
-                      <td>Exo Tax</td>
-                      <td>$2</td>
-                    </tr>
-                    <tr class="shipping-cost">
-                      <td>Shipping Cost</td>
-                      <td>Free</td>
-                    </tr>
-                    <tr>
-                      <td>Total</td>
-                      <td><span>$61</span></td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-            </tbody>
+            </tfoot>
           </table>
+        </div>
+        <div class="row">
+          <div class="col-sm-12">
+            <button type="button" class="btn btn-primary" id="comprar_carrito">
+              Comprar
+            </button>
+          </div>
         </div>
         <div class="payment-options">
           <span>
@@ -731,6 +724,217 @@
     <script src="js/jquery.scrollUp.min.js"></script>
     <script src="js/jquery.prettyPhoto.js"></script>
     <script src="js/main.js"></script>
+
+    <script>
+      $(document).ready(function () {
+        loadPedidosCarrito(); // Cargar los pedidos al cargar la página
+        $("#comprar_carrito").click(function () {
+          procesarCompra(); // Llamar a la función para procesar la compra al hacer clic en el botón
+        });
+      });
+
+      function loadPedidosCarrito() {
+        $.ajax({
+          url: "obtener_pedidos_carrito.php", // Usando el nuevo archivo PHP para obtener pedidos
+          type: "GET",
+          dataType: "json",
+          success: function (response) {
+            if (response.success) {
+              displayPedidosCarrito(response.pedidos);
+            } else {
+              console.error(
+                "Error al cargar los pedidos del carrito:",
+                response.message
+              );
+              // Puedes mostrar un mensaje al usuario si lo deseas
+            }
+          },
+          error: function (xhr, status, error) {
+            console.error(
+              "Error de conexión al cargar los pedidos del carrito:",
+              status,
+              error
+            );
+          },
+        });
+      }
+
+      function displayPedidosCarrito(pedidos) {
+        var cartBody = $(".cart_info tbody");
+        cartBody.empty(); // Limpiar el contenido actual del carrito
+
+        let totalCarrito = 0;
+
+        if (pedidos.length > 0) {
+          $.each(pedidos, function (index, pedido) {
+            let precio_unidad = parseFloat(pedido.precio_unidad);
+            let total = parseFloat(pedido.total);
+            totalCarrito += total;
+            let cantidad = parseInt(
+              precio_unidad > 0 ? Math.round(total / precio_unidad) : 1
+            );
+
+            console.log(precio_unidad);
+            console.log(total);
+
+            var row = $("<tr>");
+
+            row.append(
+              '<td class="cart_product"><a href=""><img class="imagen-producto" src="' +
+                pedido.imagen +
+                '" alt="' +
+                pedido.titulo +
+                '"></a></td>'
+            );
+            row.append(
+              '<td class="cart_description"><h4 title="' +
+                pedido.titulo +
+                '"><a href="#">' +
+                pedido.titulo +
+                "</a></h4><p>Web ID: " +
+                pedido.webId +
+                "</p></td>"
+            );
+            row.append(`
+              <td class="cart_quantity">
+                <input type="number" min="1" class="input-cantidad" data-pedido-id="${pedido.id}" data-precio="${precio_unidad}" value="${cantidad}">
+              </td>
+            `);
+            row.append(`
+              <td class="cart_price total-item">
+                $${total.toFixed(2)}
+              </td>
+            `);
+            row.append(
+              '<td class="cart_delete"><a class="cart_quantity_delete" href="#" data-pedido-id="' +
+                pedido.id +
+                '"><i class="fa fa-times"></i></a></td>'
+            );
+            cartBody.append(row);
+          });
+
+          $("#precioTotal").text("$" + totalCarrito.toFixed(2));
+
+          // Agregar funcionalidad para eliminar items del carrito
+          $(".cart_quantity_delete").click(function () {
+            var pedidoId = $(this).data("pedido-id");
+            borrarPedidoCarrito(pedidoId); // Usando la nueva función para borrar
+          });
+
+          $(".input-cantidad").on("blur", function () {
+            let input = $(this);
+            let cantidad = parseInt(input.val());
+            let precioUnidad = parseFloat(input.data("precio"));
+            let pedidoId = input.data("pedido-id");
+
+            if (isNaN(cantidad) || cantidad < 1) return;
+
+            let nuevoTotal = precioUnidad * cantidad;
+
+            // Actualiza el total individual
+            input
+              .closest("tr")
+              .find(".total-item")
+              .text(`$${nuevoTotal.toFixed(2)}`);
+
+            // Actualiza el total general del carrito
+            let total = 0;
+            $(".input-cantidad").each(function () {
+              let cant = parseInt($(this).val());
+              let precio = parseFloat($(this).data("precio"));
+              if (!isNaN(cant) && cant >= 1) {
+                total += cant * precio;
+              }
+            });
+            $("#precioTotal").text(`$${total.toFixed(2)}`);
+
+            console.log("Pedido ID:", pedidoId);
+            console.log("Cantidad:", cantidad);
+            console.log("Nuevo Total:", nuevoTotal);
+
+            // Ejecutar AJAX solo cuando el input pierde foco
+            $.ajax({
+              url: "actualizar_cantidad.php",
+              type: "POST",
+              data: {
+                pedido_id: pedidoId,
+                cantidad: cantidad,
+                total: nuevoTotal,
+              },
+              success: function (response) {
+                console.log(
+                  "Cantidad actualizada en la base de datos:",
+                  response
+                );
+              },
+              error: function () {
+                console.error(
+                  "Error al actualizar la cantidad en la base de datos."
+                );
+              },
+            });
+          });
+        } else {
+          $("#precioTotal").text("$" + 0.0);
+          cartBody.append(
+            '<tr><td colspan="5"><p>No hay productos en el carrito.</p></td></tr>'
+          );
+        }
+      }
+
+      function borrarPedidoCarrito(pedidoId) {
+        $.ajax({
+          url: "borrar_pedido_carrito.php", // Usando el nuevo archivo PHP para borrar pedidos
+          type: "POST",
+          dataType: "json",
+          data: { pedido_id: pedidoId }, // Enviando 'pedido_id' como espera el PHP
+          success: function (response) {
+            if (response.success) {
+              loadPedidosCarrito(); // Recargar el carrito después de eliminar
+            } else {
+              console.error(
+                "Error al eliminar el pedido del carrito:",
+                response.message
+              );
+              alert("Error al eliminar el pedido del carrito.");
+            }
+          },
+          error: function (xhr, status, error) {
+            console.error(
+              "Error de conexión al eliminar el pedido:",
+              status,
+              error
+            );
+            alert("Error de conexión al eliminar el pedido.");
+          },
+        });
+      }
+
+      function procesarCompra() {
+        $.ajax({
+          url: "procesar_compra.php", // Nuevo archivo PHP para cambiar el estado de los pedidos
+          type: "POST",
+          dataType: "json",
+          success: function (response) {
+            if (response.success) {
+              alert("¡Compra realizada con éxito!");
+              loadPedidosCarrito(); // Recargar el carrito para que se muestre vacío (si la lógica del PHP lo hace)
+            } else {
+              alert("Error al procesar la compra:", response.message);
+            }
+          },
+          error: function (xhr, status, error) {
+            console.error(
+              "Error de conexión al procesar la compra:",
+              status,
+              error
+            );
+            alert("Error de conexión al procesar la compra.");
+          },
+        });
+      }
+    </script>
+
     <script>
       $(document).ready(function () {
         $("#accountLink").on("click", function (e) {
@@ -824,8 +1028,34 @@
     </script>
     <script>
       $(document).ready(function () {
+        $(document).click(function (e) {
+          if ($("#submenuExportar").is(":visible")) {
+            if (
+              !$(e.target).closest("#submenuExportar").length &&
+              !$(e.target).closest("#verMenuExportar").length
+            ) {
+              $("#submenuExportar").hide();
+            }
+          } else if ($("#submenuVer").is(":visible")) {
+            if (
+              !$(e.target).closest("#submenuVer").length &&
+              !$(e.target).closest("#verMenu").length
+            ) {
+              $("#submenuVer").hide();
+            }
+          }
+        });
+
+        $("#verMenuExportar").click(function () {
+          verificarSesion(() => {
+            $("#submenuExportar").toggle();
+          });
+        });
+
         $("#verMenu").click(function () {
-          $("#submenuVer").toggle();
+          verificarSesion(() => {
+            $("#submenuVer").toggle();
+          });
         });
 
         $("#verPedidos").click(function () {
@@ -868,6 +1098,10 @@
           : "all";
       }
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.72/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.72/vfs_fonts.js"></script>
 
     <!--script: PDF productos-->
     <script>
@@ -890,7 +1124,9 @@
       }
 
       async function getHeaderContent() {
-        const logoBase64 = await toDataURL("images/home/logo.png").catch(() => null);
+        const logoBase64 = await toDataURL("images/home/logo.png").catch(
+          () => null
+        );
 
         return {
           table: {
@@ -918,8 +1154,7 @@
                       margin: [0, 2, 10, 0],
                     },
                     {
-                      text:
-                        "Facebook | Twitter | LinkedIn | Dribbble | Google+",
+                      text: "Facebook | Twitter | LinkedIn | Dribbble | Google+",
                       fontSize: 9,
                       color: "gray",
                       margin: [0, 5, 10, 10],
@@ -969,7 +1204,9 @@
         console.log("Exportar productos ..");
         try {
           const headerContent = await getHeaderContent();
-          const response = await fetch("get_products_by_category.php?category=all");
+          const response = await fetch(
+            "get_products_by_category.php?category=all"
+          );
           const data = await response.json();
 
           if (!data.success) {
@@ -981,7 +1218,9 @@
 
           const productsWithBase64 = await Promise.all(
             products.map(async (product) => {
-              const base64Image = await toDataURL(product.image).catch(() => null);
+              const base64Image = await toDataURL(product.image).catch(
+                () => null
+              );
               return {
                 id: product.id,
                 name: product.name,
@@ -1048,7 +1287,6 @@
         .addEventListener("click", generarPDFConProductos);
     </script>
 
-
     <!--script: PDF pedidos-->
     <script>
       function toDataURL(url) {
@@ -1068,23 +1306,23 @@
           xhr.send();
         });
       }
-    
+
       async function generarPDFConPedidos() {
         console.log("Exportar pedidos ..");
         try {
           // 1. Obtener pedidos
           const response = await fetch("get_pedidos.php");
           const data = await response.json();
-    
+
           console.log("Respuesta de get_pedidos.php:", data);
-    
+
           if (!data.success) {
             alert("Error al cargar pedidos.");
             return;
           }
-    
+
           const pedidos = data.pedidos;
-    
+
           // 2. Crear estructura del PDF
           const bodyTable = [
             [
@@ -1095,7 +1333,7 @@
               { text: "Total", bold: true },
             ],
           ];
-    
+
           pedidos.forEach((pedido) => {
             bodyTable.push([
               { text: pedido.id.toString() },
@@ -1105,11 +1343,11 @@
               { text: `$${parseFloat(pedido.total).toFixed(2)}` },
             ]);
           });
-    
+
           const logoBase64 = await toDataURL("images/home/logo.png").catch(
             () => null
           );
-    
+
           const docDefinition = {
             content: [
               {
@@ -1199,7 +1437,7 @@
               };
             },
           };
-    
+
           // 4. Generar PDF
           pdfMake.createPdf(docDefinition).download("pedidos.pdf");
         } catch (error) {
@@ -1207,7 +1445,7 @@
           alert("Ocurrió un error al generar el PDF.");
         }
       }
-    
+
       document
         .getElementById("exportarPedidos")
         .addEventListener("click", generarPDFConPedidos);

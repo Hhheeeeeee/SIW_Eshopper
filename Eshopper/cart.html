@@ -854,55 +854,6 @@
             borrarPedidoCarrito(pedidoId); // Usando la nueva función para borrar
           });
 
-          // Detectar cambios en la cantidad
-          /*
-          $(".input-cantidad").on("input", function () {
-            let pedidoId = input.data("data-pedido-id");
-            let input = $(this);
-            let cantidad = parseInt(input.val());
-            let precioUnidad = parseFloat(input.data("precio"));
-            if (isNaN(cantidad) || cantidad < 1) cantidad = 1;
-            let nuevoTotal = precioUnidad * cantidad;
-
-            // Actualizar el precio en la columna de ese producto
-            input
-              .closest("tr")
-              .find(".total-item")
-              .text(`$${nuevoTotal.toFixed(2)}`);
-
-            // Recalcular el total del carrito
-            let total = 0;
-            $(".input-cantidad").each(function () {
-              let cant = parseInt($(this).val());
-              let precio = parseFloat($(this).data("precio"));
-              total += cant * precio;
-            });
-            $("#precioTotal").text(`$${total.toFixed(2)}`);
-
-            // Actualizar el total en el servidor (base de datos)
-
-            $.ajax({
-              url: "actualizar_cantidad.php",
-              type: "POST",
-              data: {
-                pedido_id: pedidoId,
-                cantidad: cantidad,
-                total: nuevoTotal,
-              },
-              success: function (response) {
-                console.log(
-                  "Cantidad actualizada en la base de datos:",
-                  response
-                );
-              },
-              error: function () {
-                console.error(
-                  "Error al actualizar la cantidad en la base de datos."
-                );
-              },
-            });
-          });*/
-
           $(".input-cantidad").on("blur", function () {
             let input = $(this);
             let cantidad = parseInt(input.val());
@@ -1093,7 +1044,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.72/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.72/vfs_fonts.js"></script>
 
-    
     <!--script: PDF productos-->
     <script>
       function toDataURL(url) {
@@ -1115,7 +1065,9 @@
       }
 
       async function getHeaderContent() {
-        const logoBase64 = await toDataURL("images/home/logo.png").catch(() => null);
+        const logoBase64 = await toDataURL("images/home/logo.png").catch(
+          () => null
+        );
 
         return {
           table: {
@@ -1143,8 +1095,7 @@
                       margin: [0, 2, 10, 0],
                     },
                     {
-                      text:
-                        "Facebook | Twitter | LinkedIn | Dribbble | Google+",
+                      text: "Facebook | Twitter | LinkedIn | Dribbble | Google+",
                       fontSize: 9,
                       color: "gray",
                       margin: [0, 5, 10, 10],
@@ -1194,7 +1145,9 @@
         console.log("Exportar productos ..");
         try {
           const headerContent = await getHeaderContent();
-          const response = await fetch("get_products_by_category.php?category=all");
+          const response = await fetch(
+            "get_products_by_category.php?category=all"
+          );
           const data = await response.json();
 
           if (!data.success) {
@@ -1206,7 +1159,9 @@
 
           const productsWithBase64 = await Promise.all(
             products.map(async (product) => {
-              const base64Image = await toDataURL(product.image).catch(() => null);
+              const base64Image = await toDataURL(product.image).catch(
+                () => null
+              );
               return {
                 id: product.id,
                 name: product.name,
@@ -1273,7 +1228,6 @@
         .addEventListener("click", generarPDFConProductos);
     </script>
 
-
     <!--script: PDF pedidos-->
     <script>
       function toDataURL(url) {
@@ -1293,23 +1247,23 @@
           xhr.send();
         });
       }
-    
+
       async function generarPDFConPedidos() {
         console.log("Exportar pedidos ..");
         try {
           // 1. Obtener pedidos
           const response = await fetch("get_pedidos.php");
           const data = await response.json();
-    
+
           console.log("Respuesta de get_pedidos.php:", data);
-    
+
           if (!data.success) {
             alert("Error al cargar pedidos.");
             return;
           }
-    
+
           const pedidos = data.pedidos;
-    
+
           // 2. Crear estructura del PDF
           const bodyTable = [
             [
@@ -1320,7 +1274,7 @@
               { text: "Total", bold: true },
             ],
           ];
-    
+
           pedidos.forEach((pedido) => {
             bodyTable.push([
               { text: pedido.id.toString() },
@@ -1330,11 +1284,11 @@
               { text: `$${parseFloat(pedido.total).toFixed(2)}` },
             ]);
           });
-    
+
           const logoBase64 = await toDataURL("images/home/logo.png").catch(
             () => null
           );
-    
+
           const docDefinition = {
             content: [
               {
@@ -1424,7 +1378,7 @@
               };
             },
           };
-    
+
           // 4. Generar PDF
           pdfMake.createPdf(docDefinition).download("pedidos.pdf");
         } catch (error) {
@@ -1432,7 +1386,7 @@
           alert("Ocurrió un error al generar el PDF.");
         }
       }
-    
+
       document
         .getElementById("exportarPedidos")
         .addEventListener("click", generarPDFConPedidos);
