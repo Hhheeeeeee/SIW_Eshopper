@@ -1239,6 +1239,54 @@
 
     <script>
       $(document).ready(function () {
+        $("#priceMin").on("input", function () {
+          $("#priceSliderMin").val($(this).val());
+        });
+
+        $("#priceMax").on("input", function () {
+          $("#priceSliderMax").val($(this).val());
+        });
+
+        $("#priceSliderMin").on("input", function () {
+          $("#priceMin").val($(this).val());
+        });
+
+        $("#priceSliderMax").on("input", function () {
+          $("#priceMax").val($(this).val());
+        });
+
+        // Al hacer clic en "Filtrar"
+        $("#applyPriceFilter").on("click", function () {
+          let minPrice = parseInt($("#priceMin").val());
+          let maxPrice = parseInt($("#priceMax").val());
+
+          if (minPrice > maxPrice) {
+            alert("El precio mínimo no puede ser mayor que el máximo.");
+            return;
+          }
+
+          console.log("Filtrando productos:", minPrice, "-", maxPrice);
+          filterProductsByPrice(minPrice, maxPrice);
+        });
+
+        function filterProductsByPrice(minPrice, maxPrice) {
+          $(".features_items .col-sm-4").each(function () {
+            let productPrice = parseFloat(
+              $(this)
+                .find("h2")
+                .text()
+                .replace(/[^0-9.]/g, "")
+                .trim()
+            );
+
+            if (productPrice >= minPrice && productPrice <= maxPrice) {
+              $(this).show();
+            } else {
+              $(this).hide();
+            }
+          });
+        }
+
         $.ajax({
           url: "get_categories.php",
           method: "GET",
@@ -1249,36 +1297,62 @@
             $.each(data, function (category, subcategories) {
               let categoryId = category.replace(/\s+/g, "-").toLowerCase(); // ID sin espacios
               menuHtml += `
-							<div class="panel panel-default">
-								<div class="panel-heading">
-									<h4 class="panel-title">
-										<a data-toggle="collapse" data-parent="#accordian" href="#${categoryId}" class="category-link" data-category="${category}">
-											<span class="badge pull-right"><i class="fa fa-plus"></i></span>
-											${category}
-										</a>
-									</h4>
-								</div>
-								<div id="${categoryId}" class="panel-collapse collapse">
-									<div class="panel-body">
-										<ul>`;
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordian" href="#${categoryId}" class="category-link" data-category="${category}">
+                                    <span class="badge pull-right"><i class="fa fa-plus"></i></span>
+                                    ${category}
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="${categoryId}" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <ul>`;
 
               $.each(subcategories, function (index, subcategory) {
-                menuHtml += `<li><a href="#" class="category-link" data-category="${subcategory}">${subcategory}</a></li>`;
+                let subCategoryName = subcategory.sub_category;
+                let categoryKey = subcategory.category_key;
+                //menuHtml += `<li><a href="#" class="category-link" data-category="${subcategory}">${subcategory}</a></li>`;
+                menuHtml += `<li><a href="#" class="subcategory-link" data-category="${category}" data-subcategory="${categoryKey}">${subCategoryName}</a></li>`;
               });
 
               menuHtml += `      </ul>
-									</div>
-								</div>
-							</div>`;
+                            </div>
+                        </div>
+                    </div>`;
             });
 
             $(".category-products").html(menuHtml);
 
-            $(".category-link, .subcategory-link").on("click", function (e) {
+            $(".category-link").on("click", function (e) {
               e.preventDefault();
+
+              $(".category-link").removeClass("active"); // Eliminar la clase activa de otras categorías
+              $(this).addClass("active"); // Agregar clase activa a la categoría seleccionada
+
               let selectedCategory = $(this).data("category");
+              //let minPrice = $("#priceSlider").slider("values", 0);
+              //let maxPrice = $("#priceSlider").slider("values", 1);
               console.log("Categoría seleccionada:", selectedCategory);
               loadProducts(selectedCategory);
+            });
+
+            $(".subcategory-link").on("click", function (e) {
+              console.log(
+                "Subcategoría seleccionada:",
+                $(this).data("subcategory")
+              );
+              e.preventDefault();
+
+              //$(".category-link").removeClass("active"); // Eliminar la clase activa de otras categorías
+              //$(this).addClass("active"); // Agregar clase activa a la categoría seleccionada
+
+              let selectedSubCategory = $(this).data("subcategory");
+              let selectedCategory = $(this).data("category");
+              //let minPrice = $("#priceSlider").slider("values", 0);
+              //let maxPrice = $("#priceSlider").slider("values", 1);
+              loadProducts(selectedCategory, selectedSubCategory);
             });
           },
           error: function () {
@@ -1287,18 +1361,26 @@
         });
       });
 
+      var selectedCategory = "";
+
       $(document).on(
         "click",
         ".category-link, .subcategory-link",
         function (e) {
           e.preventDefault();
-          let selectedCategory = $(this).data("category");
+
+          selectedCategory = $(this).data("category");
           console.log("Categoría seleccionada:", selectedCategory);
           loadProducts(selectedCategory);
         }
       );
 
-      function loadProducts(category) {
+      function loadProducts(
+        category,
+        subcategory = -1,
+        minPrice = 0,
+        maxPrice = 600
+      ) {
         console.log("Cargando productos para la categoría:", category);
 
         // Mostrar un mensaje de carga temporal
@@ -1307,7 +1389,12 @@
         $.ajax({
           url: "get_products_by_category.php",
           type: "GET",
-          data: { category: category }, // Enviamos la categoría seleccionada
+          data: {
+            category: category,
+            subcategory: subcategory,
+            minPrice: minPrice,
+            maxPrice: maxPrice,
+          }, // Enviamos la categoría seleccionada
           dataType: "json",
           success: function (response) {
             console.log("Categoria seleccionadaa: ", category);
@@ -1318,39 +1405,54 @@
 
               response.products.forEach((product) => {
                 productsHtml += `
-								<div class="col-sm-4">
-									<div class="product-image-wrapper">
-										<div class="single-products">
-											<div class="productinfo text-center">
-												<img src="${product.image}" alt="${product.name}" />
-												<h2>$${product.price}</h2>
-												<p>${product.name}</p>
-												<a href="#" class="btn btn-default add-to-cart">
-													<i class="fa fa-shopping-cart"></i> Add to cart
-												</a>
-											</div>
-											<div class="product-overlay">
-												<div class="overlay-content">
-													<h2>$${product.price}</h2>
-													<p>${product.name}</p>
-													<a href="#" class="btn btn-default add-to-cart">
-														<i class="fa fa-shopping-cart"></i> Add to cart
-													</a>
-												</div>
-											</div>
-										</div>
-										<div class="choose">
-											<ul class="nav nav-pills nav-justified">
-												<li><a href="#"><i class="fa fa-plus-square"></i> Add to wishlist</a></li>
-												<li><a href="#"><i class="fa fa-plus-square"></i> Add to compare</a></li>
-											</ul>
-										</div>
-									</div>
-								</div>`;
+                        <div class="col-sm-4">
+                            <div class="product-image-wrapper">
+                                <div class="single-products">
+                                    <div class="productinfo text-center">
+                                        <img src="${product.image}" alt="${product.name}" />
+                                        <h2>$${product.price}</h2>
+                                        <p>${product.name}</p>
+                                        <a href="#" class="btn btn-default add-to-cart">
+                                            <i class="fa fa-shopping-cart"></i> Add to cart
+                                        </a>
+                                    </div>
+                                    <div class="product-overlay" data-id="${product.id}">
+                                        <div class="overlay-content">
+                                            <h2>$${product.price}</h2>
+                                            <p>${product.name}</p>
+                                            <a href="#" class="btn btn-default add-to-cart">
+                                                <i class="fa fa-shopping-cart"></i> Add to cart
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="choose">
+                                    <ul class="nav nav-pills nav-justified">
+                                        <li><a href="#"><i class="fa fa-plus-square"></i> Add to wishlist</a></li>
+                                        <li><a href="#"><i class="fa fa-plus-square"></i> Add to compare</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>`;
               });
 
               // Reemplazar productos en la página
               $(".features_items").html(productsHtml);
+
+              // Agregar evento de clic solo en el overlay
+              $(".product-overlay").on("click", function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                //let productId = $(this).data('id');
+                let productId = $(this).attr("data-id"); //Devuelve alfanumerico, no convierte a int
+                console.log("Producto seleccionado desde overlay:", productId);
+                openProductDetails(productId);
+              });
+
+              // Evitar que los enlaces dentro del overlay interfieran con el evento de clic
+              $(".product-overlay a").on("click", function (e) {
+                e.stopPropagation();
+              });
             } else {
               $(".features_items").html(
                 "<p>No se encontraron productos para esta categoría.</p>"
@@ -1515,13 +1617,25 @@
               ).textContent = `US $${product.precio}`;
               document.querySelector(
                 ".product-information p:nth-of-type(2)"
-              ).innerHTML = `<b>Availability:</b> NULLL`; //${product.availability}
+              ).innerHTML = `<b>Availability:</b> Available`;
+              let marcaUrl = product.url_marca || "#";
+              let marcaTexto =
+                marcaUrl.length > 20
+                  ? marcaUrl.substring(0, 20) + "..."
+                  : marcaUrl;
               document.querySelector(
                 ".product-information p:nth-of-type(3)"
-              ).innerHTML = `<b>Condition:</b> NULLL`; //${product.condition};
+              ).innerHTML = `<b>Brand:</b> <a href="${marcaUrl}" target="_blank">${marcaTexto}</a>`;
+
+              // Más información (enlace corto)
+              let productoUrl = product.url_producto || "#";
+              let productoTexto =
+                productoUrl.length > 20
+                  ? productoUrl.substring(0, 20) + "..."
+                  : productoUrl;
               document.querySelector(
                 ".product-information p:nth-of-type(4)"
-              ).innerHTML = `<b>Brand:</b> NULLL`; //${product.brand};
+              ).innerHTML = `<b>More:</b> <a href="${productoUrl}" target="_blank">${productoTexto}</a>`;
             } else {
               console.error("Error al cargar el producto:", data.message);
             }
@@ -1778,6 +1892,44 @@
           ? selectedCategory
           : "all";
       }
+    </script>
+
+    <script>
+      $(document).ready(function () {
+        $("#accountLink").on("click", function (e) {
+          e.preventDefault();
+          $.ajax({
+            url: "session_check.php",
+            type: "GET",
+            dataType: "json",
+            success: function (response) {
+              if (response.logged_in) {
+                console.log(`Response admin ${response.is_admin}`);
+                if (
+                  response.es_admin &&
+                  window.location.pathname.indexOf("admin_panel.html") === -1
+                ) {
+                  window.location.href = "/Eshopper/personal_page.html"; // Página de administrador
+                } else if (
+                  window.location.pathname.indexOf("personal_page.html") === -1
+                ) {
+                  window.location.href = "/Eshopper/personal_page.html";
+                }
+              } else {
+                $("#accountMessage")
+                  .text("No has iniciado sesión. Redirigiendo...")
+                  .show();
+                setTimeout(() => {
+                  window.location.href = "/Eshopper/login.html";
+                }, 2000);
+              }
+            },
+            error: function () {
+              alert("Error en el servidor. Inténtalo más tarde.");
+            },
+          });
+        });
+      });
     </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>

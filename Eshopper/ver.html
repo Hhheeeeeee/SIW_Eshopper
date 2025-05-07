@@ -143,18 +143,19 @@
               let firstRow = true; // Para identificar la primera fila de la categoría principal
 
               subCategories.forEach((subCategory, index) => {
+                let subCategoryName = subCategory.sub_category;
                 if (firstRow) {
                   categoriesHtml += `
                 <tr>
                   <td rowspan="${subCategories.length}">${mainCategory}</td>
-                  <td>${subCategory}</td>
+                  <td>${subCategoryName}</td>
                 </tr>
               `;
                   firstRow = false; // A partir de aquí no es necesario repetir la categoría principal
                 } else {
                   categoriesHtml += `
                 <tr>
-                  <td>${subCategory}</td>
+                  <td>${subCategoryName}</td>
                 </tr>
               `;
                 }

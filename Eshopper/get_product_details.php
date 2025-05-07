@@ -16,12 +16,12 @@ $product_id = isset($_GET['id']) ? trim($_GET['id']) : '';
 
 if (!empty($product_id)) {
     // Consulta SQL para obtener los detalles del producto
-    $sql = "SELECT titulo, precio, imagen FROM final_productos WHERE id = ?";
+    $sql = "SELECT titulo, precio, imagen, url_marca, url_producto FROM final_productos WHERE id = ?";
     $stmt = $conn->prepare($sql);
-    
-    // Cambia el tipo de dato de la consulta a STRING en lugar de INTEGER
+
+    // Cambia el tipo de dato de la consulta a STRING
     $stmt->bind_param("s", $product_id);
-    
+
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -36,7 +36,9 @@ if (!empty($product_id)) {
             'id' => $product_id,
             'titulo' => $row['titulo'],
             'precio' => number_format($row['precio'], 2),
-            'imagen' => $imageUrl
+            'imagen' => $imageUrl,
+            'url_marca' => $row['url_marca'],
+            'url_producto' => $row['url_producto']
         ];
         echo json_encode(["success" => true, "product" => $product]);
     } else {
@@ -49,4 +51,5 @@ if (!empty($product_id)) {
 }
 
 $conn->close();
+
 ?>

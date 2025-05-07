@@ -1720,23 +1720,50 @@
           }
 
           console.log("Filtrando productos:", minPrice, "-", maxPrice);
+
           filterProductsByPrice(minPrice, maxPrice);
         });
 
         function filterProductsByPrice(minPrice, maxPrice) {
           $(".features_items .col-sm-4").each(function () {
+            console.log($(this).html()); // Muestra todo el HTML del producto
+          });
+
+          $(".features_items .col-sm-4").each(function (index) {
+            // Buscar el precio de la oferta y el precio original dentro de .productinfo
+            let priceText = $(this)
+              .find(".productinfo .offer-price")
+              .first()
+              .text()
+              .trim();
+
+            console.log("Precio de oferta encontrado (raw):", priceText); // Para depuración
+
+            // Si no se encuentra el precio de oferta, intentar con el precio original
+            if (!priceText) {
+              priceText = $(this).find(".productinfo h2").first().text().trim();
+              console.log("Precio original encontrado (raw):", priceText);
+            }
+
+            // Limpia el texto para obtener sólo números y puntos
             let productPrice = parseFloat(
-              $(this)
-                .find("h2")
-                .text()
-                .replace(/[^0-9.]/g, "")
+              priceText
+                .replace(/[^0-9.,]/g, "")
+                .replace(",", ".")
                 .trim()
             );
 
+            // Si está en el rango, mostrar
+
             if (productPrice >= minPrice && productPrice <= maxPrice) {
-              $(this).show();
+              console.log(
+                "Producto dentro del rango de precios:",
+                productPrice
+              );
+              $(this).css("display", "block");
             } else {
-              $(this).hide();
+              console.log("Producto fuera del rango de precios:", productPrice);
+              $(this).css("display", "none");
             }
           });
         }
@@ -1765,7 +1792,10 @@
                                 <ul>`;
 
               $.each(subcategories, function (index, subcategory) {
-                menuHtml += `<li><a href="#" class="category-link" data-category="${subcategory}">${subcategory}</a></li>`;
+                let subCategoryName = subcategory.sub_category;
+                let categoryKey = subcategory.category_key;
+                //menuHtml += `<li><a href="#" class="category-link" data-category="${subcategory}">${subcategory}</a></li>`;
+                menuHtml += `<li><a href="#" class="subcategory-link" data-category="${category}" data-subcategory="${categoryKey}">${subCategoryName}</a></li>`;
               });
 
               menuHtml += `      </ul>
@@ -1776,7 +1806,7 @@
 
             $(".category-products").html(menuHtml);
 
-            $(".category-link, .subcategory-link").on("click", function (e) {
+            $(".category-link").on("click", function (e) {
               e.preventDefault();
 
               $(".category-link").removeClass("active"); // Eliminar la clase activa de otras categorías
@@ -1787,6 +1817,23 @@
               //let maxPrice = $("#priceSlider").slider("values", 1);
               console.log("Categoría seleccionada:", selectedCategory);
               loadProducts(selectedCategory);
+            });
+
+            $(".subcategory-link").on("click", function (e) {
+              console.log(
+                "Subcategoría seleccionada:",
+                $(this).data("subcategory")
+              );
+              e.preventDefault();
+
+              //$(".category-link").removeClass("active"); // Eliminar la clase activa de otras categorías
+              //$(this).addClass("active"); // Agregar clase activa a la categoría seleccionada
+
+              let selectedSubCategory = $(this).data("subcategory");
+              let selectedCategory = $(this).data("category");
+              //let minPrice = $("#priceSlider").slider("values", 0);
+              //let maxPrice = $("#priceSlider").slider("values", 1);
+              loadProducts(selectedCategory, selectedSubCategory);
             });
           },
           error: function () {
@@ -1809,7 +1856,12 @@
         }
       );
 
-      function loadProducts(category, minPrice = 0, maxPrice = 600) {
+      function loadProducts(
+        category,
+        subcategory = -1,
+        minPrice = 0,
+        maxPrice = 600
+      ) {
         console.log("Cargando productos para la categoría:", category);
 
         // Mostrar un mensaje de carga temporal
@@ -1818,7 +1870,12 @@
         $.ajax({
           url: "get_products_by_category.php",
           type: "GET",
-          data: { category: category, minPrice: minPrice, maxPrice: maxPrice }, // Enviamos la categoría seleccionada
+          data: {
+            category: category,
+            subcategory: subcategory,
+            minPrice: minPrice,
+            maxPrice: maxPrice,
+          }, // Enviamos la categoría seleccionada
           dataType: "json",
           success: function (response) {
             console.log("Categoria seleccionadaa: ", category);

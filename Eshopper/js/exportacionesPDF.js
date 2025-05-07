@@ -139,17 +139,17 @@ async function generarPDFConCategorias() {
         { text: "Subcategoría", bold: true },
       ],
     ];
-
     for (const mainCategory in data) {
       if (data.hasOwnProperty(mainCategory)) {
         let subCategories = data[mainCategory];
 
-        subCategories.forEach((subCategory, index) => {
+        subCategories.forEach((subCategoryObj, index) => {
+          let subCategoryName = subCategoryObj.sub_category; // Accedemos al nombre
           bodyTable.push([
             index === 0
               ? { text: mainCategory, rowSpan: subCategories.length }
               : {},
-            { text: subCategory },
+            { text: subCategoryName },
           ]);
         });
       }
