@@ -1556,7 +1556,7 @@
                 data: pedidoData,
                 success: function (pedidoResponse) {
                   if (pedidoResponse.success) {
-                    console.log("Producto añadido al carrito!");
+                    alert("¡Producto añadido al carrito!");
                   } else {
                     console.log(
                       "Error al añadir el producto al carrito: " +
@@ -1650,112 +1650,115 @@
         const productId = urlParams.get("id");
 
         if (!productId) {
-          console.error("No se encontró el ID del producto en la URL.");
-          return;
+            console.error("No se encontró el ID del producto en la URL.");
+            return;
         }
 
         const reviewsContainer = document.querySelector("#reviews .col-sm-12");
 
         function loadReviews(starFilter = null) {
-          let fetchUrl = starFilter
-            ? `filter_reviews_by_star.php?id=${encodeURIComponent(
-                productId
-              )}&stars=${starFilter}`
-            : `get_reviews.php?id=${encodeURIComponent(productId)}`;
+            let fetchUrl = starFilter
+                ? `filter_reviews_by_star.php?id=${encodeURIComponent(productId)}&stars=${starFilter}`
+                : `get_reviews.php?id=${encodeURIComponent(productId)}`;
 
-          fetch(fetchUrl)
-            .then((response) => response.json())
-            .then((data) => {
-              reviewsContainer.innerHTML = ""; // Limpiar contenido
+            fetch(fetchUrl)
+                .then((response) => response.json())
+                .then((data) => {
+                    reviewsContainer.innerHTML = ""; // Limpiar contenido
 
-              if (data.success && data.reviews.length > 0) {
-                data.reviews.forEach((review) => {
-                  const stars =
-                    "★".repeat(Math.round(review.rating)) +
-                    "☆".repeat(5 - Math.round(review.rating));
-                  const reviewHtml = `
-								<ul>
-									<li><i class="fa fa-user"></i> ${review.usuario}</li>
-									<li><i class="fa fa-calendar-o"></i> ${review.fecha}</li>
-								</ul>
-								<p><b>${stars}</b></p>
-								<p>${review.comentario}</p>
-								<hr>
-							`;
-                  reviewsContainer.innerHTML += reviewHtml;
-                });
-              } else {
-                reviewsContainer.innerHTML =
-                  "<p>No hay opiniones para este producto.</p>";
-              }
-
-              // Agregar formulario si no existe
-              if (!document.getElementById("reviewForm")) {
-                const formHtml = `
-							<form id="reviewForm">
-								<span>
-									<input type="text" id="reviewName" placeholder="Your Name" required />
-									<input type="email" id="reviewEmail" placeholder="Email Address" required />
-								</span>
-								<textarea id="reviewComment" placeholder="Write your review here..." required></textarea>
-								<b>Rating: </b> <img src="images/product-details/rating.png" alt="" />
-								<button type="submit" class="btn btn-default pull-right">Submit</button>
-							</form>
-						`;
-                reviewsContainer.innerHTML += formHtml;
-
-                // Manejar envío del formulario
-                document
-                  .getElementById("reviewForm")
-                  .addEventListener("submit", function (event) {
-                    event.preventDefault();
-
-                    const name = document
-                      .getElementById("reviewName")
-                      .value.trim();
-                    const email = document
-                      .getElementById("reviewEmail")
-                      .value.trim();
-                    const comment = document
-                      .getElementById("reviewComment")
-                      .value.trim();
-
-                    if (!name || !email || !comment) {
-                      alert("Por favor, complete todos los campos.");
-                      return;
+                    if (data.success && data.reviews.length > 0) {
+                        data.reviews.forEach((review) => {
+                            const stars =
+                                "★".repeat(Math.round(review.rating)) +
+                                "☆".repeat(5 - Math.round(review.rating));
+                            const reviewHtml = `
+                                <ul>
+                                    <li><i class="fa fa-user"></i> ${review.usuario}</li>
+                                    <li><i class="fa fa-calendar-o"></i> ${review.fecha}</li>
+                                </ul>
+                                <p><b>${stars}</b></p>
+                                <p>${review.comentario}</p>
+                                <hr>
+                            `;
+                            reviewsContainer.innerHTML += reviewHtml;
+                        });
+                    } else {
+                        reviewsContainer.innerHTML = "<p>No hay opiniones para este producto.</p>";
                     }
 
-                    fetch("submit_review.php", {
-                      method: "POST",
-                      headers: {
-                        "Content-Type": "application/x-www-form-urlencoded",
-                      },
-                      body: `id=${encodeURIComponent(
-                        productId
-                      )}&name=${encodeURIComponent(
-                        name
-                      )}&email=${encodeURIComponent(
-                        email
-                      )}&comment=${encodeURIComponent(comment)}`,
-                    })
-                      .then((response) => response.json())
-                      .then((data) => {
-                        if (data.success) {
-                          alert("¡Reseña enviada con éxito!");
-                          loadReviews(5); // Recargar reseñas con filtro de 5 estrellas
-                        } else {
-                          alert("Error al enviar la reseña: " + data.message);
-                        }
-                      })
-                      .catch((error) =>
-                        console.error("Error en la petición AJAX:", error)
-                      );
-                  });
-              }
-            })
-            .catch((error) =>
-              console.error("Error en la petición AJAX:", error)
-            );
+                    // Agregar formulario si no existe
+                    if (!document.getElementById("reviewForm")) {
+                        const formHtml = `
+                            <form id="reviewForm">
+                                <span>
+                                    <input type="text" id="reviewName" placeholder="Your Name" required />
+                                    <input type="text" id="reviewUserUrl" placeholder="Your Email" required /> <!-- Cambiado a usuario_url -->
+                                </span>
+                                <textarea id="reviewComment" placeholder="Write your review here..." required></textarea>
+                                <b>Rating:</b>
+                                <ul class="nav nav-tabs" id="starSelector">
+                                    <li><a href="#" data-stars="1">★</a></li>
+                                    <li><a href="#" data-stars="2">★★</a></li>
+                                    <li><a href="#" data-stars="3">★★★</a></li>
+                                    <li><a href="#" data-stars="4">★★★★</a></li>
+                                    <li class="active"><a href="#" data-stars="5">★★★★★</a></li>
+                                </ul>
+                                <input type="hidden" id="selectedRating" value="5" />
+                                <button type="submit" class="btn btn-default pull-right">Submit</button>
+                            </form>
+                        `;
+                        reviewsContainer.innerHTML += formHtml;
+
+                        // Activar selector de estrellas
+                        document.querySelectorAll("#starSelector a").forEach((el) => {
+                            el.addEventListener("click", function (e) {
+                                e.preventDefault(); // Evita el salto hacia arriba
+
+                                const selectedStars = this.getAttribute("data-stars");
+                                document.getElementById("selectedRating").value = selectedStars;
+
+                                document.querySelectorAll("#starSelector li").forEach((li) =>
+                                    li.classList.remove("active")
+                                );
+                                this.parentElement.classList.add("active");
+                            });
+                        });
+
+                        // Manejar envío del formulario
+                        document.getElementById("reviewForm").addEventListener("submit", function (event) {
+                            event.preventDefault();
+
+                            const name = document.getElementById("reviewName").value.trim();
+                            const userUrl = document.getElementById("reviewUserUrl").value.trim(); // Usuario URL en lugar de email
+                            const comment = document.getElementById("reviewComment").value.trim();
+                            const rating = document.getElementById("selectedRating").value; // Obtener rating seleccionado
+
+                            if (!name || !userUrl || !comment || !rating) {
+                                alert("Por favor, complete todos los campos.");
+                                return;
+                            }
+
+                            fetch("submit_review.php", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/x-www-form-urlencoded",
+                                },
+                                body: `id=${encodeURIComponent(productId)}&name=${encodeURIComponent(name)}&userUrl=${encodeURIComponent(userUrl)}&comment=${encodeURIComponent(comment)}&rating=${encodeURIComponent(rating)}`,
+                            })
+                                .then((response) => response.json())
+                                .then((data) => {
+                                    if (data.success) {
+                                        alert("¡Reseña enviada con éxito!");
+                                        loadReviews(5); // Recargar reseñas con filtro de 5 estrellas
+                                    } else {
+                                        alert("Error al enviar la reseña: " + data.message);
+                                    }
+                                })
+                                .catch((error) => console.error("Error en la petición AJAX:", error));
+                        });
+                    }
+                })
+                .catch((error) => console.error("Error en la petición AJAX:", error));
         }
 
         // Cargar reseñas de 5 estrellas por defecto
