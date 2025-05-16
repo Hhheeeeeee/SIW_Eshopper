@@ -365,11 +365,6 @@
                 </ul>
               </div>
             </div>
-            <div class="col-sm-3">
-              <div class="search_box pull-right">
-                <input type="text" placeholder="Search" />
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -521,13 +516,6 @@
               </tr>
             </tfoot>
           </table>
-        </div>
-        <div class="row">
-          <div class="col-sm-12">
-            <button type="button" class="btn btn-primary" id="comprar_carrito">
-              Comprar
-            </button>
-          </div>
         </div>
         <div class="payment-options">
           <span>
@@ -728,76 +716,72 @@
     <script>
       $(document).ready(function () {
         loadPedidosCarrito(); // Cargar los pedidos al cargar la página
-        $("#comprar_carrito").click(function () {
-          procesarCompra(); // Llamar a la función para procesar la compra al hacer clic en el botón
-        });
       });
 
       function loadPedidosCarrito() {
         $.ajax({
-          url: "obtener_pedidos_carrito.php", // Usando el nuevo archivo PHP para obtener pedidos
+          url: "obtener_pedidos_carrito.php",
           type: "GET",
           dataType: "json",
           success: function (response) {
             if (response.success) {
-              displayPedidosCarrito(response.pedidos);
+              let pedidosDB = response.pedidos;
+              let pedidosLocal = JSON.parse(localStorage.getItem("carritoLocal")) || [];
+
+              let pedidosCombinados = [...pedidosDB];
+
+              pedidosLocal.forEach(localItem => {
+                let index = pedidosCombinados.findIndex(dbItem => dbItem.webId === localItem.webId);
+                if (index !== -1) {
+                  pedidosCombinados[index].cantidad = (pedidosCombinados[index].cantidad || 1) + parseInt(localItem.cantidad);
+                  pedidosCombinados[index].total = pedidosCombinados[index].precio_unidad * pedidosCombinados[index].cantidad;
+                } else {
+                  pedidosCombinados.push(localItem);
+                }
+              });
+
+              displayPedidosCarrito(pedidosCombinados);
             } else {
-              console.error(
-                "Error al cargar los pedidos del carrito:",
-                response.message
-              );
-              // Puedes mostrar un mensaje al usuario si lo deseas
+              let pedidosLocal = JSON.parse(localStorage.getItem("carritoLocal")) || [];
+              displayPedidosCarrito(pedidosLocal);
             }
           },
           error: function (xhr, status, error) {
-            console.error(
-              "Error de conexión al cargar los pedidos del carrito:",
-              status,
-              error
-            );
+            console.error("Error de conexión al cargar los pedidos del carrito:", status, error);
+
+            let pedidosLocal = JSON.parse(localStorage.getItem("carritoLocal")) || [];
+            displayPedidosCarrito(pedidosLocal);
           },
         });
       }
 
       function displayPedidosCarrito(pedidos) {
         var cartBody = $(".cart_info tbody");
-        cartBody.empty(); // Limpiar el contenido actual del carrito
+        cartBody.empty();
 
         let totalCarrito = 0;
 
         if (pedidos.length > 0) {
           $.each(pedidos, function (index, pedido) {
-            let precio_unidad = parseFloat(pedido.precio_unidad);
-            let total = parseFloat(pedido.total);
+            console.log("Pedido en display:", pedido);
+            let precio_unidad = parseFloat(pedido.precio_unidad || pedido.precio);
+            let cantidad = pedido.cantidad ? parseInt(pedido.cantidad) : Math.round(parseFloat(pedido.total) / parseFloat(pedido.precio_unidad));
+            let total = parseFloat(pedido.total) || precio_unidad * cantidad;
             totalCarrito += total;
-            let cantidad = parseInt(
-              precio_unidad > 0 ? Math.round(total / precio_unidad) : 1
-            );
 
-            console.log(precio_unidad);
-            console.log(total);
+            let titulo = pedido.productTitle || pedido.titulo || "Sin título";
 
             var row = $("<tr>");
 
             row.append(
-              '<td class="cart_product"><a href=""><img class="imagen-producto" src="' +
-                pedido.imagen +
-                '" alt="' +
-                pedido.titulo +
-                '"></a></td>'
+              `<td class="cart_product"><a href="#"><img class="imagen-producto" src="${pedido.imagen}" alt="${titulo}"></a></td>`
             );
             row.append(
-              '<td class="cart_description"><h4 title="' +
-                pedido.titulo +
-                '"><a href="#">' +
-                pedido.titulo +
-                "</a></h4><p>Web ID: " +
-                pedido.webId +
-                "</p></td>"
+              `<td class="cart_description"><h4 title="${titulo}"><a href="#">${titulo}</a></h4><p>Web ID: ${pedido.webId}</p></td>`
             );
             row.append(`
               <td class="cart_quantity">
-                <input type="number" min="1" class="input-cantidad" data-pedido-id="${pedido.id}" data-precio="${precio_unidad}" value="${cantidad}">
+                <input type="number" min="1" class="input-cantidad" data-pedido-id="${pedido.id || ''}" data-webid="${pedido.webId}" data-precio="${precio_unidad}" value="${cantidad}">
               </td>
             `);
             row.append(`
@@ -806,38 +790,42 @@
               </td>
             `);
             row.append(
-              '<td class="cart_delete"><a class="cart_quantity_delete" href="#" data-pedido-id="' +
-                pedido.id +
-                '"><i class="fa fa-times"></i></a></td>'
+              `<td class="cart_delete"><a class="cart_quantity_delete" href="#" data-pedido-id="${pedido.id || ''}" data-webid="${pedido.webId}"><i class="fa fa-times"></i></a></td>`
             );
             cartBody.append(row);
           });
 
           $("#precioTotal").text("$" + totalCarrito.toFixed(2));
 
-          // Agregar funcionalidad para eliminar items del carrito
-          $(".cart_quantity_delete").click(function () {
-            var pedidoId = $(this).data("pedido-id");
-            borrarPedidoCarrito(pedidoId); // Usando la nueva función para borrar
+          // Funcionalidad para eliminar pedidos
+          $(".cart_quantity_delete").click(function (e) {
+            e.preventDefault();
+            let pedidoId = $(this).data("pedido-id");
+            let webId = $(this).data("webid");
+
+            if (pedidoId) {
+              // Pedido en base de datos
+              borrarPedidoCarrito(pedidoId);
+            } else if (webId) {
+              // Pedido en localStorage
+              borrarPedidoLocal(webId);
+            }
           });
 
+          // Actualizar cantidades y totales
           $(".input-cantidad").on("blur", function () {
             let input = $(this);
             let cantidad = parseInt(input.val());
             let precioUnidad = parseFloat(input.data("precio"));
             let pedidoId = input.data("pedido-id");
+            let webId = input.data("webid");
 
             if (isNaN(cantidad) || cantidad < 1) return;
 
             let nuevoTotal = precioUnidad * cantidad;
 
-            // Actualiza el total individual
-            input
-              .closest("tr")
-              .find(".total-item")
-              .text(`$${nuevoTotal.toFixed(2)}`);
+            input.closest("tr").find(".total-item").text(`$${nuevoTotal.toFixed(2)}`);
 
-            // Actualiza el total general del carrito
             let total = 0;
             $(".input-cantidad").each(function () {
               let cant = parseInt($(this).val());
@@ -848,90 +836,71 @@
             });
             $("#precioTotal").text(`$${total.toFixed(2)}`);
 
-            console.log("Pedido ID:", pedidoId);
-            console.log("Cantidad:", cantidad);
-            console.log("Nuevo Total:", nuevoTotal);
-
-            // Ejecutar AJAX solo cuando el input pierde foco
-            $.ajax({
-              url: "actualizar_cantidad.php",
-              type: "POST",
-              data: {
-                pedido_id: pedidoId,
-                cantidad: cantidad,
-                total: nuevoTotal,
-              },
-              success: function (response) {
-                console.log(
-                  "Cantidad actualizada en la base de datos:",
-                  response
-                );
-              },
-              error: function () {
-                console.error(
-                  "Error al actualizar la cantidad en la base de datos."
-                );
-              },
-            });
+            if (pedidoId) {
+              // Actualizar base de datos
+              $.ajax({
+                url: "actualizar_cantidad.php",
+                type: "POST",
+                data: {
+                  pedido_id: pedidoId,
+                  cantidad: cantidad,
+                  total: nuevoTotal,
+                },
+                success: function (response) {
+                  console.log("Cantidad actualizada en la base de datos:", response);
+                },
+                error: function () {
+                  console.error("Error al actualizar la cantidad en la base de datos.");
+                },
+              });
+            } else if (webId) {
+              // Actualizar localStorage
+              actualizarCantidadLocal(webId, cantidad, nuevoTotal);
+            }
           });
         } else {
-          $("#precioTotal").text("$" + 0.0);
-          cartBody.append(
-            '<tr><td colspan="5"><p>No hay productos en el carrito.</p></td></tr>'
-          );
+          $("#precioTotal").text("$0.00");
+          cartBody.append('<tr><td colspan="5"><p>No hay productos en el carrito.</p></td></tr>');
         }
       }
 
       function borrarPedidoCarrito(pedidoId) {
         $.ajax({
-          url: "borrar_pedido_carrito.php", // Usando el nuevo archivo PHP para borrar pedidos
+          url: "borrar_pedido_carrito.php",
           type: "POST",
           dataType: "json",
-          data: { pedido_id: pedidoId }, // Enviando 'pedido_id' como espera el PHP
+          data: { pedido_id: pedidoId },
           success: function (response) {
             if (response.success) {
-              loadPedidosCarrito(); // Recargar el carrito después de eliminar
+              loadPedidosCarrito();
             } else {
-              console.error(
-                "Error al eliminar el pedido del carrito:",
-                response.message
-              );
+              console.error("Error al eliminar el pedido del carrito:", response.message);
               alert("Error al eliminar el pedido del carrito.");
             }
           },
           error: function (xhr, status, error) {
-            console.error(
-              "Error de conexión al eliminar el pedido:",
-              status,
-              error
-            );
+            console.error("Error de conexión al eliminar el pedido:", status, error);
             alert("Error de conexión al eliminar el pedido.");
           },
         });
       }
 
-      function procesarCompra() {
-        $.ajax({
-          url: "procesar_compra.php", // Nuevo archivo PHP para cambiar el estado de los pedidos
-          type: "POST",
-          dataType: "json",
-          success: function (response) {
-            if (response.success) {
-              alert("¡Compra realizada con éxito!");
-              loadPedidosCarrito(); // Recargar el carrito para que se muestre vacío (si la lógica del PHP lo hace)
-            } else {
-              alert("Error al procesar la compra:", response.message);
-            }
-          },
-          error: function (xhr, status, error) {
-            console.error(
-              "Error de conexión al procesar la compra:",
-              status,
-              error
-            );
-            alert("Error de conexión al procesar la compra.");
-          },
-        });
+      function borrarPedidoLocal(webId) {
+        let pedidosLocal = JSON.parse(localStorage.getItem("carritoLocal")) || [];
+        pedidosLocal = pedidosLocal.filter(p => p.webId !== webId);
+        localStorage.setItem("carritoLocal", JSON.stringify(pedidosLocal));
+        loadPedidosCarrito();
+      }
+
+      function actualizarCantidadLocal(webId, cantidad, total) {
+        let pedidosLocal = JSON.parse(localStorage.getItem("carritoLocal")) || [];
+        let pedidoIndex = pedidosLocal.findIndex(p => p.webId === webId);
+        if (pedidoIndex !== -1) {
+          pedidosLocal[pedidoIndex].cantidad = cantidad;
+          pedidosLocal[pedidoIndex].total = total;
+          localStorage.setItem("carritoLocal", JSON.stringify(pedidosLocal));
+          loadPedidosCarrito();  // Refrescar para que se muestre bien la cantidad
+        }
       }
     </script>
 
@@ -1085,6 +1054,7 @@
           : "all";
       }
     </script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.72/pdfmake.min.js"></script>

@@ -391,85 +391,6 @@
     </section>
     <!--/#cart_items-->
 
-    <section id="do_action">
-      <div class="container">
-        <div class="heading">
-          <h3>What would you like to do next?</h3>
-          <p>
-            Choose if you have a discount code or reward points you want to use
-            or would like to estimate your delivery cost.
-          </p>
-        </div>
-        <div class="row">
-          <div class="col-sm-6">
-            <div class="chose_area">
-              <ul class="user_option">
-                <li>
-                  <input type="checkbox" />
-                  <label>Use Coupon Code</label>
-                </li>
-                <li>
-                  <input type="checkbox" />
-                  <label>Use Gift Voucher</label>
-                </li>
-                <li>
-                  <input type="checkbox" />
-                  <label>Estimate Shipping & Taxes</label>
-                </li>
-              </ul>
-              <ul class="user_info">
-                <li class="single_field">
-                  <label>Country:</label>
-                  <select>
-                    <option>United States</option>
-                    <option>Bangladesh</option>
-                    <option>UK</option>
-                    <option>India</option>
-                    <option>Pakistan</option>
-                    <option>Ucrane</option>
-                    <option>Canada</option>
-                    <option>Dubai</option>
-                  </select>
-                </li>
-                <li class="single_field">
-                  <label>Region / State:</label>
-                  <select>
-                    <option>Select</option>
-                    <option>Dhaka</option>
-                    <option>London</option>
-                    <option>Dillih</option>
-                    <option>Lahore</option>
-                    <option>Alaska</option>
-                    <option>Canada</option>
-                    <option>Dubai</option>
-                  </select>
-                </li>
-                <li class="single_field zip-field">
-                  <label>Zip Code:</label>
-                  <input type="text" />
-                </li>
-              </ul>
-              <a class="btn btn-default update" href="">Get Quotes</a>
-              <a class="btn btn-default check_out" href="">Continue</a>
-            </div>
-          </div>
-          <div class="col-sm-6">
-            <div class="total_area">
-              <ul>
-                <li>Cart Sub Total <span>$59</span></li>
-                <li>Eco Tax <span>$2</span></li>
-                <li>Shipping Cost <span>Free</span></li>
-                <li>Total <span>$61</span></li>
-              </ul>
-              <a class="btn btn-default update" href="">Update</a>
-              <a class="btn btn-default check_out" href="">Check Out</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!--/#do_action-->
-
     <footer id="footer">
       <!--Footer-->
       <div class="footer-top">
@@ -760,77 +681,76 @@
     <script>
       $(document).ready(function () {
         loadPedidosCarrito(); // Cargar los pedidos al cargar la página
-        // *** AGREGAR ESTE LISTENER PARA EL BOTÓN COMPRAR ***
+
         $("#comprar_carrito").click(function () {
-          procesarCompra(); // Llamar a la función para procesar la compra al hacer clic en el botón
+          procesarCompra();
         });
       });
 
       function loadPedidosCarrito() {
         $.ajax({
-          url: "obtener_pedidos_carrito.php", // Usando el nuevo archivo PHP para obtener pedidos
+          url: "obtener_pedidos_carrito.php",
           type: "GET",
           dataType: "json",
           success: function (response) {
             if (response.success) {
-              displayPedidosCarrito(response.pedidos);
+              let pedidosDB = response.pedidos;
+              let pedidosLocal = JSON.parse(localStorage.getItem("carritoLocal")) || [];
+
+              let pedidosCombinados = [...pedidosDB];
+
+              pedidosLocal.forEach(localItem => {
+                let index = pedidosCombinados.findIndex(dbItem => dbItem.webId === localItem.webId);
+                if (index !== -1) {
+                  pedidosCombinados[index].cantidad = (pedidosCombinados[index].cantidad || 1) + parseInt(localItem.cantidad);
+                  pedidosCombinados[index].total = pedidosCombinados[index].precio_unidad * pedidosCombinados[index].cantidad;
+                } else {
+                  pedidosCombinados.push(localItem);
+                }
+              });
+
+              displayPedidosCarrito(pedidosCombinados);
             } else {
-              console.error(
-                "Error al cargar los pedidos del carrito:",
-                response.message
-              );
-              // Puedes mostrar un mensaje al usuario si lo deseas
+              let pedidosLocal = JSON.parse(localStorage.getItem("carritoLocal")) || [];
+              displayPedidosCarrito(pedidosLocal);
             }
           },
           error: function (xhr, status, error) {
-            console.error(
-              "Error de conexión al cargar los pedidos del carrito:",
-              status,
-              error
-            );
+            console.error("Error de conexión al cargar los pedidos del carrito:", status, error);
+
+            let pedidosLocal = JSON.parse(localStorage.getItem("carritoLocal")) || [];
+            displayPedidosCarrito(pedidosLocal);
           },
         });
       }
 
       function displayPedidosCarrito(pedidos) {
         var cartBody = $(".cart_info tbody");
-        cartBody.empty(); // Limpiar el contenido actual del carrito
+        cartBody.empty();
 
         let totalCarrito = 0;
 
         if (pedidos.length > 0) {
           $.each(pedidos, function (index, pedido) {
-            let precio_unidad = parseFloat(pedido.precio_unidad);
-            let total = parseFloat(pedido.total);
+            console.log("Pedido en display:", pedido);
+            let precio_unidad = parseFloat(pedido.precio_unidad || pedido.precio);
+            let cantidad = pedido.cantidad ? parseInt(pedido.cantidad) : Math.round(parseFloat(pedido.total) / parseFloat(pedido.precio_unidad));
+            let total = parseFloat(pedido.total) || precio_unidad * cantidad;
             totalCarrito += total;
-            let cantidad = parseInt(
-              precio_unidad > 0 ? Math.round(total / precio_unidad) : 1
-            );
 
-            console.log(precio_unidad);
-            console.log(total);
+            let titulo = pedido.productTitle || pedido.titulo || "Sin título";
 
             var row = $("<tr>");
 
             row.append(
-              '<td class="cart_product"><a href=""><img class="imagen-producto" src="' +
-                pedido.imagen +
-                '" alt="' +
-                pedido.titulo +
-                '"></a></td>'
+              `<td class="cart_product"><a href="#"><img class="imagen-producto" src="${pedido.imagen}" alt="${titulo}"></a></td>`
             );
             row.append(
-              '<td class="cart_description"><h4 title="' +
-                pedido.titulo +
-                '"><a href="#">' +
-                pedido.titulo +
-                "</a></h4><p>Web ID: " +
-                pedido.webId +
-                "</p></td>"
+              `<td class="cart_description"><h4 title="${titulo}"><a href="#">${titulo}</a></h4><p>Web ID: ${pedido.webId}</p></td>`
             );
             row.append(`
               <td class="cart_quantity">
-                <input type="number" min="1" class="input-cantidad" data-pedido-id="${pedido.id}" data-precio="${precio_unidad}" value="${cantidad}">
+                <input type="number" min="1" class="input-cantidad" data-pedido-id="${pedido.id || ''}" data-webid="${pedido.webId}" data-precio="${precio_unidad}" value="${cantidad}">
               </td>
             `);
             row.append(`
@@ -839,38 +759,42 @@
               </td>
             `);
             row.append(
-              '<td class="cart_delete"><a class="cart_quantity_delete" href="#" data-pedido-id="' +
-                pedido.id +
-                '"><i class="fa fa-times"></i></a></td>'
+              `<td class="cart_delete"><a class="cart_quantity_delete" href="#" data-pedido-id="${pedido.id || ''}" data-webid="${pedido.webId}"><i class="fa fa-times"></i></a></td>`
             );
             cartBody.append(row);
           });
 
           $("#precioTotal").text("$" + totalCarrito.toFixed(2));
 
-          // Agregar funcionalidad para eliminar items del carrito
-          $(".cart_quantity_delete").click(function () {
-            var pedidoId = $(this).data("pedido-id");
-            borrarPedidoCarrito(pedidoId); // Usando la nueva función para borrar
+          // Funcionalidad para eliminar pedidos
+          $(".cart_quantity_delete").click(function (e) {
+            e.preventDefault();
+            let pedidoId = $(this).data("pedido-id");
+            let webId = $(this).data("webid");
+
+            if (pedidoId) {
+              // Pedido en base de datos
+              borrarPedidoCarrito(pedidoId);
+            } else if (webId) {
+              // Pedido en localStorage
+              borrarPedidoLocal(webId);
+            }
           });
 
+          // Actualizar cantidades y totales
           $(".input-cantidad").on("blur", function () {
             let input = $(this);
             let cantidad = parseInt(input.val());
             let precioUnidad = parseFloat(input.data("precio"));
             let pedidoId = input.data("pedido-id");
+            let webId = input.data("webid");
 
             if (isNaN(cantidad) || cantidad < 1) return;
 
             let nuevoTotal = precioUnidad * cantidad;
 
-            // Actualiza el total individual
-            input
-              .closest("tr")
-              .find(".total-item")
-              .text(`$${nuevoTotal.toFixed(2)}`);
+            input.closest("tr").find(".total-item").text(`$${nuevoTotal.toFixed(2)}`);
 
-            // Actualiza el total general del carrito
             let total = 0;
             $(".input-cantidad").each(function () {
               let cant = parseInt($(this).val());
@@ -881,92 +805,140 @@
             });
             $("#precioTotal").text(`$${total.toFixed(2)}`);
 
-            console.log("Pedido ID:", pedidoId);
-            console.log("Cantidad:", cantidad);
-            console.log("Nuevo Total:", nuevoTotal);
-
-            // Ejecutar AJAX solo cuando el input pierde foco
-            $.ajax({
-              url: "actualizar_cantidad.php",
-              type: "POST",
-              data: {
-                pedido_id: pedidoId,
-                cantidad: cantidad,
-                total: nuevoTotal,
-              },
-              success: function (response) {
-                console.log(
-                  "Cantidad actualizada en la base de datos:",
-                  response
-                );
-              },
-              error: function () {
-                console.error(
-                  "Error al actualizar la cantidad en la base de datos."
-                );
-              },
-            });
+            if (pedidoId) {
+              // Actualizar base de datos
+              $.ajax({
+                url: "actualizar_cantidad.php",
+                type: "POST",
+                data: {
+                  pedido_id: pedidoId,
+                  cantidad: cantidad,
+                  total: nuevoTotal,
+                },
+                success: function (response) {
+                  console.log("Cantidad actualizada en la base de datos:", response);
+                },
+                error: function () {
+                  console.error("Error al actualizar la cantidad en la base de datos.");
+                },
+              });
+            } else if (webId) {
+              // Actualizar localStorage
+              actualizarCantidadLocal(webId, cantidad, nuevoTotal);
+            }
           });
         } else {
-          $("#precioTotal").text("$" + 0.0);
-          cartBody.append(
-            '<tr><td colspan="5"><p>No hay productos en el carrito.</p></td></tr>'
-          );
+          $("#precioTotal").text("$0.00");
+          cartBody.append('<tr><td colspan="5"><p>No hay productos en el carrito.</p></td></tr>');
         }
       }
 
       function borrarPedidoCarrito(pedidoId) {
         $.ajax({
-          url: "borrar_pedido_carrito.php", // Usando el nuevo archivo PHP para borrar pedidos
+          url: "borrar_pedido_carrito.php",
           type: "POST",
           dataType: "json",
-          data: { pedido_id: pedidoId }, // Enviando 'pedido_id' como espera el PHP
+          data: { pedido_id: pedidoId },
           success: function (response) {
             if (response.success) {
-              loadPedidosCarrito(); // Recargar el carrito después de eliminar
+              loadPedidosCarrito();
             } else {
-              console.error(
-                "Error al eliminar el pedido del carrito:",
-                response.message
-              );
+              console.error("Error al eliminar el pedido del carrito:", response.message);
               alert("Error al eliminar el pedido del carrito.");
             }
           },
           error: function (xhr, status, error) {
-            console.error(
-              "Error de conexión al eliminar el pedido:",
-              status,
-              error
-            );
+            console.error("Error de conexión al eliminar el pedido:", status, error);
             alert("Error de conexión al eliminar el pedido.");
           },
         });
       }
 
+      function borrarPedidoLocal(webId) {
+        let pedidosLocal = JSON.parse(localStorage.getItem("carritoLocal")) || [];
+        pedidosLocal = pedidosLocal.filter(p => p.webId !== webId);
+        localStorage.setItem("carritoLocal", JSON.stringify(pedidosLocal));
+        loadPedidosCarrito();
+      }
+
+      function actualizarCantidadLocal(webId, cantidad, total) {
+        let pedidosLocal = JSON.parse(localStorage.getItem("carritoLocal")) || [];
+        let pedidoIndex = pedidosLocal.findIndex(p => p.webId === webId);
+        if (pedidoIndex !== -1) {
+          pedidosLocal[pedidoIndex].cantidad = cantidad;
+          pedidosLocal[pedidoIndex].total = total;
+          localStorage.setItem("carritoLocal", JSON.stringify(pedidosLocal));
+          loadPedidosCarrito();  // Refrescar para que se muestre bien la cantidad
+        }
+      }
+
+
       function procesarCompra() {
+      const pedidosLocal = JSON.parse(localStorage.getItem("carritoLocal")) || [];
+      //console.log(pedidosLocal.length);
+      // Enviar los pedidos locales al servidor si hay y si el usuario está logueado
+      if (pedidosLocal.length > 0) {
         $.ajax({
-          url: "procesar_compra.php", // Nuevo archivo PHP para cambiar el estado de los pedidos
-          type: "POST",
+          url: "session_check.php",
+          type: "GET",
           dataType: "json",
-          success: function (response) {
-            if (response.success) {
-              alert("¡Compra realizada con éxito!");
-              loadPedidosCarrito(); // Recargar el carrito para que se muestre vacío (si la lógica del PHP lo hace)
+          success: function (sessionResponse) {
+            if (sessionResponse.logged_in && sessionResponse.user_id) {
+              // Enviar los pedidos locales al servidor
+              $.ajax({
+                url: "guardar_pedidos_locales.php", // Este PHP debe procesar múltiples pedidos
+                type: "POST",
+                dataType: "json",
+                data: JSON.stringify({ pedidos: pedidosLocal }),
+                contentType: "application/json",
+                success: function (guardadoResponse) {
+                  if (guardadoResponse.success) {
+                    // Vaciar el localStorage
+                    localStorage.removeItem("carritoLocal");
+
+                    // Procesar la compra (cambiar estado en BD, etc.)
+                    continuarCompra();
+                  } else {
+                    alert("Error al guardar los pedidos locales.");
+                  }
+                },
+                error: function () {
+                  alert("Error al conectar con el servidor para guardar pedidos.");
+                },
+              });
             } else {
-              alert("Error al procesar la compra:", response.message);
+              // No logueado, solo procesar localmente si quieres
+              alert("Debes iniciar sesión para completar la compra.");
+              window.location.href = "login.html";
             }
           },
-          error: function (xhr, status, error) {
-            console.error(
-              "Error de conexión al procesar la compra:",
-              status,
-              error
-            );
-            alert("Error de conexión al procesar la compra.");
-          },
         });
+      } else {
+        // No hay pedidos locales, solo procesar compra con los de la BD
+        continuarCompra();
       }
+    }
+
+    function continuarCompra() {
+      $.ajax({
+        url: "procesar_compra.php",
+        type: "POST",
+        dataType: "json",
+        success: function (response) {
+          if (response.success) {
+            window.location.href = "checkout.html";
+          } else {
+            alert("Error al procesar la compra: " + response.message);
+          }
+        },
+        error: function () {
+          alert("Error de conexión al procesar la compra.");
+        },
+      });
+    }
+
     </script>
+
     <script>
       $(document).ready(function () {
         $(document).click(function (e) {

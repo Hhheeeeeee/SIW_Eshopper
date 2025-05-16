@@ -619,12 +619,6 @@
                   <p><b>Availability:</b> In Stock</p>
                   <p><b>Condition:</b> New</p>
                   <p><b>Brand:</b> E-SHOPPER</p>
-                  <a href=""
-                    ><img
-                      src="images/product-details/share.png"
-                      class="share img-responsive"
-                      alt=""
-                  /></a>
                 </div>
                 <!--/product-information-->
               </div>
@@ -1470,22 +1464,16 @@
     <script>
       $(".btn.cart").click(function () {
         console.log("Botón cart2 pulsado");
-        // Guardamos el botón que fue clickeado
         var clickedButton = $(this);
 
         loadPedidos(clickedButton);
 
         var alertDiv = clickedButton.siblings(".alert-dialog")[0]; // Cambié .next() por .siblings()
-
-        // Obtenemos la posición del botón
         const offset = clickedButton.offset();
+        alertDiv.style.top = `${offset.top - 40}px`; 
+        alertDiv.style.left = `${offset.left}px`;
+        alertDiv.style.display = "block";
 
-        // Colocamos el mensaje arriba y alineado con el botón
-        alertDiv.style.top = `${offset.top - 40}px`; // 40px arriba del botón
-        alertDiv.style.left = `${offset.left}px`; // Alineamos al borde izquierdo del botón
-        alertDiv.style.display = "block"; // Mostramos el mensaje
-
-        // Ocultamos después de 2 segundos
         setTimeout(() => {
           alertDiv.style.display = "none";
         }, 2000);
@@ -1499,87 +1487,84 @@
           type: "GET",
           dataType: "json",
           success: function (sessionResponse) {
+            var quantityInput = clickedButton.siblings('input[type="text"]');
+            var quantity = quantityInput.val();
+
+            var priceSpan = clickedButton
+              .closest(".product-information")
+              .find("span > span:first-child");
+            var priceText = priceSpan.text();
+            var price = parseFloat(priceText.replace("US $", ""));
+            var total = quantity * price;
+            var imagen = clickedButton
+              .closest(".product-details")
+              .find(".view-product img")
+              .attr("src");
+            var productTitle = clickedButton
+              .closest(".product-information")
+              .find("h2")
+              .text();
+            var webIdElement = clickedButton
+              .closest(".product-information")
+              .find('p:contains("Web ID:")');
+            var webId = webIdElement.text().replace("Web ID:", "").trim();
+
+            var pedidoData = {
+              precio: price,
+              total: total,
+              estado: "Pendiente",
+              imagen: imagen,
+              productTitle: productTitle,
+              webId: webId,
+              cantidad: quantity,
+            };
+
             if (sessionResponse.logged_in && sessionResponse.user_id) {
-              var user_id = sessionResponse.user_id;
-              console.log("USER_ID:", user_id);
-
-              var quantityInput = clickedButton.siblings('input[type="text"]');
-              console.log("Esta es la cantidad: ");
-              console.log(quantityInput);
-              var quantity = quantityInput.val();
-              console.log("Esta es la cantidad bien: ");
-              console.log(quantity);
-
-              var priceSpan = clickedButton
-                .closest(".product-information")
-                .find("span > span:first-child");
-              console.log("Este es el precio: ");
-              console.log(priceSpan);
-              var priceText = priceSpan.text();
-              console.log("Este es el precio en texto: ");
-              console.log(priceText);
-              var price = parseFloat(priceText.replace("US $", ""));
-              var total = quantity * price;
-              var imagen = clickedButton
-                .closest(".product-details")
-                .find(".view-product img")
-                .attr("src");
-              console.log("URL de la imagen:", imagen);
-
-              var productTitle = clickedButton
-                .closest(".product-information")
-                .find("h2")
-                .text();
-              console.log("Título del producto:", productTitle);
-
-              var webIdElement = clickedButton
-                .closest(".product-information")
-                .find('p:contains("Web ID:")');
-              var webId = webIdElement.text().replace("Web ID:", "").trim();
-              console.log("Web ID:", webId);
-
-              var pedidoData = {
-                user_id: user_id,
-                precio: price,
-                total: total,
-                estado: "Pendiente",
-                imagen: imagen,
-                productTitle: productTitle,
-                webId: webId,
-                cantidad: quantity,
-              };
-
-              $.ajax({
-                url: "guardar_pedido.php",
-                type: "POST",
-                dataType: "json",
-                data: pedidoData,
-                success: function (pedidoResponse) {
-                  if (pedidoResponse.success) {
-                    alert("¡Producto añadido al carrito!");
-                  } else {
-                    console.log(
-                      "Error al añadir el producto al carrito: " +
-                        pedidoResponse.message
-                    );
-                  }
-                },
-                error: function () {
-                  console.log(
-                    "Error de conexión al servidor al guardar el pedido."
-                  );
-                },
-              });
+              pedidoData.user_id = sessionResponse.user_id;
+              guardarPedidoBD(pedidoData);
             } else {
-              console.log(
-                "Debes estar logueado para añadir productos al carrito."
-              );
+              addPedidoToLocal(pedidoData);
             }
           },
           error: function (xhr, status, error) {
             console.error("Error al verificar sesión:", status, error);
           },
         });
+      }
+
+      function guardarPedidoBD(pedidoData) {
+        $.ajax({
+          url: "guardar_pedido.php",
+          type: "POST",
+          dataType: "json",
+          data: pedidoData,
+          success: function (pedidoResponse) {
+            if (pedidoResponse.success) {
+              alert("¡Producto añadido al carrito!");
+            } else {
+              console.log("Error al añadir el producto al carrito: " + pedidoResponse.message);
+            }
+          },
+          error: function () {
+            console.log("Error de conexión al servidor al guardar el pedido.");
+          },
+        });
+      }
+
+      function addPedidoToLocal(pedidoData) {
+        let carritoLocal = JSON.parse(localStorage.getItem("carritoLocal")) || [];
+
+        // Opcional: comprobar si ya existe el producto y actualizar cantidad, sino añadir
+        let index = carritoLocal.findIndex(item => item.webId === pedidoData.webId);
+        if (index !== -1) {
+          carritoLocal[index].cantidad = parseInt(carritoLocal[index].cantidad) + parseInt(pedidoData.cantidad);
+          carritoLocal[index].total = carritoLocal[index].cantidad * carritoLocal[index].precio;
+        } else {
+          carritoLocal.push(pedidoData);
+        }
+
+        localStorage.setItem("carritoLocal", JSON.stringify(carritoLocal));
+        alert("¡Producto añadido al carrito local!");
       }
     </script>
 

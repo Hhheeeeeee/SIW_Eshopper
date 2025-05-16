@@ -293,11 +293,6 @@
                 </ul>
               </div>
             </div>
-            <div class="col-sm-3">
-              <div class="search_box pull-right">
-                <input type="text" placeholder="Search" />
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -611,23 +606,50 @@
             dataType: "json",
             success: function (response) {
               if (response.success) {
-                $("#loginMessage")
-                  .text("Inicio de sesión exitoso")
-                  .css("color", "green");
-                window.location.href = "/Eshopper/index.html"; // Redirigir al usuario
+                $("#loginMessage").text("Inicio de sesión exitoso").css("color", "green");
+
+                // Obtenemos el carrito local desde localStorage
+                var carritoLocal = JSON.parse(localStorage.getItem("carritoLocal")) || [];
+
+                if (carritoLocal.length > 0) {
+                  // Si hay productos en carrito local, los enviamos para fusionar
+                  $.ajax({
+                    url: 'fusionar_carrito.php',
+                    type: 'POST',
+                    data: { carrito: JSON.stringify(carritoLocal) },
+                    dataType: 'json',
+                    success: function (fusionResponse) {
+                      if (fusionResponse.success) {
+                        // Si la fusión fue exitosa, eliminamos carrito local
+                        localStorage.removeItem("carritoLocal");
+                        console.log("Carrito fusionado correctamente");
+                      } else {
+                        console.log("Error al fusionar carrito:", fusionResponse.message);
+                      }
+                      // Finalmente redirigimos al usuario
+                      window.location.href = "/Eshopper/index.html";
+                    },
+                    error: function () {
+                      console.log("Error al conectar con el servidor para fusionar carrito");
+                      window.location.href = "/Eshopper/index.html";
+                    }
+                  });
+                } else {
+                  // Si no hay carrito local, redirigimos directamente
+                  window.location.href = "/Eshopper/index.html";
+                }
               } else {
                 $("#loginMessage").text(response.message).css("color", "red");
               }
             },
             error: function () {
-              $("#loginMessage")
-                .text("Error en el servidor")
-                .css("color", "red");
+              $("#loginMessage").text("Error en el servidor").css("color", "red");
             },
           });
         });
       });
     </script>
+
 
     <script>
       $(document).ready(function () {

@@ -1844,18 +1844,6 @@
 
       var selectedCategory = "";
 
-      $(document).on(
-        "click",
-        ".category-link, .subcategory-link",
-        function (e) {
-          e.preventDefault();
-
-          selectedCategory = $(this).data("category");
-          console.log("Categoría seleccionada:", selectedCategory);
-          loadProducts(selectedCategory);
-        }
-      );
-
       function loadProducts(
         category,
         subcategory = -1,
@@ -1863,6 +1851,7 @@
         maxPrice = 600
       ) {
         console.log("Cargando productos para la categoría:", category);
+        console.log("Cargando productos para subcategoria:", subcategory);
 
         // Mostrar un mensaje de carga temporal
         $(".features_items").html("<p>Cargando productos...</p>");
@@ -1986,9 +1975,6 @@
                                             <div class="overlay-content">
                                                 <h2><del>$${offer.precio_original}</del> $${offer.precio_oferta}</h2>
                                                 <p>Oferta ID: ${offer.id}</p>
-                                                <a href="#" class="btn btn-default add-to-cart">
-                                                    <i class="fa fa-shopping-cart"></i> Add to cart
-                                                </a>
                                             </div>
                                         </div>
                                     </div>
@@ -2014,17 +2000,11 @@
                                             </p>
                                             <p>${offer.titulo}</p>
                                             <p>Oferta ID: ${offer.id}</p>
-                                            <a href="#" class="btn btn-default add-to-cart">
-                                                <i class="fa fa-shopping-cart"></i> Add to cart
-                                            </a>
                                         </div>
                                         <div class="product-overlay" data-id="${offer.id_producto}">
                                             <div class="overlay-content">
                                                 <h2><del>$${offer.precio_original}</del> $${offer.precio_oferta}</h2>
                                                 <p>Oferta ID: ${offer.id}</p>
-                                                <a href="#" class="btn btn-default add-to-cart">
-                                                    <i class="fa fa-shopping-cart"></i> Add to cart
-                                                </a>
                                             </div>
                                         </div>
                                     </div>
