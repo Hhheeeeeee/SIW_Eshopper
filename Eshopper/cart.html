@@ -382,9 +382,6 @@
         </div>
         <div class="row">
           <div class="col-sm-12">
-            <button type="button" class="btn btn-primary" id="comprar_carrito">
-              Comprar
-            </button>
           </div>
         </div>
       </div>
@@ -679,265 +676,195 @@
     </script>
 
     <script>
-      $(document).ready(function () {
-        loadPedidosCarrito(); // Cargar los pedidos al cargar la página
+  $(document).ready(function () {
+    loadPedidosCarrito(); // Cargar los pedidos al cargar la página
 
-        $("#comprar_carrito").click(function () {
-          procesarCompra();
-        });
-      });
-
-      function loadPedidosCarrito() {
-        $.ajax({
-          url: "obtener_pedidos_carrito.php",
-          type: "GET",
-          dataType: "json",
-          success: function (response) {
-            if (response.success) {
-              let pedidosDB = response.pedidos;
-              let pedidosLocal = JSON.parse(localStorage.getItem("carritoLocal")) || [];
-
-              let pedidosCombinados = [...pedidosDB];
-
-              pedidosLocal.forEach(localItem => {
-                let index = pedidosCombinados.findIndex(dbItem => dbItem.webId === localItem.webId);
-                if (index !== -1) {
-                  pedidosCombinados[index].cantidad = (pedidosCombinados[index].cantidad || 1) + parseInt(localItem.cantidad);
-                  pedidosCombinados[index].total = pedidosCombinados[index].precio_unidad * pedidosCombinados[index].cantidad;
-                } else {
-                  pedidosCombinados.push(localItem);
-                }
-              });
-
-              displayPedidosCarrito(pedidosCombinados);
-            } else {
-              let pedidosLocal = JSON.parse(localStorage.getItem("carritoLocal")) || [];
-              displayPedidosCarrito(pedidosLocal);
-            }
-          },
-          error: function (xhr, status, error) {
-            console.error("Error de conexión al cargar los pedidos del carrito:", status, error);
-
-            let pedidosLocal = JSON.parse(localStorage.getItem("carritoLocal")) || [];
-            displayPedidosCarrito(pedidosLocal);
-          },
-        });
-      }
-
-      function displayPedidosCarrito(pedidos) {
-        var cartBody = $(".cart_info tbody");
-        cartBody.empty();
-
-        let totalCarrito = 0;
-
-        if (pedidos.length > 0) {
-          $.each(pedidos, function (index, pedido) {
-            console.log("Pedido en display:", pedido);
-            let precio_unidad = parseFloat(pedido.precio_unidad || pedido.precio);
-            let cantidad = pedido.cantidad ? parseInt(pedido.cantidad) : Math.round(parseFloat(pedido.total) / parseFloat(pedido.precio_unidad));
-            let total = parseFloat(pedido.total) || precio_unidad * cantidad;
-            totalCarrito += total;
-
-            let titulo = pedido.productTitle || pedido.titulo || "Sin título";
-
-            var row = $("<tr>");
-
-            row.append(
-              `<td class="cart_product"><a href="#"><img class="imagen-producto" src="${pedido.imagen}" alt="${titulo}"></a></td>`
-            );
-            row.append(
-              `<td class="cart_description"><h4 title="${titulo}"><a href="#">${titulo}</a></h4><p>Web ID: ${pedido.webId}</p></td>`
-            );
-            row.append(`
-              <td class="cart_quantity">
-                <input type="number" min="1" class="input-cantidad" data-pedido-id="${pedido.id || ''}" data-webid="${pedido.webId}" data-precio="${precio_unidad}" value="${cantidad}">
-              </td>
-            `);
-            row.append(`
-              <td class="cart_price total-item">
-                $${total.toFixed(2)}
-              </td>
-            `);
-            row.append(
-              `<td class="cart_delete"><a class="cart_quantity_delete" href="#" data-pedido-id="${pedido.id || ''}" data-webid="${pedido.webId}"><i class="fa fa-times"></i></a></td>`
-            );
-            cartBody.append(row);
-          });
-
-          $("#precioTotal").text("$" + totalCarrito.toFixed(2));
-
-          // Funcionalidad para eliminar pedidos
-          $(".cart_quantity_delete").click(function (e) {
-            e.preventDefault();
-            let pedidoId = $(this).data("pedido-id");
-            let webId = $(this).data("webid");
-
-            if (pedidoId) {
-              // Pedido en base de datos
-              borrarPedidoCarrito(pedidoId);
-            } else if (webId) {
-              // Pedido en localStorage
-              borrarPedidoLocal(webId);
-            }
-          });
-
-          // Actualizar cantidades y totales
-          $(".input-cantidad").on("blur", function () {
-            let input = $(this);
-            let cantidad = parseInt(input.val());
-            let precioUnidad = parseFloat(input.data("precio"));
-            let pedidoId = input.data("pedido-id");
-            let webId = input.data("webid");
-
-            if (isNaN(cantidad) || cantidad < 1) return;
-
-            let nuevoTotal = precioUnidad * cantidad;
-
-            input.closest("tr").find(".total-item").text(`$${nuevoTotal.toFixed(2)}`);
-
-            let total = 0;
-            $(".input-cantidad").each(function () {
-              let cant = parseInt($(this).val());
-              let precio = parseFloat($(this).data("precio"));
-              if (!isNaN(cant) && cant >= 1) {
-                total += cant * precio;
-              }
-            });
-            $("#precioTotal").text(`$${total.toFixed(2)}`);
-
-            if (pedidoId) {
-              // Actualizar base de datos
-              $.ajax({
-                url: "actualizar_cantidad.php",
-                type: "POST",
-                data: {
-                  pedido_id: pedidoId,
-                  cantidad: cantidad,
-                  total: nuevoTotal,
-                },
-                success: function (response) {
-                  console.log("Cantidad actualizada en la base de datos:", response);
-                },
-                error: function () {
-                  console.error("Error al actualizar la cantidad en la base de datos.");
-                },
-              });
-            } else if (webId) {
-              // Actualizar localStorage
-              actualizarCantidadLocal(webId, cantidad, nuevoTotal);
-            }
-          });
-        } else {
-          $("#precioTotal").text("$0.00");
-          cartBody.append('<tr><td colspan="5"><p>No hay productos en el carrito.</p></td></tr>');
-        }
-      }
-
-      function borrarPedidoCarrito(pedidoId) {
-        $.ajax({
-          url: "borrar_pedido_carrito.php",
-          type: "POST",
-          dataType: "json",
-          data: { pedido_id: pedidoId },
-          success: function (response) {
-            if (response.success) {
-              loadPedidosCarrito();
-            } else {
-              console.error("Error al eliminar el pedido del carrito:", response.message);
-              alert("Error al eliminar el pedido del carrito.");
-            }
-          },
-          error: function (xhr, status, error) {
-            console.error("Error de conexión al eliminar el pedido:", status, error);
-            alert("Error de conexión al eliminar el pedido.");
-          },
-        });
-      }
-
-      function borrarPedidoLocal(webId) {
-        let pedidosLocal = JSON.parse(localStorage.getItem("carritoLocal")) || [];
-        pedidosLocal = pedidosLocal.filter(p => p.webId !== webId);
-        localStorage.setItem("carritoLocal", JSON.stringify(pedidosLocal));
-        loadPedidosCarrito();
-      }
-
-      function actualizarCantidadLocal(webId, cantidad, total) {
-        let pedidosLocal = JSON.parse(localStorage.getItem("carritoLocal")) || [];
-        let pedidoIndex = pedidosLocal.findIndex(p => p.webId === webId);
-        if (pedidoIndex !== -1) {
-          pedidosLocal[pedidoIndex].cantidad = cantidad;
-          pedidosLocal[pedidoIndex].total = total;
-          localStorage.setItem("carritoLocal", JSON.stringify(pedidosLocal));
-          loadPedidosCarrito();  // Refrescar para que se muestre bien la cantidad
-        }
-      }
-
-
-      function procesarCompra() {
-      const pedidosLocal = JSON.parse(localStorage.getItem("carritoLocal")) || [];
-      //console.log(pedidosLocal.length);
-      // Enviar los pedidos locales al servidor si hay y si el usuario está logueado
-      if (pedidosLocal.length > 0) {
-        $.ajax({
-          url: "session_check.php",
-          type: "GET",
-          dataType: "json",
-          success: function (sessionResponse) {
-            if (sessionResponse.logged_in && sessionResponse.user_id) {
-              // Enviar los pedidos locales al servidor
-              $.ajax({
-                url: "guardar_pedidos_locales.php", // Este PHP debe procesar múltiples pedidos
-                type: "POST",
-                dataType: "json",
-                data: JSON.stringify({ pedidos: pedidosLocal }),
-                contentType: "application/json",
-                success: function (guardadoResponse) {
-                  if (guardadoResponse.success) {
-                    // Vaciar el localStorage
-                    localStorage.removeItem("carritoLocal");
-
-                    // Procesar la compra (cambiar estado en BD, etc.)
-                    continuarCompra();
-                  } else {
-                    alert("Error al guardar los pedidos locales.");
-                  }
-                },
-                error: function () {
-                  alert("Error al conectar con el servidor para guardar pedidos.");
-                },
-              });
-            } else {
-              // No logueado, solo procesar localmente si quieres
-              alert("Debes iniciar sesión para completar la compra.");
-              window.location.href = "login.html";
-            }
-          },
-        });
-      } else {
-        // No hay pedidos locales, solo procesar compra con los de la BD
-        continuarCompra();
-      }
-    }
-
-    function continuarCompra() {
+    function loadPedidosCarrito() {
       $.ajax({
-        url: "procesar_compra.php",
-        type: "POST",
+        url: "obtener_pedidos_carrito.php",
+        type: "GET",
         dataType: "json",
         success: function (response) {
           if (response.success) {
-            window.location.href = "checkout.html";
+            let pedidosDB = response.pedidos;
+            let pedidosLocal = JSON.parse(localStorage.getItem("carritoLocal")) || [];
+
+            let pedidosCombinados = [...pedidosDB];
+
+            pedidosLocal.forEach(localItem => {
+              let index = pedidosCombinados.findIndex(dbItem => dbItem.webId === localItem.webId);
+              if (index !== -1) {
+                pedidosCombinados[index].cantidad =
+                  (pedidosCombinados[index].cantidad || 1) + parseInt(localItem.cantidad);
+                pedidosCombinados[index].total =
+                  pedidosCombinados[index].precio_unidad * pedidosCombinados[index].cantidad;
+              } else {
+                pedidosCombinados.push(localItem);
+              }
+            });
+
+            displayPedidosCarrito(pedidosCombinados);
           } else {
-            alert("Error al procesar la compra: " + response.message);
+            let pedidosLocal = JSON.parse(localStorage.getItem("carritoLocal")) || [];
+            displayPedidosCarrito(pedidosLocal);
           }
         },
-        error: function () {
-          alert("Error de conexión al procesar la compra.");
+        error: function (xhr, status, error) {
+          console.error("Error de conexión al cargar los pedidos del carrito:", status, error);
+          let pedidosLocal = JSON.parse(localStorage.getItem("carritoLocal")) || [];
+          displayPedidosCarrito(pedidosLocal);
         },
       });
     }
 
-    </script>
+    function displayPedidosCarrito(pedidos) {
+      var cartBody = $(".cart_info tbody");
+      cartBody.empty();
+
+      let totalCarrito = 0;
+
+      if (pedidos.length > 0) {
+        $.each(pedidos, function (index, pedido) {
+          let precio_unidad = parseFloat(pedido.precio_unidad || pedido.precio);
+          let cantidad = pedido.cantidad
+            ? parseInt(pedido.cantidad)
+            : Math.round(parseFloat(pedido.total) / parseFloat(precio_unidad));
+          let total = parseFloat(pedido.total) || precio_unidad * cantidad;
+          totalCarrito += total;
+
+          let titulo = pedido.productTitle || pedido.titulo || "Sin título";
+
+          var row = $("<tr>");
+
+          row.append(
+            `<td class="cart_product"><a href="#"><img class="imagen-producto" src="${pedido.imagen}" alt="${titulo}"></a></td>`
+          );
+          row.append(
+            `<td class="cart_description"><h4 title="${titulo}"><a href="#">${titulo}</a></h4><p>Web ID: ${pedido.webId}</p></td>`
+          );
+          row.append(`
+            <td class="cart_quantity">
+              <input type="number" min="1" class="input-cantidad" data-pedido-id="${pedido.id || ''}" data-webid="${pedido.webId}" data-precio="${precio_unidad}" value="${cantidad}">
+            </td>
+          `);
+          row.append(`
+            <td class="cart_price total-item">
+              $${total.toFixed(2)}
+            </td>
+          `);
+          row.append(
+            `<td class="cart_delete"><a class="cart_quantity_delete" href="#" data-pedido-id="${pedido.id || ''}" data-webid="${pedido.webId}"><i class="fa fa-times"></i></a></td>`
+          );
+
+          cartBody.append(row);
+        });
+
+        $("#precioTotal").text("$" + totalCarrito.toFixed(2));
+
+        // Eliminar pedido
+        $(".cart_quantity_delete").click(function (e) {
+          e.preventDefault();
+          let pedidoId = $(this).data("pedido-id");
+          let webId = $(this).data("webid");
+
+          if (pedidoId) {
+            borrarPedidoCarrito(pedidoId);
+          } else if (webId) {
+            borrarPedidoLocal(webId);
+          }
+        });
+
+        // Cambiar cantidad
+        $(".input-cantidad").on("blur", function () {
+          let input = $(this);
+          let cantidad = parseInt(input.val());
+          let precioUnidad = parseFloat(input.data("precio"));
+          let pedidoId = input.data("pedido-id");
+          let webId = input.data("webid");
+
+          if (isNaN(cantidad) || cantidad < 1) return;
+
+          let nuevoTotal = precioUnidad * cantidad;
+
+          input.closest("tr").find(".total-item").text(`$${nuevoTotal.toFixed(2)}`);
+
+          let total = 0;
+          $(".input-cantidad").each(function () {
+            let cant = parseInt($(this).val());
+            let precio = parseFloat($(this).data("precio"));
+            if (!isNaN(cant) && cant >= 1) {
+              total += cant * precio;
+            }
+          });
+          $("#precioTotal").text(`$${total.toFixed(2)}`);
+
+          if (pedidoId) {
+            $.ajax({
+              url: "actualizar_cantidad.php",
+              type: "POST",
+              data: {
+                pedido_id: pedidoId,
+                cantidad: cantidad,
+                total: nuevoTotal,
+              },
+              success: function (response) {
+                console.log("Cantidad actualizada en la base de datos:", response);
+              },
+              error: function () {
+                console.error("Error al actualizar la cantidad en la base de datos.");
+              },
+            });
+          } else if (webId) {
+            actualizarCantidadLocal(webId, cantidad, nuevoTotal);
+          }
+        });
+      } else {
+        $("#precioTotal").text("$0.00");
+        cartBody.append('<tr><td colspan="5"><p>No hay productos en el carrito.</p></td></tr>');
+      }
+    }
+
+    function borrarPedidoCarrito(pedidoId) {
+      $.ajax({
+        url: "borrar_pedido_carrito.php",
+        type: "POST",
+        dataType: "json",
+        data: { pedido_id: pedidoId },
+        success: function (response) {
+          if (response.success) {
+            loadPedidosCarrito();
+          } else {
+            console.error("Error al eliminar el pedido del carrito:", response.message);
+            alert("Error al eliminar el pedido del carrito.");
+          }
+        },
+        error: function (xhr, status, error) {
+          console.error("Error de conexión al eliminar el pedido:", status, error);
+          alert("Error de conexión al eliminar el pedido.");
+        },
+      });
+    }
+
+    function borrarPedidoLocal(webId) {
+      let pedidosLocal = JSON.parse(localStorage.getItem("carritoLocal")) || [];
+      pedidosLocal = pedidosLocal.filter(p => p.webId !== webId);
+      localStorage.setItem("carritoLocal", JSON.stringify(pedidosLocal));
+      loadPedidosCarrito();
+    }
+
+    function actualizarCantidadLocal(webId, cantidad, total) {
+      let pedidosLocal = JSON.parse(localStorage.getItem("carritoLocal")) || [];
+      let pedidoIndex = pedidosLocal.findIndex(p => p.webId === webId);
+      if (pedidoIndex !== -1) {
+        pedidosLocal[pedidoIndex].cantidad = cantidad;
+        pedidosLocal[pedidoIndex].total = total;
+        localStorage.setItem("carritoLocal", JSON.stringify(pedidosLocal));
+        loadPedidosCarrito();
+      }
+    }
+  });
+</script>
+
 
     <script>
       $(document).ready(function () {

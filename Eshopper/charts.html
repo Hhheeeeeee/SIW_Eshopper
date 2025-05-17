@@ -379,9 +379,12 @@
                 </ul>
               </div>
             </div>
-            <div class="col-sm-3">
-              <div class="search_box pull-right">
-                <input type="text" placeholder="Search" />
+            <div class="container" style="margin-bottom: 20px;">
+              <div class="row">
+                <div class="col-sm-12">
+                  <input type="text" id="search-charts-input" class="form-control" placeholder="Buscar gráfico por nombre..." />
+                  <button id="search-charts-button" class="btn btn-primary" style="margin-top: 10px;">Buscar</button>
+                </div>
               </div>
             </div>
           </div>
@@ -1117,6 +1120,62 @@
         });
       });
     </script>
+
+<script>
+  $(document).ready(function() {
+    // Función para normalizar texto: minúsculas + sin acentos
+    function normalizarTexto(texto) {
+      return texto
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+    }
+
+    function filtrarGraficosPorBusqueda() {
+      let query = normalizarTexto($('#search-charts-input').val().trim());
+
+      if(query === "") {
+        $('.chart-container').show();
+      } else {
+        $('.chart-container').each(function() {
+          let tituloGrafico = normalizarTexto($(this).find('h3#titulo').text());
+
+          if(tituloGrafico.indexOf(query) !== -1) {
+            $(this).show();
+          } else {
+            $(this).hide();
+          }
+        });
+
+        if($('.chart-container:visible').length > 0) {
+          $('html, body').animate({
+            scrollTop: $('.chart-container:visible').first().offset().top
+          }, 600);
+        }
+      }
+    }
+
+    $('#search-charts-input').on('keypress', function(e) {
+      if(e.which === 13) {
+        e.preventDefault();
+        filtrarGraficosPorBusqueda();
+      }
+    });
+
+    $('#search-charts-button').on('click', function() {
+      filtrarGraficosPorBusqueda();
+    });
+
+    $('#search-charts-input').on('input', function() {
+      if($(this).val().trim() === "") {
+        $('.chart-container').show();
+      }
+    });
+  });
+</script>
+
+
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.72/pdfmake.min.js"></script>

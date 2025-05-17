@@ -159,6 +159,21 @@
       #submenuVer li a:hover {
         background-color: #ddd;
       }
+      .btn-verde {
+        background-color: #28a745;
+        color: white;
+        padding: 12px 24px;
+        font-size: 16px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .btn-verde:hover {
+        background-color: #218838;
+      }
+
     </style></head
   ><!--/head-->
 
@@ -365,6 +380,11 @@
                 </ul>
               </div>
             </div>
+            <div class="col-sm-3">
+              <div class="search_box pull-right">
+                <input type="text" placeholder="Search" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -373,163 +393,239 @@
     <!--/header-->
 
     <section id="cart_items">
-      <div class="container">
-        <div class="breadcrumbs">
-          <ol class="breadcrumb">
-            <li><a href="#">Home</a></li>
-            <li class="active">Check out</li>
-          </ol>
-        </div>
-        <!--/breadcrums-->
+  <div class="container">
+    <div class="breadcrumbs">
+      <ol class="breadcrumb">
+        <li><a href="#">Home</a></li>
+        <li class="active">Check out</li>
+      </ol>
+    </div>
+    <div class="step-one">
+      <h2 class="heading">Paso 1: Información del Cliente</h2>
+    </div>
 
-        <div class="step-one">
-          <h2 class="heading">Step1</h2>
-        </div>
-        <div class="checkout-options">
-          <h3>New User</h3>
-          <p>Checkout options</p>
-          <ul class="nav">
-            <li>
-              <label><input type="checkbox" /> Register Account</label>
-            </li>
-            <li>
-              <label><input type="checkbox" /> Guest Checkout</label>
-            </li>
-            <li>
-              <a href=""><i class="fa fa-times"></i>Cancel</a>
-            </li>
-          </ul>
-        </div>
-        <!--/checkout-options-->
+    <div class="checkout-info mb-4">
+      <pre>
+Para continuar con la compra, por favor ingresa tus datos personales y de envío.
+<strong>No es necesario estar registrado previamente.</strong> Se creará una cuenta al completar el pedido.
+      </pre>
+    </div>
 
-        <div class="register-req">
-          <p>
-            Please use Register And Checkout to easily get access to your order
-            history, or use Checkout as Guest
-          </p>
-        </div>
-        <!--/register-req-->
-
-        <div class="shopper-informations">
-          <div class="row">
-            <div class="col-sm-3">
-              <div class="shopper-info">
-                <p>Shopper Information</p>
-                <form>
-                  <input type="text" placeholder="Display Name" />
-                  <input type="text" placeholder="User Name" />
-                  <input type="password" placeholder="Password" />
-                  <input type="password" placeholder="Confirm password" />
-                </form>
-                <a class="btn btn-primary" href="">Get Quotes</a>
-                <a class="btn btn-primary" href="">Continue</a>
-              </div>
+    <form id="checkoutForm" class="needs-validation shopper-informations mt-4" novalidate autocomplete="off">
+      <div class="row">
+        <div class="col-sm-5">
+          <div class="shopper-info mb-4">
+            <h4>Datos del Cliente</h4>
+            <div class="mb-3">
+              <label for="nombre">Nombre *</label>
+              <input type="text" class="form-control" id="nombre" name="nombre" required autocomplete="off" />
             </div>
-            <div class="col-sm-5 clearfix">
-              <div class="bill-to">
-                <p>Bill To</p>
-                <div class="form-one">
-                  <form>
-                    <input type="text" placeholder="Company Name" />
-                    <input type="text" placeholder="Email*" />
-                    <input type="text" placeholder="Title" />
-                    <input type="text" placeholder="First Name *" />
-                    <input type="text" placeholder="Middle Name" />
-                    <input type="text" placeholder="Last Name *" />
-                    <input type="text" placeholder="Address 1 *" />
-                    <input type="text" placeholder="Address 2" />
-                  </form>
-                </div>
-                <div class="form-two">
-                  <form>
-                    <input type="text" placeholder="Zip / Postal Code *" />
-                    <select>
-                      <option>-- Country --</option>
-                      <option>United States</option>
-                      <option>Bangladesh</option>
-                      <option>UK</option>
-                      <option>India</option>
-                      <option>Pakistan</option>
-                      <option>Ucrane</option>
-                      <option>Canada</option>
-                      <option>Dubai</option>
-                    </select>
-                    <select>
-                      <option>-- State / Province / Region --</option>
-                      <option>United States</option>
-                      <option>Bangladesh</option>
-                      <option>UK</option>
-                      <option>India</option>
-                      <option>Pakistan</option>
-                      <option>Ucrane</option>
-                      <option>Canada</option>
-                      <option>Dubai</option>
-                    </select>
-                    <input type="password" placeholder="Confirm password" />
-                    <input type="text" placeholder="Phone *" />
-                    <input type="text" placeholder="Mobile Phone" />
-                    <input type="text" placeholder="Fax" />
-                  </form>
-                </div>
-              </div>
+            <div class="mb-3">
+              <label for="apellido">Apellido *</label>
+              <input type="text" class="form-control" id="apellido" name="apellido" required autocomplete="off" />
             </div>
-            <div class="col-sm-4">
-              <div class="order-message">
-                <p>Shipping Order</p>
-                <textarea
-                  name="message"
-                  placeholder="Notes about your order, Special Notes for Delivery"
-                  rows="16"
-                ></textarea>
-                <label
-                  ><input type="checkbox" /> Shipping to bill address</label
-                >
-              </div>
+            <div class="mb-3">
+              <label for="email">Correo Electrónico *</label>
+              <input type="email" class="form-control" id="email" name="email" required autocomplete="off" />
+            </div>
+            <div class="mb-3">
+              <label for="telefono">Teléfono *</label>
+              <input type="tel" class="form-control" id="telefono" name="telefono" required autocomplete="off" />
             </div>
           </div>
         </div>
-        <div class="review-payment">
-          <h2>Review & Payment</h2>
+
+        <div class="col-sm-4">
+          <div class="bill-to">
+            <h4>Dirección de Envío</h4>
+            <div class="mb-3">
+              <label for="direccion">Dirección *</label>
+              <input type="text" class="form-control" id="direccion" name="direccion" required autocomplete="off" />
+            </div>
+            <div class="mb-3">
+              <label for="tipoDireccion">Tipo de Dirección *</label>
+              <select id="tipoDireccion" name="tipoDireccion" class="form-select" required autocomplete="off">
+                <option value="">-- Selecciona --</option>
+                <option value="casa">Casa</option>
+                <option value="apartamento">Apartamento</option>
+                <option value="oficina">Oficina</option>
+                <option value="otro">Otro</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="ciudad">Ciudad *</label>
+              <input type="text" class="form-control" id="ciudad" name="ciudad" required autocomplete="off" />
+            </div>
+            <div class="mb-3">
+              <label for="codigoPostal">Código Postal *</label>
+              <input type="text" class="form-control" id="codigoPostal" name="codigoPostal" required autocomplete="off" />
+            </div>
+          </div>
         </div>
 
-        <div class="table-responsive cart_info">
-          <table class="table table-condensed">
-            <thead>
-              <tr class="cart_menu">
-                <td class="image">Item</td>
-                <td class="description">Description</td>
-                <td class="quantity">Cantidad</td>
-                <!-- NUEVA COLUMNA -->
-
-                <td class="price">Precio</td>
-                <td></td>
-              </tr>
-            </thead>
-            <tbody></tbody>
-            <tfoot>
-              <tr>
-                <td colspan="3"></td>
-                <td>
-                  <strong>Total:</strong> <span id="precioTotal">$0.00</span>
-                </td>
-                <td></td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-        <div class="payment-options">
-          <span>
-            <label><input type="checkbox" /> Direct Bank Transfer</label>
-          </span>
-          <span>
-            <label><input type="checkbox" /> Check Payment</label>
-          </span>
-          <span>
-            <label><input type="checkbox" /> Paypal</label>
-          </span>
+        <div class="col-sm-3">
+          <div class="order-message">
+            <h4>Notas del Pedido</h4>
+            <textarea
+              class="form-control mb-2"
+              id="notas"
+              name="notas"
+              placeholder="Notas sobre el pedido o entrega"
+              rows="10"
+              autocomplete="off"
+            ></textarea>
+            <div class="form-check">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                id="mismoEnvio"
+                name="mismoEnvio"
+                checked
+              />
+              <label class="form-check-label" for="mismoEnvio">
+                Enviar a la misma dirección
+              </label>
+            </div>
+          </div>
         </div>
       </div>
-    </section>
+
+      <div class="payment-section mt-4">
+        <h4>Datos de Pago</h4>
+
+        <div class="mb-3">
+          <label for="metodoPago" class="form-label">Método de Pago *</label><br />
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="metodoPago"
+              id="tarjetaCredito"
+              value="tarjeta"
+              required
+              autocomplete="off"
+            />
+            <label class="form-check-label" for="tarjetaCredito">Tarjeta de Crédito / Débito</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="metodoPago"
+              id="paypal"
+              value="paypal"
+              required
+              autocomplete="off"
+            />
+            <label class="form-check-label" for="paypal">PayPal</label>
+          </div>
+        </div>
+
+        <div id="datosTarjeta" style="display:none;">
+          <div class="mb-3">
+            <label for="nombreTarjeta" class="form-label">Nombre en la Tarjeta *</label>
+            <input
+              type="text"
+              class="form-control"
+              id="nombreTarjeta"
+              name="nombreTarjeta"
+              pattern="[A-Za-z\s]+"
+              placeholder="Como aparece en la tarjeta"
+              autocomplete="off"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="numeroTarjeta" class="form-label">Número de Tarjeta *</label>
+            <input
+              type="text"
+              class="form-control"
+              id="numeroTarjeta"
+              name="numeroTarjeta"
+              pattern="\d{13,19}"
+              placeholder="1234 5678 9012 3456"
+              maxlength="19"
+              autocomplete="off"
+            />
+          </div>
+          <div class="row">
+            <div class="col-6 mb-3">
+              <label for="fechaExpiracion" class="form-label">Fecha de Expiración *</label>
+              <input
+                type="month"
+                class="form-control"
+                id="fechaExpiracion"
+                name="fechaExpiracion"
+                min="2023-05"
+                autocomplete="off"
+              />
+            </div>
+            <div class="col-6 mb-3">
+              <label for="cvv" class="form-label">CVV *</label>
+              <input
+                type="text"
+                class="form-control"
+                id="cvv"
+                name="cvv"
+                pattern="\d{3,4}"
+                maxlength="4"
+                placeholder="123"
+                autocomplete="off"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div id="datosPaypal" style="display:none;">
+          <div class="mb-3">
+            <label for="emailPaypal" class="form-label">Correo de PayPal *</label>
+            <input
+              type="email"
+              class="form-control"
+              id="emailPaypal"
+              name="emailPaypal"
+              placeholder="usuario@ejemplo.com"
+              autocomplete="off"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="text-end mt-4" style="margin-top: 20px;">
+        <button type="submit" id="finalizar_compra" class="btn-verde">
+          Finalizar Compra
+        </button>
+      </div>
+    </form>
+
+    <div class="review-payment">
+      <h2>Review &amp; Payment</h2>
+    </div>
+
+    <div class="table-responsive cart_info">
+      <table class="table table-condensed">
+        <thead>
+          <tr class="cart_menu">
+            <td class="image">Item</td>
+            <td class="description">Description</td>
+            <td class="quantity">Cantidad</td>
+            <td class="price">Precio</td>
+            <td></td>
+          </tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3"></td>
+            <td>
+              <strong>Total:</strong> <span id="precioTotal">$0.00</span>
+            </td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</section>
     <!--/#cart_items-->
 
     <footer id="footer">
@@ -713,9 +809,173 @@
     <script src="js/jquery.prettyPhoto.js"></script>
     <script src="js/main.js"></script>
 
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const checkoutForm = document.getElementById('checkoutForm');
+    const metodoPagoRadios = document.querySelectorAll('input[name="metodoPago"]');
+    const datosTarjeta = document.getElementById('datosTarjeta');
+    const datosPaypal = document.getElementById('datosPaypal');
+
+    const camposAGuardar = [
+      'nombre', 'apellido', 'email', 'telefono', 'direccion', 'tipoDireccion',
+      'ciudad', 'codigoPostal', 'notas',
+      'metodoPago',
+      'nombreTarjeta', 'numeroTarjeta', 'fechaExpiracion', 'cvv',
+      'emailPaypal'
+    ];
+
+    function cargarDatos() {
+      camposAGuardar.forEach(id => {
+        const campo = document.getElementById(id);
+        if (!campo) return;
+        const valorGuardado = localStorage.getItem(id);
+        if (valorGuardado) {
+          if (campo.type === 'radio') {
+            const radioParaMarcar = document.querySelector(`input[name="${campo.name}"][value="${valorGuardado}"]`);
+            if (radioParaMarcar) radioParaMarcar.checked = true;
+          } else {
+            campo.value = valorGuardado;
+            campo.autocomplete = 'off';  // <---- Aquí lo pones para intentar evitar sugerencias
+          }
+        }
+      });
+    }
+
+
+    cargarDatos();
+
+    function togglePagoFields() {
+      const metodoSeleccionado = [...metodoPagoRadios].find(r => r.checked)?.value;
+      datosTarjeta.style.display = metodoSeleccionado === 'tarjeta' ? 'block' : 'none';
+      datosPaypal.style.display = metodoSeleccionado === 'paypal' ? 'block' : 'none';
+
+      datosTarjeta.querySelectorAll('input').forEach(input => input.required = metodoSeleccionado === 'tarjeta');
+      datosPaypal.querySelectorAll('input').forEach(input => input.required = metodoSeleccionado === 'paypal');
+    }
+
+    metodoPagoRadios.forEach(radio => radio.addEventListener('change', togglePagoFields));
+    togglePagoFields();
+
+    function mostrarError(campo, mensaje) {
+      alert(mensaje);
+      campo.value = '';
+      campo.setCustomValidity(mensaje);
+      campo.reportValidity();
+      campo.focus();
+      return false;
+    }
+
+    function validarYEnviar(e) {
+      e.preventDefault();
+      checkoutForm.classList.remove('was-validated');
+
+      const campos = {
+        nombre: { expr: /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/, msg: 'Por favor ingresa un nombre válido (solo letras).' },
+        apellido: { expr: /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/, msg: 'Por favor ingresa un apellido válido (solo letras).' },
+        email: { expr: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, msg: 'Por favor ingresa un correo electrónico válido.' },
+        telefono: { expr: /^\d{7,}$/, msg: 'Por favor ingresa un teléfono válido (mínimo 7 dígitos).' },
+        direccion: { expr: /.+/, msg: 'La dirección es obligatoria.' },
+        tipoDireccion: { expr: /.+/, msg: 'Por favor selecciona un tipo de dirección.' },
+        ciudad: { expr: /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/, msg: 'Por favor ingresa una ciudad válida.' },
+        codigoPostal: { expr: /^\d{4,10}$/, msg: 'Por favor ingresa un código postal válido (4 a 10 dígitos).' }
+      };
+
+      for (let id in campos) {
+        const campo = document.getElementById(id);
+        const { expr, msg } = campos[id];
+        if (!expr.test(campo.value.trim())) {
+          return mostrarError(campo, msg);
+        } else {
+          campo.setCustomValidity('');
+        }
+      }
+
+      const notas = document.getElementById('notas');
+      if (notas.value.length > 300) {
+        return mostrarError(notas, 'Las notas no pueden superar los 300 caracteres.');
+      }
+
+      const metodoSeleccionado = [...metodoPagoRadios].find(r => r.checked)?.value;
+      if (!metodoSeleccionado) {
+        alert('Por favor selecciona un método de pago.');
+        return false;
+      }
+
+      if (metodoSeleccionado === 'tarjeta') {
+        const nombreTarjeta = document.getElementById('nombreTarjeta');
+        const numeroTarjeta = document.getElementById('numeroTarjeta');
+        const fechaExpiracion = document.getElementById('fechaExpiracion');
+        const cvv = document.getElementById('cvv');
+
+        if (!/^[A-Za-z\s]+$/.test(nombreTarjeta.value.trim())) {
+          return mostrarError(nombreTarjeta, 'Por favor ingresa un nombre válido en la tarjeta.');
+        }
+
+        if (!/^\d{13,19}$/.test(numeroTarjeta.value.replace(/\s/g, ''))) {
+          return mostrarError(numeroTarjeta, 'Por favor ingresa un número de tarjeta válido (13-19 dígitos).');
+        }
+
+        if (!fechaExpiracion.value) {
+          return mostrarError(fechaExpiracion, 'Por favor ingresa una fecha de expiración.');
+        } else {
+          const [year, month] = fechaExpiracion.value.split('-').map(Number);
+          const hoy = new Date();
+          if (year < hoy.getFullYear() || (year === hoy.getFullYear() && month < hoy.getMonth() + 1)) {
+            return mostrarError(fechaExpiracion, 'La fecha de expiración debe ser futura.');
+          }
+        }
+
+        if (!/^\d{3,4}$/.test(cvv.value.trim())) {
+          return mostrarError(cvv, 'Por favor ingresa un CVV válido (3 o 4 dígitos).');
+        }
+      } else if (metodoSeleccionado === 'paypal') {
+        const emailPaypal = document.getElementById('emailPaypal');
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailPaypal.value.trim())) {
+          return mostrarError(emailPaypal, 'Por favor ingresa un correo de PayPal válido.');
+        }
+      }
+
+      checkoutForm.classList.add('was-validated');
+
+      // Preguntar si quiere guardar datos y guardar o limpiar localStorage
+      const quiereGuardar = confirm('¿Quieres guardar tus datos para futuros pedidos?');
+
+      if (quiereGuardar) {
+        camposAGuardar.forEach(id => {
+          const campo = document.getElementById(id);
+          if (!campo) return;
+
+          if (campo.type === 'radio') {
+            const seleccionado = document.querySelector(`input[name="${campo.name}"]:checked`);
+            if (seleccionado) {
+              localStorage.setItem(id, seleccionado.value);
+            }
+          } else {
+            if (campo.value.trim() !== '') {
+              localStorage.setItem(id, campo.value.trim());
+            }
+          }
+        });
+      } else {
+        localStorage.clear();
+      }
+
+      // Removemos event listener para evitar bucles y enviamos formulario
+      checkoutForm.removeEventListener('submit', validarYEnviar);
+      checkoutForm.submit();
+    }
+
+    checkoutForm.addEventListener('submit', validarYEnviar);
+  });
+</script>
+
     <script>
       $(document).ready(function () {
         loadPedidosCarrito(); // Cargar los pedidos al cargar la página
+
+        $("#finalizar_compra").click(function () {
+          procesarCompra();
+        });
       });
 
       function loadPedidosCarrito() {
@@ -902,6 +1162,72 @@
           loadPedidosCarrito();  // Refrescar para que se muestre bien la cantidad
         }
       }
+
+
+      function procesarCompra() {
+      const pedidosLocal = JSON.parse(localStorage.getItem("carritoLocal")) || [];
+      //console.log(pedidosLocal.length);
+      // Enviar los pedidos locales al servidor si hay y si el usuario está logueado
+      if (pedidosLocal.length > 0) {
+        $.ajax({
+          url: "session_check.php",
+          type: "GET",
+          dataType: "json",
+          success: function (sessionResponse) {
+            if (sessionResponse.logged_in && sessionResponse.user_id) {
+              // Enviar los pedidos locales al servidor
+              $.ajax({
+                url: "guardar_pedidos_locales.php", // Este PHP debe procesar múltiples pedidos
+                type: "POST",
+                dataType: "json",
+                data: JSON.stringify({ pedidos: pedidosLocal }),
+                contentType: "application/json",
+                success: function (guardadoResponse) {
+                  if (guardadoResponse.success) {
+                    // Vaciar el localStorage
+                    localStorage.removeItem("carritoLocal");
+
+                    // Procesar la compra (cambiar estado en BD, etc.)
+                    continuarCompra();
+                  } else {
+                    alert("Error al guardar los pedidos locales.");
+                  }
+                },
+                error: function () {
+                  alert("Error al conectar con el servidor para guardar pedidos.");
+                },
+              });
+            } else {
+              // No logueado, solo procesar localmente si quieres
+              alert("Debes iniciar sesión para completar la compra.");
+              window.location.href = "login.html";
+            }
+          },
+        });
+      } else {
+        // No hay pedidos locales, solo procesar compra con los de la BD
+        continuarCompra();
+      }
+    }
+
+    function continuarCompra() {
+      $.ajax({
+        url: "pedido_pagado.php",
+        type: "POST",
+        dataType: "json",
+        success: function (response) {
+          if (response.success) {
+            window.location.href = "checkout.html";
+          } else {
+            alert("Error al procesar la compra: " + response.message);
+          }
+        },
+        error: function () {
+          alert("Error de conexión al procesar la compra.");
+        },
+      });
+    }
+
     </script>
 
     <script>
@@ -1055,6 +1381,25 @@
       }
     </script>
 
+    <script>
+      document.querySelector('.search_box input').addEventListener('input', function () {
+        const busqueda = this.value.trim().toLowerCase();
+        const elementos = Array.from(document.querySelectorAll('*')).filter(el => el.textContent.trim().length > 0);
+
+        // Primero quitamos cualquier resaltado previo
+        elementos.forEach(el => {
+          el.style.backgroundColor = '';
+        });
+
+        if (busqueda === '') return; // Si está vacío no hacemos nada
+
+        elementos.forEach(el => {
+          if (el.textContent.toLowerCase().includes(busqueda)) {
+            el.style.backgroundColor = 'yellow'; // Resalta con amarillo
+          }
+        });
+      });
+    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.72/pdfmake.min.js"></script>

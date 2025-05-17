@@ -466,7 +466,10 @@
             </div>
             <div class="col-sm-3">
               <div class="search_box pull-right">
-                <input type="text" placeholder="Search" />
+                <input type="text" id="search-input" placeholder="Buscar" />
+                <button id="search-button" style="margin-left:5px;">
+                  <i class="fa fa-search"></i>
+                </button>
               </div>
             </div>
           </div>
@@ -2247,5 +2250,51 @@
           : "all";
       }
     </script>
+
+   <script>
+  $(document).ready(function() {
+    // Función para normalizar texto: minúsculas + sin acentos
+    function normalizarTexto(texto) {
+      return texto
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+    }
+
+    function filtrarProductosPorBusqueda() {
+      let query = normalizarTexto($('#search-input').val().trim());
+
+      if(query === "") {
+        $('.features_items .col-sm-4').show();
+      } else {
+        $('.features_items .col-sm-4').each(function() {
+          let nombreProducto = normalizarTexto($(this).find('.productinfo p').text());
+          if(nombreProducto.indexOf(query) !== -1) {
+            $(this).show();
+          } else {
+            $(this).hide();
+          }
+        });
+      }
+
+      // Scroll suave hacia la sección .features_items
+      $('html, body').animate({
+        scrollTop: $('.features_items').offset().top
+      }, 600);
+    }
+
+    $('#search-input').on('keypress', function(e) {
+      if(e.which === 13) {
+        e.preventDefault();
+        filtrarProductosPorBusqueda();
+      }
+    });
+
+    $('#search-button').on('click', function() {
+      filtrarProductosPorBusqueda();
+    });
+  });
+</script>
+
   </body>
 </html>
