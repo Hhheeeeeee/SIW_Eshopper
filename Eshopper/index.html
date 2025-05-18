@@ -313,7 +313,7 @@
                 /></a>
               </div>
               <div class="btn-group pull-right">
-                <div class="btn-group">
+                <!--<div class="btn-group">
                   <button
                     type="button"
                     class="btn btn-default dropdown-toggle usa"
@@ -341,7 +341,7 @@
                     <li><a href="#">Canadian Dollar</a></li>
                     <li><a href="#">Pound</a></li>
                   </ul>
-                </div>
+                </div> -->
               </div>
             </div>
             <div class="col-sm-8">
@@ -452,14 +452,14 @@
                       <li><a href="charts.html">Gráficos</a></li>
                     </ul>
                   </li>
-                  <li class="dropdown">
+                  <!--<li class="dropdown">
                     <a href="#">Blog<i class="fa fa-angle-down"></i></a>
                     <ul role="menu" class="sub-menu">
                       <li><a href="blog.html">Blog List</a></li>
                       <li><a href="blog-single.html">Blog Single</a></li>
                     </ul>
                   </li>
-                  <li><a href="404.html">404</a></li>
+                  <li><a href="404.html">404</a></li>-->
                   <li><a href="contact-us.html">Contact</a></li>
                 </ul>
               </div>
@@ -467,7 +467,7 @@
             <div class="col-sm-3">
               <div class="search_box pull-right">
                 <input type="text" id="search-input" placeholder="Buscar" />
-                <button id="search-button" style="margin-left:5px;">
+                <button id="search-button" style="margin-left: 5px">
                   <i class="fa fa-search"></i>
                 </button>
               </div>
@@ -2251,50 +2251,54 @@
       }
     </script>
 
-   <script>
-  $(document).ready(function() {
-    // Función para normalizar texto: minúsculas + sin acentos
-    function normalizarTexto(texto) {
-      return texto
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "");
-    }
+    <script>
+      $(document).ready(function () {
+        // Función para normalizar texto: minúsculas + sin acentos
+        function normalizarTexto(texto) {
+          return texto
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "");
+        }
 
-    function filtrarProductosPorBusqueda() {
-      let query = normalizarTexto($('#search-input').val().trim());
+        function filtrarProductosPorBusqueda() {
+          let query = normalizarTexto($("#search-input").val().trim());
 
-      if(query === "") {
-        $('.features_items .col-sm-4').show();
-      } else {
-        $('.features_items .col-sm-4').each(function() {
-          let nombreProducto = normalizarTexto($(this).find('.productinfo p').text());
-          if(nombreProducto.indexOf(query) !== -1) {
-            $(this).show();
+          if (query === "") {
+            $(".features_items .col-sm-4").show();
           } else {
-            $(this).hide();
+            $(".features_items .col-sm-4").each(function () {
+              let nombreProducto = normalizarTexto(
+                $(this).find(".productinfo p").text()
+              );
+              if (nombreProducto.indexOf(query) !== -1) {
+                $(this).show();
+              } else {
+                $(this).hide();
+              }
+            });
+          }
+
+          // Scroll suave hacia la sección .features_items
+          $("html, body").animate(
+            {
+              scrollTop: $(".features_items").offset().top,
+            },
+            600
+          );
+        }
+
+        $("#search-input").on("keypress", function (e) {
+          if (e.which === 13) {
+            e.preventDefault();
+            filtrarProductosPorBusqueda();
           }
         });
-      }
 
-      // Scroll suave hacia la sección .features_items
-      $('html, body').animate({
-        scrollTop: $('.features_items').offset().top
-      }, 600);
-    }
-
-    $('#search-input').on('keypress', function(e) {
-      if(e.which === 13) {
-        e.preventDefault();
-        filtrarProductosPorBusqueda();
-      }
-    });
-
-    $('#search-button').on('click', function() {
-      filtrarProductosPorBusqueda();
-    });
-  });
-</script>
-
+        $("#search-button").on("click", function () {
+          filtrarProductosPorBusqueda();
+        });
+      });
+    </script>
   </body>
 </html>
