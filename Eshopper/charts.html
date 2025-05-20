@@ -152,10 +152,9 @@
         height: 500px !important;
       }
       #diferenciaPrecioTabla {
-        width: 400px !important; /* Usar !important si otros estilos están afectando */
-        height: 400px !important;
-        margin-top: 200px !important;
-        margin-left: 100px !important;
+        /*width: 400px !important; /* Usar !important si otros estilos están afectando */
+        height: 700px !important;
+        margin-top: 175px !important;
       }
       #originalPriceHeader,
       [id^="originalPriceCell-"] {
@@ -173,6 +172,49 @@
         font-size: 1.5em;
         margin-top: 10px;
       }
+
+      .precio-tabla {
+        border-collapse: collapse;
+        width: 100%;
+        margin-bottom: 10px;
+        table-layout: fixed; /* mantiene anchos fijos */
+        font-family: Arial, sans-serif;
+      }
+
+      .precio-tabla td,
+      .precio-tabla th {
+        border: 1px solid #ccc;
+        padding: 4px 10px; /* un poco más de padding para que haya espacio */
+        text-align: center;
+        white-space: nowrap; /* evita que el contenido se divida en varias líneas */
+      }
+
+      .precio-tabla .tipo {
+        background-color: #f7f7f7;
+        font-weight: bold;
+        text-align: left;
+        width: 112px; /* un poco más ancho que antes */
+      }
+
+      .precio-tabla td:not(.tipo) {
+        min-width: 80px;
+        text-align: right;      /* alineación derecha */
+        padding-left: 0 !important;   /* sin padding izquierdo */
+        padding-right: 6px;     /* un poco de padding a la derecha */
+        margin-left: 0;         /* sin margen izquierdo */
+      }
+
+      .precio-tabla tr:nth-child(odd) td {
+        background-color: #fafafa;
+      }
+
+      .precio-tabla tr:nth-child(even) td {
+        background-color: #f0f0f0;
+      }
+
+
+
+
     </style></head
   ><!--/head-->
 
@@ -449,7 +491,7 @@
             </div>
 
             <div class="chart-container">
-              <h3 id="titulo">Diferencia de Precio por Oferta</h3>
+              <h5 id="tituloDiferencia">Comparativa de Precios y Ofertas</h5>
               <div id="diferenciaPrecioTabla"></div>
             </div>
           </div>
@@ -1080,34 +1122,38 @@
               });
 
               // --- Mostrar la diferencia de precio en una tabla ---
-              if (
-                data.diferencia_precio_oferta &&
-                data.diferencia_precio_oferta.length > 0
-              ) {
-                let tablaHTML = "<table><thead><tr>";
-                tablaHTML +=
-                  '<th id="originalPriceHeader">Precio Original</th>';
-                tablaHTML += '<th id="offerPriceHeader">Precio Oferta</th>';
-                tablaHTML += '<th id="differenceHeader">Diferencia</th>';
-                tablaHTML += "</tr></thead><tbody>";
+              if (data.diferencia_precio_oferta && data.diferencia_precio_oferta.length > 0) {
+  const maxCols = 11;
+  const ofertas = data.diferencia_precio_oferta;
+  const totalOfertas = ofertas.length;
 
-                data.diferencia_precio_oferta.forEach((item, index) => {
-                  tablaHTML += "<tr>";
-                  tablaHTML += `<td id="originalPriceCell-${index}">${parseFloat(
-                    item.precio_original
-                  ).toFixed(2)}</td>`;
-                  tablaHTML += `<td id="offerPriceCell-${index}">${parseFloat(
-                    item.precio_oferta
-                  ).toFixed(2)}</td>`;
-                  tablaHTML += `<td id="differenceCell-${index}">${parseFloat(
-                    item.diferencia_precio
-                  ).toFixed(2)}</td>`;
-                  tablaHTML += "</tr>";
-                });
+  let tablaHTML = "";
 
-                tablaHTML += "</tbody></table>";
-                $("#diferenciaPrecioTabla").html(tablaHTML);
-              }
+  for (let start = 0; start < totalOfertas; start += maxCols) {
+    tablaHTML += "<table class='precio-tabla'>";
+
+    function crearFilaDatos(tipo, startIndex, key) {
+      let fila = `<tr><td class="tipo">${tipo}</td>`;
+      for (let i = startIndex; i < Math.min(startIndex + maxCols, totalOfertas); i++) {
+        fila += `<td>${parseFloat(ofertas[i][key]).toFixed(2)}</td>`;
+      }
+      fila += "</tr>";
+      return fila;
+    }
+
+    tablaHTML += crearFilaDatos("Precio Original", start, "precio_original");
+    tablaHTML += crearFilaDatos("Precio Oferta", start, "precio_oferta");
+    tablaHTML += crearFilaDatos("Diferencia", start, "diferencia_precio");
+
+    tablaHTML += "</table>";
+  }
+
+  $("#diferenciaPrecioTabla").html(tablaHTML);
+}
+
+
+
+
             } else {
               console.error("Error al obtener los datos:", data.message);
               $("#accountMessage").text(data.message).show();
